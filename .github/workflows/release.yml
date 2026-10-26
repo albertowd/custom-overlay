@@ -130,7 +130,10 @@ jobs:
           merge-multiple: true
       - name: Checksums
         working-directory: packages
-        run: sha256sum custom-overlay-* > SHA256SUMS.txt
+        # The artifacts keep electron-builder's version folder (release/<version>/): flatten it.
+        run: |
+          find . -mindepth 2 -type f -name 'custom-overlay-*' -exec mv -t . {} +
+          sha256sum custom-overlay-* > SHA256SUMS.txt
       - uses: softprops/action-gh-release@v3
         with:
           tag_name: ${{ env.TAG }}
