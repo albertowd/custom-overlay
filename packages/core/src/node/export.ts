@@ -293,8 +293,13 @@ export async function exportProject(options: ExportOptions): Promise<ExportResul
   // ffmpeg closing its input early (an error) must not crash the process.
   stdin.on('error', () => undefined);
 
-  const abort = () => child.kill();
-  signal?.addEventListener('abort', abort, { once: true });
+  // A plain kill (SIGTERM on Linux and macOS) asks ffmpeg to finish cleanly, which can leave it
+  // waiting forever on the open frame pipe: close the pipe and stop it for good.
+  const stop = () => {
+    stdin.destroy();
+    child.kill('SIGKILL');
+  };
+  signal?.addEventListener('abort', stop, { once: true });
   const warnings = new Set<string>();
   // Frames requested ahead, so every thread stays busy while frames are written in order.
   const ahead = Math.max(2, source.threads * 3);
@@ -336,14 +341,14 @@ export async function exportProject(options: ExportOptions): Promise<ExportResul
     if (signal?.aborted) throw new ExportError('Export cancelled');
     if (code !== 0) throw new ExportError(`ffmpeg failed (exit code ${code}):\n${tail(stderr)}`);
   } catch (error) {
-    child.kill();
+    stop();
     await exited.catch(() => null);
     // Do not leave a broken video behind.
     if (project.export.mode === 'video') await rm(outputPath, { force: true }).catch(() => undefined);
     // Killing ffmpeg breaks the pipe it reads frames from ("write EOF"): still a cancellation.
     throw signal?.aborted ? new ExportError('Export cancelled') : error;
   } finally {
-    signal?.removeEventListener('abort', abort);
+    signal?.removeEventListener('abort', stop);
     // Pending frames resolve or fail with the workers; nothing waits for them any more.
     for (const pending of requested.values()) pending.catch(() => undefined);
     await source.close();
