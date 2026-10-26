@@ -1,0 +1,46 @@
+{
+  "description": "Sync GoPro videos with telemetry and render customizable overlay widgets",
+  "devDependencies": {
+    "@biomejs/biome": "^2.6.3",
+    "@types/node": "^24.19.2",
+    "@vitest/coverage-v8": "^5.0.5",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.5"
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "license": "AGPL-3.0-only",
+  "name": "custom-overlay",
+  "private": true,
+  "scripts": {
+    "build": "npm run build -w @custom-overlay/core && npm run build -w @custom-overlay/cli && npm run build -w @custom-overlay/desktop && npm run build -w @custom-overlay/pwa",
+    "build:core": "npm run build -w @custom-overlay/core",
+    "build:pwa": "npm run build:core && npm run build -w @custom-overlay/pwa",
+    "check": "npm run lint && npm run check:locales && npm run typecheck && npm test",
+    "check:locales": "node scripts/check-locales.mjs",
+    "cli": "node packages/cli/dist/index.js",
+    "dev": "npm run build:core && npm run dev -w @custom-overlay/desktop",
+    "dev:pwa": "npm run build:core && npm run dev -w @custom-overlay/pwa",
+    "format": "biome format --write .",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "postinstall": "node scripts/ensure-electron.mjs",
+    "sonar:down": "docker compose down",
+    "sonar:scan": "npm run test:coverage && docker compose --profile scan run --rm sonar-scanner",
+    "sonar:up": "docker compose up -d sonarqube",
+    "test": "npm run build:core && npm run test --workspaces --if-present",
+    "test:coverage": "npm run build:core && npm run test:coverage --workspaces --if-present",
+    "tracks": "node scripts/build-tracks.mjs",
+    "typecheck": "npm run build:core && npm run typecheck --workspaces --if-present"
+  },
+  "type": "module",
+  "version": "0.1.0",
+  "workspaces": [
+    "packages/core",
+    "packages/ui",
+    "packages/cli",
+    "apps/desktop",
+    "apps/pwa"
+  ]
+}

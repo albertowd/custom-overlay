@@ -1,0 +1,20 @@
+title: "[Track]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Questions and talk about tracks: where the official timing lines are, layouts, timing tips...
+
+        > [!TIP]
+        > To add a track to the app's [list of known tracks](https://github.com/albertowd/custom-overlay/tree/main/packages/core/src/tracks), or to fix one, use the [Add or fix a track](https://github.com/albertowd/custom-overlay/issues/new?template=track.yml) issue form instead: the list is part of the app, so changes to it are tracked as issues and pull requests.
+  - type: input
+    id: name
+    attributes:
+      label: Track
+      placeholder: "Interlagos – GP layout"
+  - type: textarea
+    id: body
+    attributes:
+      label: Your question or idea
+    validations:
+      required: true

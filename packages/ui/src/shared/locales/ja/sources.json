@@ -1,0 +1,15 @@
+{
+  "card": {
+    "embedded": "動画に埋め込み",
+    "loading": "読み込み中…",
+    "error": "エラー",
+    "use": "使用"
+  },
+  "unsupported": "対応していないデータソースです: {name}",
+  "add": "データソースを追加…",
+  "empty": {
+    "title": "データソースはまだありません。",
+    "drop": "RaceChrono の CSV エクスポート、DJI の .SRT 字幕、またはデータだけを使うテレメトリー付き動画 (GoPro、DJI) をここにドロップしてください。"
+  },
+  "supported": "対応形式: RaceChrono の CSV エクスポート (v2/v3)、GoPro MP4 のテレメトリー (GPS、加速度計、ジャイロ)、DJI の .SRT 字幕 (GPS、高度、カメラ設定)。"
+}

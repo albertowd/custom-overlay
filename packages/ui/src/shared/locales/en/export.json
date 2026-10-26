@@ -1,0 +1,98 @@
+{
+  "range": {
+    "title": "Range",
+    "help": "The preview shows the video with the widgets as they will be exported. Play or scrub it, then set where the export starts and ends: drag the handles, type times as m:ss.mmm, or press I / O at the playhead.",
+    "followsData": "Without a start or end, the export follows the data range set in the Track step ({start} – {end}).",
+    "dataRange": "Track data range",
+    "followsDataField": "Follows the Track data range"
+  },
+  "output": {
+    "title": "Output",
+    "video": "Final video",
+    "videoHelp": "The videos with the widgets burned in.",
+    "sequence": "Transparent image sequence",
+    "sequenceHelp": "One PNG per frame with only the widgets, to composite in an editor.",
+    "none": "No output selected",
+    "choose": "Choose…",
+    "defaultHint": "Not chosen: it goes next to the videos (or the data), named after the project, without replacing an earlier export.",
+    "zipHint": "The browser cannot write into a folder: the frames are downloaded as one zip file.",
+    "useDefault": "Use the default location"
+  },
+  "format": {
+    "title": "Format",
+    "resolution": "Resolution",
+    "customResolution": "Custom ({width} × {height})",
+    "width": "Width",
+    "height": "Height",
+    "frameRate": "Frame rate",
+    "colorSpace": "Color space",
+    "rangeDepth": "Range / depth",
+    "limited": "Limited · {bits}-bit",
+    "full": "Full · {bits}-bit",
+    "matchVideo": "Match the first video",
+    "canvasHelp": "The output size is the canvas the widgets are placed on (Template step): changing its shape moves them."
+  },
+  "encoding": {
+    "title": "Encoding",
+    "preset": "Preset",
+    "custom": "Custom",
+    "customHelp": "Custom values, kept with the project.",
+    "codec": "Codec",
+    "bitrate": "Bitrate (Mbps)",
+    "keyframe": "Keyframe every (s)",
+    "bFrames": "B-frames",
+    "audio": "Audio",
+    "audioOptions": {
+      "aac": "AAC",
+      "copy": "Copy from video",
+      "none": "No audio"
+    },
+    "acceleration": "Decode / encode on",
+    "accelerationOptions": {
+      "auto": "GPU when available",
+      "software": "CPU only"
+    },
+    "scaling": "Scaling (when the output size differs from a video)",
+    "scalers": {
+      "bilinear": "Bilinear (fast)",
+      "bicubic": "Bicubic",
+      "lanczos": "Lanczos (sharp)",
+      "fsr1": "FSR 1 style (Lanczos + AMD CAS sharpening)"
+    },
+    "scalingHelp": "DLSS and XeSS are not offered: they are temporal upscalers that need motion vectors and depth from a game engine, which recorded video does not have. The FSR 1 style option upscales with Lanczos and sharpens with AMD's CAS, the two stages of FSR 1.",
+    "notes": {
+      "sdrConverted": "YouTube converts SDR uploads to 8-bit Rec.709 limited range: a Rec.709 limited output looks the same before and after uploading.",
+      "h264TenBit": "10-bit H.264 is encoded on the CPU only (GPU H.264 encoders are 8-bit) and YouTube converts it to 8-bit anyway: choose an 8-bit output or the HEVC preset.",
+      "hdrNeedsHdrOutput": "YouTube treats a video as HDR only with a 10-bit Rec.2020 HLG or PQ output: set the colour space and depth in Format.",
+      "hdrResolution": "YouTube accepts HDR from 720p up.",
+      "frameRate": "The output frame rate is outside this preset's range (YouTube plays at most 60 fps): choose the preset again to convert it.",
+      "socialSdr": "The app plays 8-bit Rec.709 SDR video: other colour settings are converted when uploading.",
+      "socialSize": "The output is not this preset's format: choose the preset again to move the canvas to it.",
+      "socialFrameRate": "The output frame rate is outside this preset's range (the apps play at most 60 fps): choose the preset again to convert it."
+    },
+    "estimatedSize": "Estimated file size: about {size} for {duration}.",
+    "estimatedSizeHelp": "From the bitrate and the length of the range: the real size varies a little with the encoder and the footage.",
+    "otherPresets": "Other presets"
+  },
+  "run": {
+    "title": "Export",
+    "start": "Export",
+    "help": "Widgets are drawn on several threads; the video is decoded and encoded on the GPU when possible. You can keep working meanwhile.",
+    "helpSequence": "Widgets are drawn on several threads and each frame is written as a PNG file. You can keep working meanwhile.",
+    "preparing": "Preparing: loading values, choosing the encoder…",
+    "progress": "{percent}% · frame {frame} / {frames}",
+    "speed": "{fps} fps · {elapsed} elapsed · {left} left",
+    "done": {
+      "one": "Exported {count} frame",
+      "other": "Exported {count} frames"
+    },
+    "doneTime": "in {time}.",
+    "doneTimeEncoder": "in {time} with {encoder}.",
+    "showInFolder": "Show in folder",
+    "dismiss": "Dismiss",
+    "failed": "The export failed.",
+    "cancelled": "Export cancelled; the unfinished file was removed.",
+    "cancelledSequence": "Export cancelled; the frames already written were kept.",
+    "cancelledZip": "Export cancelled; nothing was downloaded."
+  }
+}

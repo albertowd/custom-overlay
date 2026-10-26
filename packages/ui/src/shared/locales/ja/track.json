@@ -1,0 +1,137 @@
+{
+  "importLines": "ラインをインポート…",
+  "exportLines": "ラインをエクスポート…",
+  "list": {
+    "title": "コース一覧",
+    "none": "このセッションは既知のコースのどれにも該当しません。",
+    "detected": "このセッションは{name}です。",
+    "several": "このセッションは複数の既知のコースに該当します。下から選んでください。",
+    "inUse": "コース一覧の{name}のラインです。",
+    "use": "このラインを使う",
+    "load": "既知のコースを読み込む",
+    "choose": "コースを選択…",
+    "detectedGroup": "このセッション",
+    "confirmReplace": "現在のラインを{name}のラインに置き換えますか？",
+    "share": "コースがない、またはラインが違いますか？",
+    "shareLink": "ラインを共有する",
+    "search": "名前・都市・国で検索",
+    "resultsGroup": {
+      "one": "{count}件のコース",
+      "other": "{count}件のコース"
+    },
+    "nearbyGroup": "{km} km以内",
+    "km": "{distance} km",
+    "noResults": "コースが見つかりません",
+    "source": {
+      "bundled": {
+        "one": "このバージョンに内蔵の{count}コース（GitHubに接続できません）",
+        "other": "このバージョンに内蔵の{count}コース（GitHubに接続できません）"
+      },
+      "github": {
+        "one": "{count}コース（GitHubと同期済み）",
+        "other": "{count}コース（GitHubと同期済み）"
+      },
+      "cache": {
+        "one": "前回ダウンロードした{count}コース（GitHubに接続できません）",
+        "other": "前回ダウンロードした{count}コース（GitHubに接続できません）"
+      }
+    }
+  },
+  "timing": {
+    "label": "ラップ値の取得元",
+    "options": {
+      "auto": "自動: コースのラインがあればライン、なければロガー",
+      "imported": "ロガーから（例: RaceChrono のラップ）",
+      "lines": "コースのラインから"
+    },
+    "nowLines": "現在: コースのライン。各ウィジェットの設定（ラップ計測）で変更できます。",
+    "nowLogger": "現在: ロガー。各ウィジェットの設定（ラップ計測）で変更できます。"
+  },
+  "startFinish": {
+    "title": "コントロールライン",
+    "set": "設定済み。地図上で端をドラッグして調整します。",
+    "notSet": "未設定: ラップはロガーから取得します。",
+    "draw": "描画",
+    "redraw": "再描画",
+    "fromLogger": "ロガーのラップから",
+    "fromLoggerHint": "ロガーのラップ番号が変わる位置に配置します",
+    "noLapChange": "GPS の走行軌跡上でロガーのラップが変わる位置がありません"
+  },
+  "sectors": {
+    "title": "セクターライン",
+    "hint": "走行順: n 本のラインで n + 1 セクターになります。",
+    "add": "セクターラインを追加"
+  },
+  "settings": {
+    "title": "設定",
+    "name": "コース名",
+    "minLap": "最短ラップタイム (s)",
+    "minLapHint": "これより短い間隔の通過は GPS のぶれとみなし、新しいラップにしません"
+  },
+  "map": {
+    "loading": "セッションを読み込み中…",
+    "scrubber": "タイムライン上の位置",
+    "satellite": "衛星写真",
+    "drawHint": "コースを横切る 2 点をクリックしてラインを配置します。Esc でキャンセル。",
+    "dragHint": "ラインの端をドラッグして調整します。スクロールでズーム、ドラッグで地図を移動。",
+    "noGpsPath": "このセッションには GPS 位置がありません。ラップのラインには GPS の走行軌跡が必要です。",
+    "noGps": "描画する GPS 位置がありません。",
+    "imageryUnavailable": "衛星写真を利用できません（インターネット接続なし？）",
+    "startFinishShort": "S/F",
+    "split": "スプリット {number}"
+  },
+  "laps": {
+    "title": "ラップ",
+    "hint": "ラップをクリックするとその開始位置へ移動します",
+    "none": "まだラップがありません。",
+    "lap": "ラップ",
+    "logger": "ロガー",
+    "lines": "ライン",
+    "diff": "差",
+    "sectorShort": "S{number}",
+    "startsAt": "{time} に開始"
+  },
+  "range": {
+    "rejected": "タイムライン内で、開始が終了より前である必要があります",
+    "dragStart": "開始位置をドラッグ",
+    "dragEnd": "終了位置をドラッグ",
+    "frames": {
+      "other": "{count} フレーム"
+    },
+    "shortcut": "ショートカット: {key}",
+    "startAtPlayhead": "再生位置を開始に",
+    "endAtPlayhead": "再生位置を終了に",
+    "goToStart": "開始へ移動",
+    "goToEnd": "終了へ移動",
+    "wholeTimeline": "タイムライン全体"
+  },
+  "dataRange": {
+    "title": "データ範囲",
+    "hint": "ウィジェットのデータを取るセッションの範囲です。範囲外にはデータがなく、範囲内ではセッションが最初から始まります: 距離は 0 から、ラップは 1 から番号付けされ、ベストラップは残したラップから求められます。ウィジェットごとに独自の範囲を使えます。",
+    "start": "開始",
+    "end": "終了",
+    "whole": "セッション全体",
+    "atTime": "時刻で指定",
+    "lapStart": "ラップの開始",
+    "lapEnd": "ラップの終了",
+    "leaveOut": "最後のラップを除外",
+    "time": "時刻",
+    "lap": "ラップ",
+    "lapsLeftOut": "除外するラップ数",
+    "summary": "{start} から {end} までのデータ",
+    "sessionStart": "開始",
+    "sessionEnd": "終了",
+    "untrimmed": "セッション全体のデータ",
+    "keptLaps": {
+      "other": "完了ラップ {total} 周中 {count} 周を使用"
+    },
+    "noLaps": "このセッションにはまだラップがありません: ラップでの指定にはラップ計測 (ロガーのラップまたはスタート/フィニッシュライン) が必要です。",
+    "problems": {
+      "lapMissing": "ラップ {lap} はありません: その側は切り取られません。",
+      "notEnoughLaps": {
+        "other": "{count} 周を除外できるだけの完了ラップがありません: 終了は切り取られません。"
+      },
+      "empty": "範囲が空です: 終了が開始より前です。"
+    }
+  }
+}

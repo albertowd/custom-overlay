@@ -1,0 +1,95 @@
+name: Bug report
+description: Something does not work as described.
+title: "[Bug]: "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting. For questions, use [Discussions](https://github.com/albertowd/custom-overlay/discussions) instead.
+        Please search [existing issues](https://github.com/albertowd/custom-overlay/issues) first.
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: The release you downloaded (e.g. from the Releases page).
+      placeholder: "0.1.0"
+    validations:
+      required: true
+  - type: dropdown
+    id: surface
+    attributes:
+      label: Where does it happen?
+      multiple: true
+      options:
+        - Desktop app
+        - CLI
+    validations:
+      required: true
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating system
+      options:
+        - Windows
+        - macOS
+        - Linux
+    validations:
+      required: true
+  - type: dropdown
+    id: step
+    attributes:
+      label: Workflow step
+      options:
+        - Videos
+        - Data sources
+        - Sync
+        - Track
+        - Template (widgets / values / style)
+        - Summary
+        - Export
+        - Other / not sure
+    validations:
+      required: true
+  - type: dropdown
+    id: sources
+    attributes:
+      label: Input data
+      multiple: true
+      options:
+        - Video without telemetry (any camera)
+        - GoPro MP4 (embedded GPMF)
+        - DJI video with its .SRT subtitles
+        - RaceChrono CSV
+        - Other (describe below)
+        - None
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What you expected and what happened instead.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Add GX010042.MP4
+        2. Add session.csv
+        3. Sync shows ...
+    validations:
+      required: true
+  - type: textarea
+    id: files
+    attributes:
+      label: Project / template / logs
+      description: |
+        Attach the `*.overlay.json`, `*.template.json` or `*.values.json` if relevant (zip it if GitHub rejects the file).
+        Video files are too large to attach; describe the camera model and settings instead.
+  - type: textarea
+    id: logs
+    attributes:
+      label: Error output
+      description: Console or CLI output. Pasted as code automatically.
+      render: shell

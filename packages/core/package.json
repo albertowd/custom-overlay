@@ -1,0 +1,41 @@
+{
+  "dependencies": {
+    "@napi-rs/canvas": "^1.0.13",
+    "egm96-universal": "^1.1.1",
+    "ffmpeg-static": "^5.3.0",
+    "gopro-telemetry": "^1.2.11",
+    "zod": "^4.6.7"
+  },
+  "description": "Platform-agnostic engine: project model, workflow, telemetry parsing and sync",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./loaders": {
+      "types": "./dist/loaders/index.d.ts",
+      "default": "./dist/loaders/index.js"
+    },
+    "./node": {
+      "types": "./dist/node/index.d.ts",
+      "default": "./dist/node/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "license": "AGPL-3.0-only",
+  "main": "./dist/index.js",
+  "name": "@custom-overlay/core",
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "dev": "tsc -p tsconfig.build.json --watch",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage && node ../../scripts/normalize-lcov.mjs coverage/lcov.info",
+    "test:watch": "vitest",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "type": "module",
+  "types": "./dist/index.d.ts",
+  "version": "0.1.0"
+}

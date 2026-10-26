@@ -1,0 +1,185 @@
+{
+  "load": "テンプレートを読み込む…",
+  "saveAs": "テンプレートに名前を付けて保存…",
+  "loadFailed": "テンプレートを読み込めませんでした: {error}",
+  "saveFailed": "テンプレートを保存できませんでした: {error}",
+  "widgetsTitle": "ウィジェット",
+  "tabs": {
+    "widget": "ウィジェット",
+    "values": "値",
+    "style": "スタイル"
+  },
+  "visible": {
+    "title": "ウィジェットの表示期間",
+    "hint": "独自の範囲を持つウィジェット以外のすべてに適用"
+  },
+  "editor": {
+    "snap": "ガイドにスナップ",
+    "showGuides": "ガイドを表示",
+    "hint": "ドラッグ中に Alt キーを押すとスナップを切り替えます。ガイドは「スタイル」タブで設定します。"
+  },
+  "canvas": {
+    "title": "キャンバス",
+    "hint": "ウィジェットを配置するフレーム。書き出しにも使われます",
+    "format": "形状",
+    "formats": {
+      "landscape": "横長 16:9（YouTube）",
+      "vertical": "縦長 9:16（TikTok、リール、ショート）",
+      "square": "正方形 1:1",
+      "portrait": "縦 4:5（Instagram フィード）"
+    },
+    "matchVideo": "動画と同じ（{width} × {height}）",
+    "custom": "カスタム（{width} × {height}）",
+    "width": "幅",
+    "height": "高さ",
+    "fit": "動画の配置",
+    "fitModes": {
+      "contain": "全体を表示（黒帯）",
+      "cover": "全面に表示（切り抜き）",
+      "blur": "ぼかしたコピーの上に全体を表示",
+      "stretch": "引き伸ばし"
+    },
+    "rotation": "回転",
+    "rotations": {
+      "0": "なし",
+      "90": "時計回りに 90°",
+      "180": "180°",
+      "270": "反時計回りに 90°"
+    },
+    "fitHelp": {
+      "contain": "動画全体が表示され、キャンバスの残りは黒くなり、ウィジェットを置けます。",
+      "cover": "動画がキャンバス全体を覆い、はみ出た部分は切り抜かれます。位置で残す部分を選びます。",
+      "blur": "SNS アプリのように、キャンバスを覆うぼかしたコピーの上に動画全体を表示します。",
+      "stretch": "動画がキャンバス全体を覆い、縦横比が違うと歪みます。"
+    },
+    "rotationHelp": "動画を先に回転してから配置します。横長の動画を 90° 回転すると縦長のキャンバス全体を使えます。",
+    "rotateWidgets": "ウィジェットも動画と一緒に回転",
+    "rotateWidgetsOn": "ウィジェットも動画と一緒に回転します。回転前のキャンバスに配置するので、横長のテンプレートをそのまま使えます。",
+    "rotateWidgetsOff": "ウィジェットはキャンバス上で正立したままです。",
+    "zoom": "ズーム",
+    "horizontal": "水平位置",
+    "vertical": "垂直位置",
+    "noVideo": "動画がない場合はキャンバスのサイズだけが使われ、ウィジェットは透明な背景で書き出されます。"
+  },
+  "guides": {
+    "title": "ガイド",
+    "description": "ウィジェット配置用のスナップ線です。テンプレートに保存され、レンダリングはされません。フレームの端には常にスナップします。",
+    "columns": "列",
+    "rows": "行",
+    "margin": "セーフマージン %",
+    "vertical": "追加の縦線 %",
+    "horizontal": "追加の横線 %",
+    "linesPlaceholder": "例: 25, 75",
+    "center": "中央線",
+    "thirds": "三分割",
+    "safeArea": "5% セーフエリア",
+    "clear": "クリア"
+  },
+  "style": {
+    "templateName": "テンプレート名",
+    "linkedFile": "リンクされたファイル: {path}",
+    "font": "フォントファミリー",
+    "fontHint": "CSS のフォントリスト。最初にインストールされているフォントが使われます。",
+    "antialias": "ウィジェットの縁をアンチエイリアス (2× スーパーサンプリング)",
+    "palette": "プロジェクトのパレット",
+    "paletteHint": "ウィジェットで色を明示的に指定しない限り、これらの色が使われます。",
+    "colorOf": "{name} の色",
+    "hexOf": "{name} の16進値"
+  },
+  "palette": {
+    "primary": "プライマリ",
+    "secondary": "セカンダリ",
+    "accent": "アクセント",
+    "text": "テキスト",
+    "textMuted": "控えめなテキスト",
+    "background": "パネルの背景",
+    "positive": "ポジティブ",
+    "negative": "ネガティブ",
+    "warning": "警告"
+  },
+  "field": {
+    "paletteColor": "パレット: {name}",
+    "customColor": "カスタムカラー",
+    "replaceImage": "置き換え…",
+    "chooseImage": "画像を選択…",
+    "imageTooLarge": "画像はテンプレートに埋め込まれます。5 MB 未満にしてください",
+    "valueId": "値の ID"
+  },
+  "preview": {
+    "noVideoNow": "この時点の動画はありません",
+    "noVideo": "動画なし — 透過出力",
+    "decodeError": "このコンピューターではこの動画をデコードできません (H.265/HEVC にはハードウェア対応が必要です)。テレメトリーと同期は引き続き使えます。",
+    "previousFrame": "前のフレーム (←)",
+    "playPause": "再生 / 一時停止 (スペース)",
+    "nextFrame": "次のフレーム (→)"
+  },
+  "widgets": {
+    "categories": {
+      "data": "データ",
+      "map": "マップ",
+      "text": "テキスト",
+      "asset": "画像"
+    },
+    "anchor": "アンカー",
+    "anchorTitle": "アンカー: {anchor}",
+    "anchors": {
+      "top-left": "左上",
+      "top": "上",
+      "top-right": "右上",
+      "left": "左",
+      "center": "中央",
+      "right": "右",
+      "bottom-left": "左下",
+      "bottom": "下",
+      "bottom-right": "右下"
+    },
+    "testValues": "テスト値",
+    "testValuesHint": "値を入力すると、その値でのウィジェットの見た目を確認できます (保存されません)。",
+    "noSuchValue": "存在しない値",
+    "wholeVideo": "動画全体",
+    "rangeStart": "開始",
+    "rangeEnd": "終了",
+    "visible": "表示",
+    "likeTemplate": "テンプレートと同じ ({range})",
+    "ownRange": "独自の時間範囲",
+    "ownRangeShort": "独自の時間範囲",
+    "unknownType": "不明なウィジェットの種類 '{type}'",
+    "x": "X %",
+    "y": "Y %",
+    "width": "幅 %",
+    "height": "高さ %",
+    "opacity": "不透明度",
+    "antialias": "アンチエイリアス",
+    "templateDefault": "テンプレートの既定値",
+    "on": "オン",
+    "off": "オフ",
+    "lapTiming": "ラップ計測",
+    "timingProject": "プロジェクトの既定値 (「コース」ステップ)",
+    "timingImported": "ロガーから",
+    "timingLines": "コースのラインから",
+    "showWhen": "表示条件の値",
+    "alwaysShown": "常に表示",
+    "condition": "条件",
+    "conditions": {
+      "has-value": "値がある",
+      "non-zero": "ゼロでない",
+      "zero": "ゼロ",
+      "positive": "正の値",
+      "negative": "負の値"
+    },
+    "settings": "設定",
+    "add": "+ ウィジェットを追加",
+    "sampleData": "サンプルデータ",
+    "sampleDataHint": "2 分間の合成セッションでウィジェットをプレビュー",
+    "empty": "ウィジェットはまだありません。追加してオーバーレイを始めましょう。",
+    "hide": "非表示",
+    "show": "表示",
+    "bringForward": "前面へ",
+    "sendBackward": "背面へ",
+    "selectHint": "編集するウィジェットをリストまたは動画上で選択してください。",
+    "data": "データ",
+    "likeProject": "プロジェクトと同じ ({range})",
+    "ownData": "独自のデータ範囲",
+    "ownDataShort": "独自のデータ範囲"
+  }
+}

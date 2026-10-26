@@ -1,0 +1,26 @@
+{
+  "card": {
+    "reference": "riferimento",
+    "at": "a {offset}",
+    "notSynced": "non sincronizzato",
+    "gpmfTelemetry": "telemetria GPMF",
+    "loading": "caricamento…",
+    "error": "errore",
+    "use": "Usa",
+    "format": "Formato",
+    "codec": "Codec",
+    "camera": "Fotocamera",
+    "size": "Dimensione"
+  },
+  "onlyVideos": "Qui si possono aggiungere solo video MP4 / MOV",
+  "reading": "Lettura…",
+  "add": "Aggiungi video…",
+  "readingVideos": "Lettura dei video…",
+  "drop": "Trascina qui i video (MP4 o MOV: capitoli, più fotocamere…)",
+  "noVideo": {
+    "title": "Nessun video?",
+    "text": "Esporta solo i widget come sequenza di immagini trasparente, sincronizzata dalla telemetria, da comporre in seguito.",
+    "continue": "Continua senza video"
+  },
+  "hint": "Il primo video è il riferimento della timeline e definisce il formato di output (modificabile in Esporta). Gli altri video vengono posizionati automaticamente: i capitoli GoPro si concatenano, le fotocamere si allineano con l'ora GPS o la velocità. La telemetria viene letta dai video GoPro e dal file .SRT di DJI accanto al video."
+}

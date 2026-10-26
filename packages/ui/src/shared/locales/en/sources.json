@@ -1,0 +1,15 @@
+{
+  "card": {
+    "embedded": "embedded in video",
+    "loading": "loading…",
+    "error": "error",
+    "use": "Use"
+  },
+  "unsupported": "Unsupported data source: {name}",
+  "add": "Add data source…",
+  "empty": {
+    "title": "No data sources yet.",
+    "drop": "Drop RaceChrono CSV exports, DJI .SRT subtitles, or videos with telemetry (GoPro, DJI) to use only their data here."
+  },
+  "supported": "Supported: RaceChrono CSV export (v2/v3), GoPro MP4 telemetry (GPS, accelerometer, gyroscope), DJI .SRT subtitles (GPS, altitude, camera settings)."
+}

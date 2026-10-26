@@ -1,0 +1,59 @@
+{
+  "status": {
+    "disabled": "desactivado",
+    "error": "error",
+    "reference": "referencia",
+    "synced": "sincronizado",
+    "notSynced": "sin sincronizar"
+  },
+  "output": {
+    "title": "Salida",
+    "format": "Formato",
+    "color": "Color",
+    "mode": "Modo",
+    "finalVideo": "Vídeo final",
+    "imageSequence": "Secuencia de imágenes transparente",
+    "encoder": "Codificador"
+  },
+  "timeline": {
+    "title": "Línea de tiempo",
+    "timeZero": "Tiempo 0",
+    "span": "Intervalo",
+    "length": "Duración",
+    "timeZeroAt": "Tiempo 0 a las",
+    "basis": {
+      "video": "Primer vídeo",
+      "source": "Primera fuente de datos",
+      "none": "Aún no definido"
+    }
+  },
+  "items": {
+    "title": "Vídeos y fuentes de datos",
+    "videos": "Vídeos",
+    "sources": "Fuentes",
+    "item": "Elemento",
+    "type": "Tipo",
+    "position": "Posición",
+    "status": "Estado",
+    "video": "Vídeo",
+    "embedded": "incluida",
+    "channels": {
+      "one": "{count} canal",
+      "other": "{count} canales"
+    },
+    "followsVideo": "sigue al vídeo"
+  },
+  "template": {
+    "title": "Plantilla",
+    "widgets": "Widgets",
+    "antialias": "Antialiasing",
+    "on": "activado",
+    "off": "desactivado",
+    "file": "Archivo",
+    "embedded": "incluida en el proyecto"
+  },
+  "checks": {
+    "title": "Comprobaciones",
+    "ready": "Todo está listo."
+  }
+}

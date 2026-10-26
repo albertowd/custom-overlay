@@ -1,0 +1,140 @@
+{
+  "importLines": "Importa linee…",
+  "exportLines": "Esporta linee…",
+  "list": {
+    "title": "Elenco dei circuiti",
+    "none": "Questa sessione non è su nessun circuito noto.",
+    "detected": "Questa sessione è a {name}.",
+    "several": "Questa sessione corrisponde a più circuiti noti: scegline uno qui sotto.",
+    "inUse": "Linee di {name} dall’elenco dei circuiti.",
+    "use": "Usa le sue linee",
+    "load": "Carica un circuito noto",
+    "choose": "Scegli un circuito…",
+    "detectedGroup": "In questa sessione",
+    "confirmReplace": "Sostituire le linee attuali con quelle di {name}?",
+    "share": "Manca un circuito o le linee sono sbagliate?",
+    "shareLink": "Condividi le tue linee",
+    "search": "Cerca per nome, città o paese",
+    "resultsGroup": {
+      "one": "{count} circuito trovato",
+      "other": "{count} circuiti trovati"
+    },
+    "nearbyGroup": "Entro {km} km",
+    "km": "{distance} km",
+    "noResults": "Nessun circuito trovato",
+    "source": {
+      "bundled": {
+        "one": "{count} circuito incluso in questa versione (GitHub non raggiungibile)",
+        "other": "{count} circuiti inclusi in questa versione (GitHub non raggiungibile)"
+      },
+      "github": {
+        "one": "{count} circuito, aggiornato da GitHub",
+        "other": "{count} circuiti, aggiornati da GitHub"
+      },
+      "cache": {
+        "one": "{count} circuito dall’ultimo download (GitHub non raggiungibile)",
+        "other": "{count} circuiti dall’ultimo download (GitHub non raggiungibile)"
+      }
+    }
+  },
+  "timing": {
+    "label": "I valori dei giri provengono da",
+    "options": {
+      "auto": "Automatico: linee del tracciato se presenti, altrimenti il logger",
+      "imported": "Dal logger (es. giri di RaceChrono)",
+      "lines": "Dalle linee del tracciato"
+    },
+    "nowLines": "Ora: le linee del tracciato. Ogni widget può modificarlo nelle sue impostazioni (Cronometraggio giri).",
+    "nowLogger": "Ora: il logger. Ogni widget può modificarlo nelle sue impostazioni (Cronometraggio giri)."
+  },
+  "startFinish": {
+    "title": "Linea del traguardo",
+    "set": "Impostata. Trascina le estremità sulla mappa per regolarla.",
+    "notSet": "Non impostata: i giri provengono dal logger.",
+    "draw": "Disegna",
+    "redraw": "Ridisegna",
+    "fromLogger": "Dai giri del logger",
+    "fromLoggerHint": "La posiziona dove cambia il numero di giro del logger",
+    "noLapChange": "I giri del logger non cambiano in nessun punto del percorso GPS"
+  },
+  "sectors": {
+    "title": "Linee dei settori",
+    "hint": "In ordine di percorrenza: n linee formano n + 1 settori.",
+    "add": "Aggiungi linea di settore"
+  },
+  "settings": {
+    "title": "Impostazioni",
+    "name": "Nome del tracciato",
+    "minLap": "Tempo minimo sul giro (s)",
+    "minLapHint": "Passaggi più ravvicinati di così sono rumore GPS, non un nuovo giro"
+  },
+  "map": {
+    "loading": "Caricamento della sessione…",
+    "scrubber": "Posizione sulla timeline",
+    "satellite": "Vista satellitare",
+    "drawHint": "Fai clic su due punti attraverso il tracciato per posizionare la linea. Esc annulla.",
+    "dragHint": "Trascina le estremità della linea per regolarle. Scorri per lo zoom, trascina per spostare la mappa.",
+    "noGpsPath": "La sessione non ha posizioni GPS: le linee dei giri richiedono un percorso GPS.",
+    "noGps": "Nessuna posizione GPS da disegnare.",
+    "imageryUnavailable": "Immagini satellitari non disponibili (nessuna connessione?)",
+    "startFinishShort": "T",
+    "split": "Intermedio {number}"
+  },
+  "laps": {
+    "title": "Giri",
+    "hint": "Fai clic su un giro per andare all'inizio",
+    "none": "Ancora nessun giro.",
+    "lap": "Giro",
+    "logger": "Logger",
+    "lines": "Linee",
+    "diff": "Diff.",
+    "sectorShort": "S{number}",
+    "startsAt": "Inizia a {time}"
+  },
+  "range": {
+    "rejected": "Deve essere all'interno della timeline, con l'inizio prima della fine",
+    "dragStart": "Trascina l'inizio",
+    "dragEnd": "Trascina la fine",
+    "frames": {
+      "one": "{count} fotogramma",
+      "other": "{count} fotogrammi"
+    },
+    "shortcut": "Scorciatoia: {key}",
+    "startAtPlayhead": "Inizio alla testina",
+    "endAtPlayhead": "Fine alla testina",
+    "goToStart": "Vai all'inizio",
+    "goToEnd": "Vai alla fine",
+    "wholeTimeline": "Intera timeline"
+  },
+  "dataRange": {
+    "title": "Intervallo dei dati",
+    "hint": "La parte della sessione da cui provengono i dati dei widget. Fuori non ci sono dati; dentro la sessione ricomincia: distanza da 0, giri numerati da 1, giro migliore tra i giri tenuti. Ogni widget può usare il proprio intervallo.",
+    "start": "Inizio",
+    "end": "Fine",
+    "whole": "Tutta la sessione",
+    "atTime": "A un momento",
+    "lapStart": "Inizio di un giro",
+    "lapEnd": "Fine di un giro",
+    "leaveOut": "Escludi gli ultimi giri",
+    "time": "Tempo",
+    "lap": "Giro",
+    "lapsLeftOut": "Giri esclusi",
+    "summary": "Dati da {start} a {end}",
+    "sessionStart": "l’inizio",
+    "sessionEnd": "la fine",
+    "untrimmed": "Dati di tutta la sessione",
+    "keptLaps": {
+      "one": "{count} giro completo tenuto su {total}",
+      "other": "{count} giri completi tenuti su {total}"
+    },
+    "noLaps": "Questa sessione non ha ancora giri: i limiti per giro richiedono il cronometraggio (giri del logger o una linea di partenza/arrivo).",
+    "problems": {
+      "lapMissing": "Il giro {lap} non esiste: quel lato non viene tagliato.",
+      "notEnoughLaps": {
+        "one": "Non ci sono abbastanza giri completi per escluderne {count}: la fine non viene tagliata.",
+        "other": "Non ci sono abbastanza giri completi per escluderne {count}: la fine non viene tagliata."
+      },
+      "empty": "L’intervallo è vuoto: la fine viene prima dell’inizio."
+    }
+  }
+}

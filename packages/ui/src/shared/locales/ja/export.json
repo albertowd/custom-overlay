@@ -1,0 +1,97 @@
+{
+  "range": {
+    "title": "範囲",
+    "help": "プレビューには、エクスポートされる状態のウィジェット付き動画が表示されます。再生またはスクラブして、エクスポートの開始と終了を設定してください：ハンドルをドラッグするか、m:ss.mmm 形式で時間を入力するか、再生位置で I / O キーを押します。",
+    "followsData": "開始・終了が空のときは、コースのステップで設定したデータ範囲（{start} – {end}）を書き出します。",
+    "dataRange": "コースのデータ範囲",
+    "followsDataField": "コースのデータ範囲に従う"
+  },
+  "output": {
+    "title": "出力",
+    "video": "完成動画",
+    "videoHelp": "ウィジェットを焼き込んだ動画。",
+    "sequence": "透過画像シーケンス",
+    "sequenceHelp": "ウィジェットのみのフレームごとの PNG。編集ソフトで合成できます。",
+    "none": "出力先が選択されていません",
+    "choose": "選択…",
+    "defaultHint": "未選択: プロジェクト名で動画 (またはデータ) と同じフォルダーに保存され、以前のエクスポートは上書きされません。",
+    "zipHint": "このブラウザーはフォルダーに書き込めないため、フレームは1つのzipファイルとしてダウンロードされます。",
+    "useDefault": "既定の保存先を使う"
+  },
+  "format": {
+    "title": "フォーマット",
+    "resolution": "解像度",
+    "customResolution": "カスタム（{width} × {height}）",
+    "width": "幅",
+    "height": "高さ",
+    "frameRate": "フレームレート",
+    "colorSpace": "色空間",
+    "rangeDepth": "レンジ / ビット深度",
+    "limited": "リミテッド · {bits} ビット",
+    "full": "フル · {bits} ビット",
+    "matchVideo": "最初の動画に合わせる",
+    "canvasHelp": "出力サイズはウィジェットを配置するキャンバスです（テンプレートの段階）。形を変えるとウィジェットも動きます。"
+  },
+  "encoding": {
+    "title": "エンコード",
+    "preset": "プリセット",
+    "custom": "カスタム",
+    "customHelp": "カスタム値。プロジェクトに保存されます。",
+    "codec": "コーデック",
+    "bitrate": "ビットレート（Mbps）",
+    "keyframe": "キーフレーム間隔（秒）",
+    "bFrames": "B フレーム",
+    "audio": "音声",
+    "audioOptions": {
+      "aac": "AAC",
+      "copy": "動画からコピー",
+      "none": "音声なし"
+    },
+    "acceleration": "デコード / エンコード",
+    "accelerationOptions": {
+      "auto": "可能なら GPU",
+      "software": "CPU のみ"
+    },
+    "scaling": "スケーリング（出力サイズが動画と異なる場合）",
+    "scalers": {
+      "bilinear": "バイリニア（高速）",
+      "bicubic": "バイキュービック",
+      "lanczos": "Lanczos（シャープ）",
+      "fsr1": "FSR 1 スタイル（Lanczos + AMD CAS シャープ化）"
+    },
+    "scalingHelp": "DLSS と XeSS は使用できません。これらはゲームエンジンのモーションベクトルと深度を必要とする時間的アップスケーラーで、録画した動画にはそれらがありません。FSR 1 スタイルは Lanczos で拡大し、AMD の CAS でシャープ化します（FSR 1 の 2 段階の処理）。",
+    "notes": {
+      "sdrConverted": "YouTube は SDR のアップロードを 8 ビット Rec.709 リミテッドレンジに変換します。Rec.709 リミテッドの出力ならアップロード前後で同じ見た目になります。",
+      "h264TenBit": "10 ビット H.264 は CPU でしかエンコードできず（GPU の H.264 エンコーダーは 8 ビットのみ）、YouTube でも 8 ビットに変換されます。8 ビット出力か HEVC プリセットを選んでください。",
+      "hdrNeedsHdrOutput": "YouTube が HDR として扱うのは 10 ビット Rec.2020 HLG または PQ の出力だけです。フォーマットで色空間とビット深度を設定してください。",
+      "hdrResolution": "YouTube の HDR は 720p 以上です。",
+      "frameRate": "出力のフレームレートがこのプリセットの範囲外です（YouTube の再生は最大 60 fps）。プリセットを選び直すと変換します。",
+      "socialSdr": "アプリは 8 ビット Rec.709 SDR の動画を再生します。ほかの色設定はアップロード時に変換されます。",
+      "socialSize": "出力がこのプリセットの形式ではありません。プリセットを選び直すとキャンバスがその形式になります。",
+      "socialFrameRate": "出力のフレームレートがこのプリセットの範囲外です（アプリの再生は最大 60 fps）。プリセットを選び直すと変換します。"
+    },
+    "estimatedSize": "推定ファイルサイズ：{duration} で約 {size}。",
+    "estimatedSizeHelp": "ビットレートと範囲の長さからの計算です。実際のサイズはエンコーダーや映像によって多少変わります。",
+    "otherPresets": "その他のプリセット"
+  },
+  "run": {
+    "title": "エクスポート",
+    "start": "エクスポート",
+    "help": "ウィジェットは複数のスレッドで描画され、動画は可能な場合 GPU でデコード・エンコードされます。その間も作業を続けられます。",
+    "helpSequence": "ウィジェットは複数のスレッドで描画され、各フレームは PNG ファイルとして書き出されます。その間も作業を続けられます。",
+    "preparing": "準備中：値を読み込み、エンコーダーを選択しています…",
+    "progress": "{percent}% · フレーム {frame} / {frames}",
+    "speed": "{fps} fps · 経過 {elapsed} · 残り {left}",
+    "done": {
+      "other": "{count} フレームをエクスポートしました"
+    },
+    "doneTime": "（{time}）。",
+    "doneTimeEncoder": "（{time}、{encoder}）。",
+    "showInFolder": "フォルダーに表示",
+    "dismiss": "閉じる",
+    "failed": "エクスポートに失敗しました。",
+    "cancelled": "エクスポートをキャンセルしました。未完成のファイルは削除されました。",
+    "cancelledSequence": "エクスポートをキャンセルしました。書き出し済みのフレームはそのまま残っています。",
+    "cancelledZip": "エクスポートをキャンセルしました。何もダウンロードされていません。"
+  }
+}

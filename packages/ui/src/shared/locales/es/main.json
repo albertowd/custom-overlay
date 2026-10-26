@@ -1,0 +1,60 @@
+{
+  "filters": {
+    "videos": "Vídeos",
+    "telemetry": "Telemetría",
+    "videoTelemetry": "Vídeo (solo telemetría: GoPro o DJI)",
+    "djiSubtitles": "Subtítulos de telemetría de DJI",
+    "project": "Proyecto de overlay",
+    "values": "Scripts de valores",
+    "trackOrProject": "Circuito o proyecto",
+    "widgets": "Widgets o plantilla",
+    "template": "Plantilla de overlay",
+    "widget": "Widget de overlay",
+    "track": "Circuito",
+    "mp4": "Vídeo MP4"
+  },
+  "dialogs": {
+    "addVideos": "Añadir vídeos",
+    "addSources": "Añadir fuentes de datos",
+    "importWidgets": "Importar widgets",
+    "exportWidget": "Exportar widget",
+    "importTrack": "Importar líneas del circuito",
+    "exportTrack": "Exportar líneas del circuito",
+    "importValues": "Importar valores",
+    "exportValues": "Exportar valores",
+    "openProject": "Abrir proyecto",
+    "saveProject": "Guardar proyecto",
+    "loadTemplate": "Cargar plantilla",
+    "saveTemplate": "Guardar plantilla",
+    "outputFolder": "Selecciona la carpeta de salida de la secuencia de imágenes",
+    "exportVideo": "Exportar vídeo"
+  },
+  "chapters": {
+    "title": "Capítulos de GoPro",
+    "message": {
+      "one": "Este vídeo forma parte de una grabación más larga de GoPro",
+      "other": "Estos vídeos forman parte de grabaciones más largas de GoPro"
+    },
+    "explanation": "GoPro divide las grabaciones largas en archivos de capítulo:",
+    "files": {
+      "one": "{count} archivo",
+      "other": "{count} archivos"
+    },
+    "question": {
+      "one": "¿Añadir también el otro capítulo ({count})? Los capítulos se colocan uno tras otro en la línea de tiempo, cada uno con su telemetría.",
+      "other": "¿Añadir también los otros {count} capítulos? Se colocan uno tras otro en la línea de tiempo, cada uno con su telemetría."
+    },
+    "addAll": "Añadir todos los capítulos",
+    "onlySelected": "Solo los vídeos seleccionados"
+  },
+  "closeDuringExport": {
+    "title": "Exportación en curso",
+    "message": "Todavía hay una exportación en curso.",
+    "detail": "Al cerrar se cancela y se elimina el archivo sin terminar.",
+    "keep": "Seguir exportando",
+    "cancelAndClose": "Cancelar la exportación y cerrar"
+  },
+  "errors": {
+    "exportRunning": "Ya hay una exportación en curso"
+  }
+}

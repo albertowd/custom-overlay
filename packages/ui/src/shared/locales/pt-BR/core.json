@@ -1,0 +1,1066 @@
+{
+  "steps": {
+    "videos": {
+      "title": "Vídeos",
+      "description": "Selecione os vídeos que receberão a sobreposição (capítulos, várias câmeras...). Pule para exportar só as imagens dos widgets."
+    },
+    "sources": {
+      "title": "Fontes de dados",
+      "description": "Adicione telemetria externa. Opcional quando um vídeo já tem telemetria embutida."
+    },
+    "sync": {
+      "title": "Sincronização",
+      "description": "Posicione cada vídeo e fonte de dados na mesma linha do tempo."
+    },
+    "track": {
+      "title": "Pista",
+      "description": "Opcional: desenhe as linhas de largada/chegada e de setores para cronometrar voltas e setores pelo GPS, e escolha de onde vêm os valores de volta."
+    },
+    "template": {
+      "title": "Modelo",
+      "description": "Posicione e configure widgets sobre o vídeo."
+    },
+    "summary": {
+      "title": "Resumo",
+      "description": "Revise o projeto antes de exportar."
+    },
+    "export": {
+      "title": "Exportar",
+      "description": "Renderize o vídeo final ou uma sequência de imagens transparentes dos widgets."
+    }
+  },
+  "issues": {
+    "notLoaded": "Não foi possível carregar '{label}'",
+    "noSourceForVideos": "Os vídeos não têm telemetria embutida: adicione pelo menos uma fonte de dados",
+    "noSourceWithoutVideo": "Sem vídeo, é necessária pelo menos uma fonte de dados",
+    "notSynced": "'{label}' ainda não foi sincronizado",
+    "noStartFinish": "Os valores de volta vêm das linhas da pista, mas ainda não há linha de largada/chegada",
+    "noWidgets": "O modelo ainda não tem widgets",
+    "videoExportWithoutVideo": "Exportar um vídeo exige um vídeo de origem; escolha o modo de sequência de imagens",
+    "videoExportElsewhere": "O vídeo final é exportado pelo aplicativo desktop ou pela CLI: salve o projeto junto aos vídeos e abra-o lá",
+    "noOutput": "Escolha um local de saída"
+  },
+  "widgets": {
+    "speed-gauge": {
+      "name": "Velocímetro",
+      "description": "Mostrador analógico com ponteiro, marcações e leitura digital. Funciona com qualquer valor (RPM, G...).",
+      "fields": {
+        "valueId": {
+          "label": "Valor"
+        },
+        "label": {
+          "label": "Rótulo da unidade"
+        },
+        "min": {
+          "label": "Mínimo"
+        },
+        "max": {
+          "label": "Máximo",
+          "hint": "0 = máximo da sessão"
+        },
+        "majorStep": {
+          "label": "Intervalo das marcações principais",
+          "hint": "0 = automático"
+        },
+        "minorTicks": {
+          "label": "Marcações secundárias"
+        },
+        "sweep": {
+          "label": "Abertura (graus)"
+        },
+        "decimals": {
+          "label": "Casas decimais"
+        },
+        "color": {
+          "label": "Arco do valor"
+        },
+        "trackColor": {
+          "label": "Arco de fundo"
+        },
+        "needleColor": {
+          "label": "Ponteiro"
+        },
+        "textColor": {
+          "label": "Texto"
+        },
+        "showDigital": {
+          "label": "Leitura digital"
+        },
+        "digitalY": {
+          "label": "Posição da leitura (Y)",
+          "hint": "% do raio abaixo do centro (negativo: acima)"
+        },
+        "showLabels": {
+          "label": "Rótulos das marcações"
+        },
+        "background": {
+          "label": "Disco de fundo"
+        }
+      }
+    },
+    "g-force": {
+      "name": "Força G",
+      "description": "Círculo de aderência: G lateral e longitudinal como um ponto com rastro que se apaga.",
+      "fields": {
+        "lateralId": {
+          "label": "G lateral"
+        },
+        "longitudinalId": {
+          "label": "G longitudinal"
+        },
+        "range": {
+          "label": "Faixa (G)"
+        },
+        "ringStep": {
+          "label": "Intervalo dos anéis (G)"
+        },
+        "trailSeconds": {
+          "label": "Rastro (s)"
+        },
+        "invertLateral": {
+          "label": "Inverter lateral"
+        },
+        "invertLongitudinal": {
+          "label": "Inverter longitudinal"
+        },
+        "dotColor": {
+          "label": "Ponto"
+        },
+        "trailColor": {
+          "label": "Rastro"
+        },
+        "gridColor": {
+          "label": "Grade"
+        },
+        "showValue": {
+          "label": "Leitura do G combinado"
+        },
+        "valuePosition": {
+          "label": "Posição da leitura",
+          "options": {
+            "bottom": "Embaixo",
+            "top": "Em cima"
+          }
+        },
+        "showRings": {
+          "label": "Anéis",
+          "hint": "Os círculos a cada passo de anel"
+        },
+        "showAxes": {
+          "label": "Linhas em cruz",
+          "hint": "Os eixos lateral e longitudinal"
+        },
+        "background": {
+          "label": "Disco de fundo"
+        }
+      }
+    },
+    "gps-path": {
+      "name": "Trajeto GPS",
+      "description": "Mapa do trajeto de toda a sessão (norte para cima) com o progresso até agora e a posição atual (um ponto ou sua imagem).",
+      "fields": {
+        "latitudeId": {
+          "label": "Latitude"
+        },
+        "longitudeId": {
+          "label": "Longitude"
+        },
+        "headingId": {
+          "label": "Direção",
+          "hint": "Gira a imagem do marcador; calculada quando ausente"
+        },
+        "lineWidth": {
+          "label": "Espessura da linha",
+          "hint": "% do lado menor"
+        },
+        "pathColor": {
+          "label": "Trajeto"
+        },
+        "progressColor": {
+          "label": "Progresso"
+        },
+        "stroke": {
+          "label": "Contorno do traçado",
+          "hint": "Mantém o traçado legível sem fundo"
+        },
+        "strokeColor": {
+          "label": "Contorno"
+        },
+        "strokeWidth": {
+          "label": "Largura do contorno",
+          "hint": "% do lado menor"
+        },
+        "markerSrc": {
+          "label": "Imagem do marcador",
+          "hint": "Um carro, um kart… girado conforme a direção"
+        },
+        "markerSize": {
+          "label": "Tamanho do marcador",
+          "hint": "% do lado menor"
+        },
+        "markerAngle": {
+          "label": "Direção da imagem do marcador (°)",
+          "hint": "0 = para cima, 90 = para a direita"
+        },
+        "markerColor": {
+          "label": "Marcador"
+        },
+        "showProgress": {
+          "label": "Destacar progresso"
+        },
+        "background": {
+          "label": "Painel de fundo"
+        }
+      }
+    },
+    "live-map": {
+      "name": "Mapa ao vivo",
+      "description": "Mapa que acompanha a posição atual (ou mostra a pista inteira), com o norte ou a direção para cima, e um marcador (ou sua imagem) girado conforme a direção.",
+      "fields": {
+        "latitudeId": {
+          "label": "Latitude"
+        },
+        "longitudeId": {
+          "label": "Longitude"
+        },
+        "headingId": {
+          "label": "Direção",
+          "hint": "Calculada pelo trajeto quando ausente"
+        },
+        "view": {
+          "label": "Visualização",
+          "options": {
+            "follow": "Acompanhar a posição",
+            "whole": "Pista inteira"
+          }
+        },
+        "radius": {
+          "label": "Raio (m)",
+          "hint": "Na visualização de acompanhar"
+        },
+        "orientation": {
+          "label": "Orientação",
+          "hint": "A pista inteira fica sempre com o norte para cima",
+          "options": {
+            "heading-up": "Direção para cima (o mapa gira)",
+            "north-up": "Norte para cima (o marcador gira)"
+          }
+        },
+        "shape": {
+          "label": "Forma",
+          "options": {
+            "circle": "Círculo",
+            "rounded": "Retângulo arredondado"
+          }
+        },
+        "markerSrc": {
+          "label": "Imagem do marcador",
+          "hint": "Um carro, um kart… girado conforme a direção"
+        },
+        "markerSize": {
+          "label": "Tamanho do marcador",
+          "hint": "% do lado menor"
+        },
+        "markerAngle": {
+          "label": "Direção da imagem do marcador (°)",
+          "hint": "0 = para cima, 90 = para a direita"
+        },
+        "markerColor": {
+          "label": "Marcador"
+        },
+        "lineWidth": {
+          "label": "Espessura da linha"
+        },
+        "pathColor": {
+          "label": "Trajeto"
+        },
+        "traveledColor": {
+          "label": "Percorrido"
+        },
+        "stroke": {
+          "label": "Contorno do traçado",
+          "hint": "Mantém o traçado legível sem fundo"
+        },
+        "strokeColor": {
+          "label": "Contorno"
+        },
+        "strokeWidth": {
+          "label": "Largura do contorno",
+          "hint": "% do lado menor"
+        },
+        "showNorth": {
+          "label": "Indicador de norte"
+        },
+        "background": {
+          "label": "Fundo"
+        }
+      }
+    },
+    "distance-bar": {
+      "name": "Barra de distância",
+      "description": "Barra de progresso da distância percorrida, com marcações a cada intervalo de distância ou no início de cada volta.",
+      "fields": {
+        "valueId": {
+          "label": "Valor de distância (m)"
+        },
+        "unit": {
+          "label": "Unidade",
+          "options": {
+            "km": "Quilômetros",
+            "m": "Metros",
+            "mi": "Milhas"
+          }
+        },
+        "total": {
+          "label": "Total",
+          "hint": "Na unidade acima; 0 = total da sessão"
+        },
+        "ticks": {
+          "label": "Marcações principais",
+          "options": {
+            "distance": "A cada intervalo",
+            "laps": "No início de cada volta"
+          }
+        },
+        "tickStep": {
+          "label": "Intervalo das marcações",
+          "hint": "0 = automático; só marcações por distância"
+        },
+        "lapTimeId": {
+          "label": "Valor do tempo de volta (s)",
+          "hint": "Só marcações por volta"
+        },
+        "lapNumberId": {
+          "label": "Valor do número da volta",
+          "hint": "Só marcações por volta"
+        },
+        "minorTicks": {
+          "label": "Marcações secundárias",
+          "hint": "Entre as marcações principais (por volta com marcações por volta)"
+        },
+        "decimals": {
+          "label": "Casas decimais"
+        },
+        "color": {
+          "label": "Progresso"
+        },
+        "trackColor": {
+          "label": "Fundo da barra"
+        },
+        "textColor": {
+          "label": "Texto"
+        },
+        "showLabels": {
+          "label": "Rótulos das marcações"
+        },
+        "showValue": {
+          "label": "Distância atual"
+        },
+        "background": {
+          "label": "Painel de fundo"
+        }
+      }
+    },
+    "elevation": {
+      "name": "Elevação",
+      "description": "Altitude atual com o perfil de elevação de toda a sessão.",
+      "fields": {
+        "valueId": {
+          "label": "Valor de altitude (m)"
+        },
+        "unit": {
+          "label": "Unidade",
+          "options": {
+            "m": "Metros",
+            "ft": "Pés"
+          }
+        },
+        "label": {
+          "label": "Rótulo"
+        },
+        "decimals": {
+          "label": "Casas decimais"
+        },
+        "showProfile": {
+          "label": "Perfil"
+        },
+        "color": {
+          "label": "Cor do perfil"
+        },
+        "markerColor": {
+          "label": "Marcador"
+        },
+        "textColor": {
+          "label": "Texto"
+        },
+        "background": {
+          "label": "Painel de fundo"
+        }
+      }
+    },
+    "lap-timer": {
+      "name": "Cronômetro de volta",
+      "description": "Tempo corrente da volta atual. Quando uma volta termina, o tempo final fica na tela por alguns segundos, com a diferença para a melhor volta ou a anterior.",
+      "fields": {
+        "lapTimeId": {
+          "label": "Valor do tempo de volta (s)"
+        },
+        "lapNumberId": {
+          "label": "Valor do número da volta"
+        },
+        "holdSeconds": {
+          "label": "Mostrar a volta concluída por (s)",
+          "hint": "0 = ir direto para a nova volta"
+        },
+        "delta": {
+          "label": "Diferença da volta concluída para",
+          "options": {
+            "best": "Melhor volta até agora",
+            "previous": "Volta anterior",
+            "none": "Sem diferença"
+          }
+        },
+        "decimals": {
+          "label": "Casas decimais"
+        },
+        "showLapNumber": {
+          "label": "Número da volta"
+        },
+        "beforeFirstLap": {
+          "label": "Antes da primeira volta",
+          "options": {
+            "dashes": "Mostrar traços",
+            "hide": "Ocultar"
+          }
+        },
+        "color": {
+          "label": "Tempo"
+        },
+        "bestColor": {
+          "label": "Nova melhor volta"
+        },
+        "background": {
+          "label": "Painel de fundo"
+        }
+      }
+    },
+    "lap-count": {
+      "name": "Contador de voltas",
+      "description": "Volta atual e total de voltas da sessão, ex. VOLTA 3 / 12.",
+      "fields": {
+        "lapNumberId": {
+          "label": "Valor do número da volta"
+        },
+        "lapCountId": {
+          "label": "Valor do total de voltas"
+        },
+        "label": {
+          "label": "Rótulo",
+          "hint": "Vazio = sem rótulo"
+        },
+        "showTotal": {
+          "label": "Total de voltas"
+        },
+        "beforeFirstLap": {
+          "label": "Antes da primeira volta",
+          "options": {
+            "dashes": "Mostrar traços",
+            "hide": "Ocultar"
+          }
+        },
+        "color": {
+          "label": "Volta atual"
+        },
+        "totalColor": {
+          "label": "Total"
+        },
+        "background": {
+          "label": "Painel de fundo"
+        }
+      }
+    },
+    "lap-table": {
+      "name": "Tempos de volta",
+      "description": "Tabela de tempos de volta com a diferença para a melhor volta: as voltas feitas até agora ou a sessão inteira. A volta atual fica destacada com o tempo corrente e o progresso.",
+      "fields": {
+        "lapTimeId": {
+          "label": "Valor do tempo de volta (s)"
+        },
+        "lapNumberId": {
+          "label": "Valor do número da volta"
+        },
+        "mode": {
+          "label": "Voltas",
+          "hint": "Sessão inteira: as voltas futuras ficam esmaecidas",
+          "options": {
+            "so-far": "Feitas até agora",
+            "session": "Sessão inteira"
+          }
+        },
+        "rows": {
+          "label": "Linhas"
+        },
+        "order": {
+          "label": "Ordem",
+          "options": {
+            "oldest-first": "Mais antigas primeiro",
+            "newest-first": "Mais recentes primeiro"
+          }
+        },
+        "showCurrent": {
+          "label": "Linha da volta atual"
+        },
+        "showDelta": {
+          "label": "Diferença para a melhor"
+        },
+        "showHeader": {
+          "label": "Cabeçalho"
+        },
+        "decimals": {
+          "label": "Casas decimais"
+        },
+        "color": {
+          "label": "Texto"
+        },
+        "currentColor": {
+          "label": "Volta atual"
+        },
+        "bestColor": {
+          "label": "Melhor volta"
+        },
+        "background": {
+          "label": "Painel de fundo"
+        }
+      }
+    },
+    "date-time": {
+      "name": "Data e hora",
+      "description": "Horário do quadro (do GPS ou do relógio do datalogger), com uma linha de data opcional.",
+      "fields": {
+        "time": {
+          "label": "Formato da hora",
+          "hint": "Códigos: HH mm ss SSS (vazio para ocultar)"
+        },
+        "date": {
+          "label": "Formato da data",
+          "hint": "Códigos: YYYY MM DD (vazio para ocultar)"
+        },
+        "timezone": {
+          "label": "Fuso horário",
+          "options": {
+            "local": "Este computador",
+            "utc": "UTC",
+            "custom": "Diferença personalizada"
+          }
+        },
+        "utcOffsetMinutes": {
+          "label": "Diferença (minutos)",
+          "hint": "Usada com um fuso horário personalizado"
+        },
+        "color": {
+          "label": "Cor da hora"
+        },
+        "dateColor": {
+          "label": "Cor da data"
+        },
+        "background": {
+          "label": "Painel de fundo"
+        }
+      }
+    },
+    "timespan": {
+      "name": "Tempo decorrido",
+      "description": "Tempo desde um início: uma data/hora do relógio (largada) ou uma posição da linha do tempo. Antes do início, faz contagem regressiva, mostra zero ou se oculta.",
+      "fields": {
+        "reference": {
+          "label": "Começar a partir de",
+          "options": {
+            "timeline": "Posição na linha do tempo",
+            "clock": "Data/hora do relógio"
+          }
+        },
+        "startTimeline": {
+          "label": "Início (linha do tempo)"
+        },
+        "startClock": {
+          "label": "Início (data/hora)",
+          "hint": "YYYY-MM-DD HH:mm:ss"
+        },
+        "timezone": {
+          "label": "Fuso horário do início",
+          "options": {
+            "local": "Este computador",
+            "utc": "UTC",
+            "custom": "Diferença personalizada"
+          }
+        },
+        "utcOffsetMinutes": {
+          "label": "Diferença (minutos)"
+        },
+        "beforeStart": {
+          "label": "Antes do início",
+          "options": {
+            "countdown": "Contagem regressiva",
+            "zero": "Mostrar zero",
+            "hide": "Ocultar"
+          }
+        },
+        "decimals": {
+          "label": "Casas decimais"
+        },
+        "label": {
+          "label": "Rótulo",
+          "hint": "Linha opcional acima, ex.: TEMPO DE CORRIDA"
+        },
+        "color": {
+          "label": "Cor"
+        },
+        "countdownColor": {
+          "label": "Cor da contagem regressiva"
+        },
+        "background": {
+          "label": "Painel de fundo"
+        }
+      }
+    },
+    "value-text": {
+      "name": "Texto com valores",
+      "description": "Texto com valores ao vivo, ex.: \"Volta {lap.number}  {lap.time|duration}\" ou \"{speed.kmh|0} km/h\".",
+      "fields": {
+        "template": {
+          "label": "Texto",
+          "hint": "{value.id} ou {value.id|format}; formatos: 0, 0.0, duration, duration.0, clock:HH:mm:ss"
+        },
+        "fallback": {
+          "label": "Sem valor"
+        },
+        "color": {
+          "label": "Cor"
+        },
+        "size": {
+          "label": "Tamanho da fonte",
+          "hint": "Fração da altura da caixa"
+        },
+        "weight": {
+          "label": "Peso",
+          "options": {
+            "400": "Normal",
+            "600": "Seminegrito",
+            "800": "Negrito"
+          }
+        },
+        "align": {
+          "label": "Alinhamento",
+          "options": {
+            "left": "Esquerda",
+            "center": "Centro",
+            "right": "Direita"
+          }
+        },
+        "italic": {
+          "label": "Itálico"
+        },
+        "uppercase": {
+          "label": "Maiúsculas"
+        },
+        "background": {
+          "label": "Painel de fundo"
+        }
+      }
+    },
+    "text": {
+      "name": "Texto",
+      "description": "Texto fixo: um título, o nome do piloto, o evento...",
+      "fields": {
+        "text": {
+          "label": "Texto"
+        },
+        "color": {
+          "label": "Cor"
+        },
+        "size": {
+          "label": "Tamanho da fonte",
+          "hint": "Fração da altura da caixa"
+        },
+        "weight": {
+          "label": "Peso",
+          "options": {
+            "400": "Normal",
+            "600": "Seminegrito",
+            "800": "Negrito"
+          }
+        },
+        "align": {
+          "label": "Alinhamento",
+          "options": {
+            "left": "Esquerda",
+            "center": "Centro",
+            "right": "Direita"
+          }
+        },
+        "italic": {
+          "label": "Itálico"
+        },
+        "uppercase": {
+          "label": "Maiúsculas"
+        },
+        "background": {
+          "label": "Painel de fundo"
+        }
+      }
+    },
+    "image": {
+      "name": "Imagem",
+      "description": "Uma imagem ou vetor fixo (PNG, JPEG, WebP, SVG): logotipo, número do carro, patrocinador...",
+      "fields": {
+        "src": {
+          "label": "Imagem"
+        },
+        "fit": {
+          "label": "Ajuste",
+          "options": {
+            "contain": "Conter",
+            "cover": "Cobrir",
+            "stretch": "Esticar"
+          }
+        },
+        "cornerRadius": {
+          "label": "Raio dos cantos",
+          "hint": "% do lado menor"
+        },
+        "background": {
+          "label": "Painel de fundo"
+        }
+      }
+    },
+    "dynamic-image": {
+      "name": "Imagem dinâmica",
+      "description": "Uma imagem movida, girada e redimensionada por valores: um volante girado pelo ângulo de direção, um ponteiro, um ícone de carro...",
+      "fields": {
+        "src": {
+          "label": "Imagem"
+        },
+        "fit": {
+          "label": "Ajuste",
+          "options": {
+            "contain": "Conter",
+            "cover": "Cobrir",
+            "stretch": "Esticar"
+          }
+        },
+        "rotateId": {
+          "label": "Girar por",
+          "hint": "Vazio: sem rotação"
+        },
+        "rotateScale": {
+          "label": "Graus por unidade"
+        },
+        "rotateOffset": {
+          "label": "Deslocamento da rotação (°)"
+        },
+        "translateXId": {
+          "label": "Mover X por"
+        },
+        "translateXScale": {
+          "label": "Larguras da caixa por unidade"
+        },
+        "translateYId": {
+          "label": "Mover Y por"
+        },
+        "translateYScale": {
+          "label": "Alturas da caixa por unidade"
+        },
+        "scaleId": {
+          "label": "Redimensionar por"
+        },
+        "scaleFactor": {
+          "label": "Escala por unidade"
+        }
+      }
+    },
+    "shape": {
+      "name": "Forma",
+      "description": "Uma forma de cor sólida para montar fundos sem imagens: painéis, barras inclinadas de corrida, círculos, selos...",
+      "fields": {
+        "shape": {
+          "label": "Forma",
+          "options": {
+            "rectangle": "Retângulo",
+            "rounded": "Retângulo arredondado",
+            "ellipse": "Elipse / círculo",
+            "parallelogram": "Paralelogramo (inclinado)",
+            "triangle": "Triângulo",
+            "diamond": "Losango",
+            "hexagon": "Hexágono"
+          }
+        },
+        "color": {
+          "label": "Preenchimento"
+        },
+        "fill": {
+          "label": "Preenchido",
+          "hint": "Desligado: só a borda"
+        },
+        "cornerRadius": {
+          "label": "Raio dos cantos",
+          "hint": "Retângulo arredondado"
+        },
+        "slant": {
+          "label": "Inclinação (%)",
+          "hint": "Paralelogramo"
+        },
+        "borderWidth": {
+          "label": "Espessura da borda",
+          "hint": "0 = nenhuma"
+        },
+        "borderColor": {
+          "label": "Borda"
+        }
+      }
+    }
+  },
+  "values": {
+    "time": {
+      "timeline": {
+        "name": "Tempo da linha do tempo",
+        "description": "Segundos desde o tempo 0 da linha do tempo"
+      },
+      "frame": {
+        "name": "Número do quadro",
+        "description": "Índice do quadro sendo renderizado"
+      },
+      "clock": {
+        "name": "Horário",
+        "description": "Horário UTC do quadro em milissegundos desde a época Unix (do GPS ou do relógio do datalogger)"
+      }
+    },
+    "session": {
+      "elapsed": {
+        "name": "Tempo de sessão decorrido",
+        "description": "Segundos desde o início da linha do tempo"
+      },
+      "remaining": {
+        "name": "Tempo restante da sessão",
+        "description": "Segundos até o fim da linha do tempo"
+      }
+    },
+    "speed": {
+      "kmh": {
+        "name": "Velocidade (km/h)",
+        "description": "Melhor velocidade disponível em km/h"
+      },
+      "mph": {
+        "name": "Velocidade (mph)",
+        "description": "Melhor velocidade disponível em mph"
+      },
+      "top": {
+        "kmh": {
+          "name": "Velocidade máxima (km/h)",
+          "description": "Maior velocidade até agora em km/h, ignorando picos do GPS"
+        },
+        "mph": {
+          "name": "Velocidade máxima (mph)",
+          "description": "Maior velocidade até agora em mph, ignorando picos do GPS"
+        }
+      }
+    },
+    "accel": {
+      "lateral": {
+        "name": "G lateral",
+        "description": "Aceleração em curva: G lateral registrado ou calculado pelo trajeto do GPS (positivo = virando à direita)"
+      },
+      "longitudinal": {
+        "name": "G longitudinal",
+        "description": "Aceleração e frenagem: G longitudinal registrado ou calculado pela velocidade do GPS (positivo = acelerando)"
+      },
+      "combined": {
+        "name": "G combinado",
+        "description": "Aceleração horizontal total: valor registrado ou calculado pelos G lateral e longitudinal"
+      }
+    },
+    "distance": {
+      "traveled": {
+        "name": "Distância percorrida",
+        "description": "Metros percorridos desde o início: distância registrada ou somada pelas posições do GPS em movimento"
+      }
+    },
+    "lap": {
+      "number": {
+        "name": "Volta",
+        "description": "Número da volta atual (fonte de cronometragem do projeto)"
+      },
+      "time": {
+        "name": "Tempo de volta",
+        "description": "Segundos desde o início da volta atual (vazio na volta de saída) (fonte de cronometragem do projeto)"
+      },
+      "last": {
+        "name": "Última volta",
+        "description": "Última volta concluída (fonte de cronometragem do projeto)"
+      },
+      "best": {
+        "name": "Melhor volta",
+        "description": "Melhor volta concluída até agora (fonte de cronometragem do projeto)"
+      },
+      "count": {
+        "name": "Total de voltas",
+        "description": "Voltas da sessão (fonte de cronometragem do projeto)"
+      },
+      "remaining": {
+        "name": "Voltas restantes",
+        "description": "Total de voltas menos a volta atual (fonte de cronometragem do projeto)"
+      },
+      "theoretical": {
+        "name": "Melhor volta teórica",
+        "description": "Soma do melhor tempo de cada setor até agora (fonte de cronometragem do projeto)"
+      }
+    },
+    "sector": {
+      "number": {
+        "name": "Setor",
+        "description": "Setor atual (fonte de cronometragem do projeto)"
+      },
+      "time": {
+        "name": "Tempo do setor",
+        "description": "Segundos desde o início do setor atual (fonte de cronometragem do projeto)"
+      },
+      "last": {
+        "name": "Último setor",
+        "description": "Último setor concluído, qualquer setor (fonte de cronometragem do projeto)"
+      },
+      "N": {
+        "last": {
+          "name": "Setor {n}",
+          "description": "Último tempo do setor {n} (fonte de cronometragem do projeto)"
+        },
+        "best": {
+          "name": "Melhor setor {n}",
+          "description": "Melhor tempo do setor {n} até agora (fonte de cronometragem do projeto)"
+        }
+      }
+    },
+    "imported": {
+      "lap": {
+        "number": {
+          "name": "Volta (do datalogger)",
+          "description": "Número da volta atual, do datalogger"
+        },
+        "time": {
+          "name": "Tempo de volta (do datalogger)",
+          "description": "Segundos desde o início da volta atual (vazio na volta de saída), do datalogger"
+        },
+        "last": {
+          "name": "Última volta (do datalogger)",
+          "description": "Última volta concluída, do datalogger"
+        },
+        "best": {
+          "name": "Melhor volta (do datalogger)",
+          "description": "Melhor volta concluída até agora, do datalogger"
+        },
+        "count": {
+          "name": "Total de voltas (do datalogger)",
+          "description": "Voltas da sessão, do datalogger"
+        },
+        "remaining": {
+          "name": "Voltas restantes (do datalogger)",
+          "description": "Total de voltas menos a volta atual, do datalogger"
+        }
+      }
+    },
+    "lines": {
+      "lap": {
+        "number": {
+          "name": "Volta (das linhas da pista)",
+          "description": "Número da volta atual, das linhas da pista"
+        },
+        "time": {
+          "name": "Tempo de volta (das linhas da pista)",
+          "description": "Segundos desde o início da volta atual (vazio na volta de saída), das linhas da pista"
+        },
+        "last": {
+          "name": "Última volta (das linhas da pista)",
+          "description": "Última volta concluída, das linhas da pista"
+        },
+        "best": {
+          "name": "Melhor volta (das linhas da pista)",
+          "description": "Melhor volta concluída até agora, das linhas da pista"
+        },
+        "count": {
+          "name": "Total de voltas (das linhas da pista)",
+          "description": "Voltas da sessão, das linhas da pista"
+        },
+        "remaining": {
+          "name": "Voltas restantes (das linhas da pista)",
+          "description": "Total de voltas menos a volta atual, das linhas da pista"
+        },
+        "theoretical": {
+          "name": "Melhor volta teórica (das linhas da pista)",
+          "description": "Soma do melhor tempo de cada setor até agora, das linhas da pista"
+        }
+      },
+      "sector": {
+        "number": {
+          "name": "Setor (das linhas da pista)",
+          "description": "Setor atual, das linhas da pista"
+        },
+        "time": {
+          "name": "Tempo do setor (das linhas da pista)",
+          "description": "Segundos desde o início do setor atual, das linhas da pista"
+        },
+        "last": {
+          "name": "Último setor (das linhas da pista)",
+          "description": "Último setor concluído, qualquer setor, das linhas da pista"
+        },
+        "N": {
+          "last": {
+            "name": "Setor {n} (das linhas da pista)",
+            "description": "Último tempo do setor {n}, das linhas da pista"
+          },
+          "best": {
+            "name": "Melhor setor {n} (das linhas da pista)",
+            "description": "Melhor tempo do setor {n} até agora, das linhas da pista"
+          }
+        }
+      }
+    }
+  },
+  "presets": {
+    "youtube-sdr-h264": {
+      "label": "YouTube SDR · H.264",
+      "description": "Configurações de upload recomendadas pelo YouTube: H.264 High, 2 quadros B, GOP fechado de metade da taxa de quadros, AAC 384 kbps."
+    },
+    "youtube-sdr-hevc": {
+      "label": "YouTube SDR · HEVC",
+      "description": "Configurações SDR do YouTube com H.265, que o YouTube também aceita: codifica vídeos de 10 bits na GPU."
+    },
+    "youtube-hdr-hevc": {
+      "label": "YouTube HDR · HEVC",
+      "description": "Recomendações de HDR do YouTube: H.265 de 10 bits para saída Rec.2020 HLG ou PQ, 2 quadros B, GOP fechado de metade da taxa de quadros, AAC 384 kbps."
+    },
+    "youtube-hdr-av1": {
+      "label": "YouTube HDR · AV1",
+      "description": "Recomendações de HDR do YouTube com AV1, também recomendado para HDR: rápido em GPUs com codificação AV1, lento na CPU."
+    },
+    "youtubeBitrate": "{bitrate} Mbps: o topo da faixa {table} do YouTube para {resolution} a {fps}.",
+    "tiktok": {
+      "label": "TikTok · 9:16",
+      "description": "Vídeo vertical em tela cheia 1080 × 1920 para o TikTok: H.264 High, 2 quadros B, GOP de 1 s, AAC 192 kbps."
+    },
+    "instagram-reels": {
+      "label": "Instagram Reels · 9:16",
+      "description": "Vídeo vertical em tela cheia 1080 × 1920 para Reels e Stories do Instagram: H.264 High, 2 quadros B, GOP de 1 s, AAC 192 kbps."
+    },
+    "instagram-feed": {
+      "label": "Feed do Instagram · 4:5",
+      "description": "Vídeo retrato 1080 × 1350, o mais alto que o Instagram mostra no feed: H.264 High, 2 quadros B, GOP de 1 s, AAC 192 kbps."
+    },
+    "socialBitrate": "{bitrate} Mbps a {fps}: o app recodifica cada vídeo enviado.",
+    "archive": {
+      "label": "Arquivo de alta qualidade",
+      "description": "H.265 com o dobro da taxa de bits do YouTube, GOP de 1 s, áudio original copiado."
+    },
+    "editing": {
+      "label": "Para edição",
+      "description": "GOP curto de 0,25 s sem quadros B para navegar com fluidez em editores de vídeo, H.264."
+    }
+  }
+}

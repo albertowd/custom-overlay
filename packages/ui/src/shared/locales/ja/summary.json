@@ -1,0 +1,58 @@
+{
+  "status": {
+    "disabled": "無効",
+    "error": "エラー",
+    "reference": "基準",
+    "synced": "同期済み",
+    "notSynced": "未同期"
+  },
+  "output": {
+    "title": "出力",
+    "format": "フォーマット",
+    "color": "カラー",
+    "mode": "モード",
+    "finalVideo": "完成動画",
+    "imageSequence": "透過連番画像",
+    "encoder": "エンコーダー"
+  },
+  "timeline": {
+    "title": "タイムライン",
+    "timeZero": "時刻 0",
+    "span": "範囲",
+    "length": "長さ",
+    "timeZeroAt": "時刻 0 の日時",
+    "basis": {
+      "video": "最初の動画",
+      "source": "最初のデータソース",
+      "none": "未設定"
+    }
+  },
+  "items": {
+    "title": "動画とデータソース",
+    "videos": "動画",
+    "sources": "ソース",
+    "item": "項目",
+    "type": "種類",
+    "position": "位置",
+    "status": "状態",
+    "video": "動画",
+    "embedded": "埋め込み",
+    "channels": {
+      "other": "{count} チャンネル"
+    },
+    "followsVideo": "動画に追従"
+  },
+  "template": {
+    "title": "テンプレート",
+    "widgets": "ウィジェット",
+    "antialias": "アンチエイリアス",
+    "on": "オン",
+    "off": "オフ",
+    "file": "ファイル",
+    "embedded": "プロジェクトに埋め込み"
+  },
+  "checks": {
+    "title": "チェック",
+    "ready": "準備完了です。"
+  }
+}

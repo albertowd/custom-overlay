@@ -1,0 +1,37 @@
+{
+  "origins": {
+    "source": "source",
+    "builtin": "built-in",
+    "script": "script"
+  },
+  "groups": {
+    "script": "Scripts",
+    "builtin": "Built-in",
+    "source": "Sources"
+  },
+  "panel": {
+    "replaces": "Replaces a {origin} value",
+    "error": "error",
+    "new": "+ New value",
+    "newScriptName": "My value",
+    "filter": "Filter values…",
+    "failed": {
+      "one": "{count} value failed — hover it for details.",
+      "other": "{count} values failed — hover them for details."
+    },
+    "evaluating": "Evaluating…",
+    "trust": "Scripts are JavaScript run with the app's permissions: import collections only from people you trust."
+  },
+  "editor": {
+    "id": "Id",
+    "initial": "Initial value",
+    "initialPlaceholder": "empty (no value)",
+    "initialInvalid": "Initial value must be a number or empty",
+    "scriptBefore": "Script: body of",
+    "scriptAfter": "returning one number per frame",
+    "scriptError": "Script error: {error}",
+    "atPlayhead": "At playhead:",
+    "saveClose": "Save & close",
+    "back": "Back"
+  }
+}

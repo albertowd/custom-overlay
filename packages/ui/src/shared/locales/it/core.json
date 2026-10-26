@@ -1,0 +1,1066 @@
+{
+  "steps": {
+    "videos": {
+      "title": "Video",
+      "description": "Seleziona i video su cui sovrapporre i widget (capitoli, più telecamere...). Salta per esportare solo le immagini dei widget."
+    },
+    "sources": {
+      "title": "Fonti dati",
+      "description": "Aggiungi telemetria esterna. Facoltativo se un video contiene già la telemetria."
+    },
+    "sync": {
+      "title": "Sincronizzazione",
+      "description": "Posiziona ogni video e fonte dati sulla stessa timeline."
+    },
+    "track": {
+      "title": "Tracciato",
+      "description": "Facoltativo: traccia le linee di partenza/arrivo e dei settori per cronometrare giri e settori dal GPS, e scegli da dove arrivano i valori dei giri."
+    },
+    "template": {
+      "title": "Modello",
+      "description": "Posiziona e configura i widget sul video."
+    },
+    "summary": {
+      "title": "Riepilogo",
+      "description": "Controlla il progetto prima di esportare."
+    },
+    "export": {
+      "title": "Esporta",
+      "description": "Esegui il rendering del video finale o di una sequenza di immagini trasparenti dei widget."
+    }
+  },
+  "issues": {
+    "notLoaded": "Impossibile caricare '{label}'",
+    "noSourceForVideos": "I video non contengono telemetria: aggiungi almeno una fonte dati",
+    "noSourceWithoutVideo": "Senza video serve almeno una fonte dati",
+    "notSynced": "'{label}' non è ancora sincronizzato",
+    "noStartFinish": "I valori dei giri arrivano dalle linee del tracciato, ma manca ancora la linea di partenza/arrivo",
+    "noWidgets": "Il modello non ha ancora widget",
+    "videoExportWithoutVideo": "Per esportare un video serve un video sorgente; scegli la modalità sequenza di immagini",
+    "videoExportElsewhere": "Il video finale si esporta con l'app desktop o con la CLI: salva il progetto accanto ai suoi video e aprilo lì",
+    "noOutput": "Scegli una destinazione d'uscita"
+  },
+  "widgets": {
+    "speed-gauge": {
+      "name": "Tachimetro",
+      "description": "Strumento analogico con lancetta, tacche e lettura digitale. Funziona con qualsiasi valore (RPM, G...).",
+      "fields": {
+        "valueId": {
+          "label": "Valore"
+        },
+        "label": {
+          "label": "Etichetta dell'unità"
+        },
+        "min": {
+          "label": "Minimo"
+        },
+        "max": {
+          "label": "Massimo",
+          "hint": "0 = massimo della sessione"
+        },
+        "majorStep": {
+          "label": "Passo delle tacche principali",
+          "hint": "0 = automatico"
+        },
+        "minorTicks": {
+          "label": "Tacche secondarie"
+        },
+        "sweep": {
+          "label": "Ampiezza (gradi)"
+        },
+        "decimals": {
+          "label": "Decimali"
+        },
+        "color": {
+          "label": "Arco del valore"
+        },
+        "trackColor": {
+          "label": "Arco di sfondo"
+        },
+        "needleColor": {
+          "label": "Lancetta"
+        },
+        "textColor": {
+          "label": "Testo"
+        },
+        "showDigital": {
+          "label": "Lettura digitale"
+        },
+        "digitalY": {
+          "label": "Posizione della lettura (Y)",
+          "hint": "% del raggio sotto il centro (negativo: sopra)"
+        },
+        "showLabels": {
+          "label": "Etichette delle tacche"
+        },
+        "background": {
+          "label": "Disco di sfondo"
+        }
+      }
+    },
+    "g-force": {
+      "name": "Forza G",
+      "description": "Cerchio di aderenza: G laterale e longitudinale come un punto con una scia che svanisce.",
+      "fields": {
+        "lateralId": {
+          "label": "G laterale"
+        },
+        "longitudinalId": {
+          "label": "G longitudinale"
+        },
+        "range": {
+          "label": "Intervallo (G)"
+        },
+        "ringStep": {
+          "label": "Passo degli anelli (G)"
+        },
+        "trailSeconds": {
+          "label": "Scia (s)"
+        },
+        "invertLateral": {
+          "label": "Inverti laterale"
+        },
+        "invertLongitudinal": {
+          "label": "Inverti longitudinale"
+        },
+        "dotColor": {
+          "label": "Punto"
+        },
+        "trailColor": {
+          "label": "Scia"
+        },
+        "gridColor": {
+          "label": "Griglia"
+        },
+        "showValue": {
+          "label": "Lettura G combinata"
+        },
+        "valuePosition": {
+          "label": "Posizione della lettura",
+          "options": {
+            "bottom": "In basso",
+            "top": "In alto"
+          }
+        },
+        "showRings": {
+          "label": "Anelli",
+          "hint": "I cerchi a ogni passo degli anelli"
+        },
+        "showAxes": {
+          "label": "Linee a croce",
+          "hint": "Gli assi laterale e longitudinale"
+        },
+        "background": {
+          "label": "Disco di sfondo"
+        }
+      }
+    },
+    "gps-path": {
+      "name": "Percorso GPS",
+      "description": "Mappa del percorso dell'intera sessione (nord in alto) con l'avanzamento finora e la posizione attuale (un punto o la tua immagine).",
+      "fields": {
+        "latitudeId": {
+          "label": "Latitudine"
+        },
+        "longitudeId": {
+          "label": "Longitudine"
+        },
+        "headingId": {
+          "label": "Direzione",
+          "hint": "Ruota l'immagine dell'indicatore; calcolata se manca"
+        },
+        "lineWidth": {
+          "label": "Spessore della linea",
+          "hint": "% del lato minore"
+        },
+        "pathColor": {
+          "label": "Percorso"
+        },
+        "progressColor": {
+          "label": "Avanzamento"
+        },
+        "stroke": {
+          "label": "Contorno del tracciato",
+          "hint": "Mantiene il tracciato leggibile senza sfondo"
+        },
+        "strokeColor": {
+          "label": "Contorno"
+        },
+        "strokeWidth": {
+          "label": "Spessore del contorno",
+          "hint": "% del lato minore"
+        },
+        "markerSrc": {
+          "label": "Immagine dell'indicatore",
+          "hint": "Un'auto, un kart… ruotato secondo la direzione"
+        },
+        "markerSize": {
+          "label": "Dimensione dell'indicatore",
+          "hint": "% del lato minore"
+        },
+        "markerAngle": {
+          "label": "Orientamento dell'immagine dell'indicatore (°)",
+          "hint": "0 = in alto, 90 = a destra"
+        },
+        "markerColor": {
+          "label": "Indicatore"
+        },
+        "showProgress": {
+          "label": "Evidenzia l'avanzamento"
+        },
+        "background": {
+          "label": "Pannello di sfondo"
+        }
+      }
+    },
+    "live-map": {
+      "name": "Mappa in tempo reale",
+      "description": "Mappa che segue la posizione attuale (o mostra l'intero tracciato), con il nord o la direzione in alto, e un indicatore (o la tua immagine) ruotato secondo la direzione.",
+      "fields": {
+        "latitudeId": {
+          "label": "Latitudine"
+        },
+        "longitudeId": {
+          "label": "Longitudine"
+        },
+        "headingId": {
+          "label": "Direzione",
+          "hint": "Calcolata dal percorso se manca"
+        },
+        "view": {
+          "label": "Vista",
+          "options": {
+            "follow": "Segui la posizione",
+            "whole": "Intero tracciato"
+          }
+        },
+        "radius": {
+          "label": "Raggio (m)",
+          "hint": "Nella vista che segue"
+        },
+        "orientation": {
+          "label": "Orientamento",
+          "hint": "L'intero tracciato ha sempre il nord in alto",
+          "options": {
+            "heading-up": "Direzione in alto (la mappa ruota)",
+            "north-up": "Nord in alto (l'indicatore ruota)"
+          }
+        },
+        "shape": {
+          "label": "Forma",
+          "options": {
+            "circle": "Cerchio",
+            "rounded": "Rettangolo arrotondato"
+          }
+        },
+        "markerSrc": {
+          "label": "Immagine dell'indicatore",
+          "hint": "Un'auto, un kart… ruotato secondo la direzione"
+        },
+        "markerSize": {
+          "label": "Dimensione dell'indicatore",
+          "hint": "% del lato minore"
+        },
+        "markerAngle": {
+          "label": "Orientamento dell'immagine dell'indicatore (°)",
+          "hint": "0 = in alto, 90 = a destra"
+        },
+        "markerColor": {
+          "label": "Indicatore"
+        },
+        "lineWidth": {
+          "label": "Spessore della linea"
+        },
+        "pathColor": {
+          "label": "Percorso"
+        },
+        "traveledColor": {
+          "label": "Percorso fatto"
+        },
+        "stroke": {
+          "label": "Contorno del tracciato",
+          "hint": "Mantiene il tracciato leggibile senza sfondo"
+        },
+        "strokeColor": {
+          "label": "Contorno"
+        },
+        "strokeWidth": {
+          "label": "Spessore del contorno",
+          "hint": "% del lato minore"
+        },
+        "showNorth": {
+          "label": "Indicatore del nord"
+        },
+        "background": {
+          "label": "Sfondo"
+        }
+      }
+    },
+    "distance-bar": {
+      "name": "Barra della distanza",
+      "description": "Barra di avanzamento della distanza percorsa, con tacche a ogni passo di distanza o all’inizio di ogni giro.",
+      "fields": {
+        "valueId": {
+          "label": "Valore della distanza (m)"
+        },
+        "unit": {
+          "label": "Unità",
+          "options": {
+            "km": "Chilometri",
+            "m": "Metri",
+            "mi": "Miglia"
+          }
+        },
+        "total": {
+          "label": "Totale",
+          "hint": "Nell'unità sopra; 0 = totale della sessione"
+        },
+        "ticks": {
+          "label": "Tacche principali",
+          "options": {
+            "distance": "A ogni passo",
+            "laps": "All’inizio di ogni giro"
+          }
+        },
+        "tickStep": {
+          "label": "Passo delle tacche",
+          "hint": "0 = automatico; solo tacche per distanza"
+        },
+        "lapTimeId": {
+          "label": "Valore del tempo sul giro (s)",
+          "hint": "Solo tacche per giro"
+        },
+        "lapNumberId": {
+          "label": "Valore del numero del giro",
+          "hint": "Solo tacche per giro"
+        },
+        "minorTicks": {
+          "label": "Tacche secondarie",
+          "hint": "Tra le tacche principali (per giro con tacche per giro)"
+        },
+        "decimals": {
+          "label": "Decimali"
+        },
+        "color": {
+          "label": "Avanzamento"
+        },
+        "trackColor": {
+          "label": "Sfondo della barra"
+        },
+        "textColor": {
+          "label": "Testo"
+        },
+        "showLabels": {
+          "label": "Etichette delle tacche"
+        },
+        "showValue": {
+          "label": "Distanza attuale"
+        },
+        "background": {
+          "label": "Pannello di sfondo"
+        }
+      }
+    },
+    "elevation": {
+      "name": "Altimetria",
+      "description": "Altitudine attuale con il profilo altimetrico dell'intera sessione.",
+      "fields": {
+        "valueId": {
+          "label": "Valore dell'altitudine (m)"
+        },
+        "unit": {
+          "label": "Unità",
+          "options": {
+            "m": "Metri",
+            "ft": "Piedi"
+          }
+        },
+        "label": {
+          "label": "Etichetta"
+        },
+        "decimals": {
+          "label": "Decimali"
+        },
+        "showProfile": {
+          "label": "Profilo"
+        },
+        "color": {
+          "label": "Colore del profilo"
+        },
+        "markerColor": {
+          "label": "Indicatore"
+        },
+        "textColor": {
+          "label": "Testo"
+        },
+        "background": {
+          "label": "Pannello di sfondo"
+        }
+      }
+    },
+    "lap-timer": {
+      "name": "Cronometro del giro",
+      "description": "Tempo in corso del giro attuale. Alla fine di un giro il tempo finale resta sullo schermo per qualche secondo, con il distacco dal giro migliore o da quello precedente.",
+      "fields": {
+        "lapTimeId": {
+          "label": "Valore del tempo sul giro (s)"
+        },
+        "lapNumberId": {
+          "label": "Valore del numero del giro"
+        },
+        "holdSeconds": {
+          "label": "Mostra il giro concluso per (s)",
+          "hint": "0 = passa subito al nuovo giro"
+        },
+        "delta": {
+          "label": "Distacco del giro concluso da",
+          "options": {
+            "best": "Giro migliore finora",
+            "previous": "Giro precedente",
+            "none": "Nessun distacco"
+          }
+        },
+        "decimals": {
+          "label": "Decimali"
+        },
+        "showLapNumber": {
+          "label": "Numero del giro"
+        },
+        "beforeFirstLap": {
+          "label": "Prima del primo giro",
+          "options": {
+            "dashes": "Mostra trattini",
+            "hide": "Nascondi"
+          }
+        },
+        "color": {
+          "label": "Tempo"
+        },
+        "bestColor": {
+          "label": "Nuovo giro migliore"
+        },
+        "background": {
+          "label": "Pannello di sfondo"
+        }
+      }
+    },
+    "lap-count": {
+      "name": "Contagiri",
+      "description": "Giro attuale e giri totali della sessione, es. GIRO 3 / 12.",
+      "fields": {
+        "lapNumberId": {
+          "label": "Valore del numero del giro"
+        },
+        "lapCountId": {
+          "label": "Valore dei giri totali"
+        },
+        "label": {
+          "label": "Etichetta",
+          "hint": "Vuota = nessuna etichetta"
+        },
+        "showTotal": {
+          "label": "Giri totali"
+        },
+        "beforeFirstLap": {
+          "label": "Prima del primo giro",
+          "options": {
+            "dashes": "Mostra trattini",
+            "hide": "Nascondi"
+          }
+        },
+        "color": {
+          "label": "Giro attuale"
+        },
+        "totalColor": {
+          "label": "Totale"
+        },
+        "background": {
+          "label": "Pannello di sfondo"
+        }
+      }
+    },
+    "lap-table": {
+      "name": "Tempi sul giro",
+      "description": "Tabella dei tempi sul giro con il distacco dal giro migliore: i giri fatti finora o l'intera sessione. Il giro attuale è evidenziato con il tempo in corso e l'avanzamento.",
+      "fields": {
+        "lapTimeId": {
+          "label": "Valore del tempo sul giro (s)"
+        },
+        "lapNumberId": {
+          "label": "Valore del numero del giro"
+        },
+        "mode": {
+          "label": "Giri",
+          "hint": "Intera sessione: i giri futuri sono attenuati",
+          "options": {
+            "so-far": "Fatti finora",
+            "session": "Intera sessione"
+          }
+        },
+        "rows": {
+          "label": "Righe"
+        },
+        "order": {
+          "label": "Ordine",
+          "options": {
+            "oldest-first": "Dal più vecchio",
+            "newest-first": "Dal più recente"
+          }
+        },
+        "showCurrent": {
+          "label": "Riga del giro attuale"
+        },
+        "showDelta": {
+          "label": "Distacco dal migliore"
+        },
+        "showHeader": {
+          "label": "Intestazione"
+        },
+        "decimals": {
+          "label": "Decimali"
+        },
+        "color": {
+          "label": "Testo"
+        },
+        "currentColor": {
+          "label": "Giro attuale"
+        },
+        "bestColor": {
+          "label": "Giro migliore"
+        },
+        "background": {
+          "label": "Pannello di sfondo"
+        }
+      }
+    },
+    "date-time": {
+      "name": "Data e ora",
+      "description": "Ora del fotogramma (dal GPS o dall'orologio del logger), con una riga facoltativa per la data.",
+      "fields": {
+        "time": {
+          "label": "Formato dell'ora",
+          "hint": "Codici: HH mm ss SSS (vuoto per nascondere)"
+        },
+        "date": {
+          "label": "Formato della data",
+          "hint": "Codici: YYYY MM DD (vuoto per nascondere)"
+        },
+        "timezone": {
+          "label": "Fuso orario",
+          "options": {
+            "local": "Questo computer",
+            "utc": "UTC",
+            "custom": "Scostamento personalizzato"
+          }
+        },
+        "utcOffsetMinutes": {
+          "label": "Scostamento (minuti)",
+          "hint": "Usato con un fuso orario personalizzato"
+        },
+        "color": {
+          "label": "Colore dell'ora"
+        },
+        "dateColor": {
+          "label": "Colore della data"
+        },
+        "background": {
+          "label": "Pannello di sfondo"
+        }
+      }
+    },
+    "timespan": {
+      "name": "Tempo trascorso",
+      "description": "Tempo da un inizio: una data/ora dell'orologio (partenza della gara) o una posizione sulla timeline. Prima dell'inizio fa il conto alla rovescia, mostra zero o si nasconde.",
+      "fields": {
+        "reference": {
+          "label": "Inizia da",
+          "options": {
+            "timeline": "Posizione sulla timeline",
+            "clock": "Data/ora dell'orologio"
+          }
+        },
+        "startTimeline": {
+          "label": "Inizio (timeline)"
+        },
+        "startClock": {
+          "label": "Inizio (data/ora)",
+          "hint": "YYYY-MM-DD HH:mm:ss"
+        },
+        "timezone": {
+          "label": "Fuso orario dell'inizio",
+          "options": {
+            "local": "Questo computer",
+            "utc": "UTC",
+            "custom": "Scostamento personalizzato"
+          }
+        },
+        "utcOffsetMinutes": {
+          "label": "Scostamento (minuti)"
+        },
+        "beforeStart": {
+          "label": "Prima dell'inizio",
+          "options": {
+            "countdown": "Conto alla rovescia",
+            "zero": "Mostra zero",
+            "hide": "Nascondi"
+          }
+        },
+        "decimals": {
+          "label": "Decimali"
+        },
+        "label": {
+          "label": "Etichetta",
+          "hint": "Riga facoltativa sopra, ad es. TEMPO DI GARA"
+        },
+        "color": {
+          "label": "Colore"
+        },
+        "countdownColor": {
+          "label": "Colore del conto alla rovescia"
+        },
+        "background": {
+          "label": "Pannello di sfondo"
+        }
+      }
+    },
+    "value-text": {
+      "name": "Testo con valori",
+      "description": "Testo con valori in tempo reale, ad es. \"Giro {lap.number}  {lap.time|duration}\" o \"{speed.kmh|0} km/h\".",
+      "fields": {
+        "template": {
+          "label": "Testo",
+          "hint": "{value.id} o {value.id|format}; formati: 0, 0.0, duration, duration.0, clock:HH:mm:ss"
+        },
+        "fallback": {
+          "label": "Senza valore"
+        },
+        "color": {
+          "label": "Colore"
+        },
+        "size": {
+          "label": "Dimensione del carattere",
+          "hint": "Frazione dell'altezza del riquadro"
+        },
+        "weight": {
+          "label": "Spessore",
+          "options": {
+            "400": "Normale",
+            "600": "Semigrassetto",
+            "800": "Grassetto"
+          }
+        },
+        "align": {
+          "label": "Allineamento",
+          "options": {
+            "left": "Sinistra",
+            "center": "Centro",
+            "right": "Destra"
+          }
+        },
+        "italic": {
+          "label": "Corsivo"
+        },
+        "uppercase": {
+          "label": "Maiuscolo"
+        },
+        "background": {
+          "label": "Pannello di sfondo"
+        }
+      }
+    },
+    "text": {
+      "name": "Testo",
+      "description": "Testo fisso: un titolo, il nome del pilota, l'evento...",
+      "fields": {
+        "text": {
+          "label": "Testo"
+        },
+        "color": {
+          "label": "Colore"
+        },
+        "size": {
+          "label": "Dimensione del carattere",
+          "hint": "Frazione dell'altezza del riquadro"
+        },
+        "weight": {
+          "label": "Spessore",
+          "options": {
+            "400": "Normale",
+            "600": "Semigrassetto",
+            "800": "Grassetto"
+          }
+        },
+        "align": {
+          "label": "Allineamento",
+          "options": {
+            "left": "Sinistra",
+            "center": "Centro",
+            "right": "Destra"
+          }
+        },
+        "italic": {
+          "label": "Corsivo"
+        },
+        "uppercase": {
+          "label": "Maiuscolo"
+        },
+        "background": {
+          "label": "Pannello di sfondo"
+        }
+      }
+    },
+    "image": {
+      "name": "Immagine",
+      "description": "Un'immagine o un vettoriale fisso (PNG, JPEG, WebP, SVG): logo, numero di gara, sponsor...",
+      "fields": {
+        "src": {
+          "label": "Immagine"
+        },
+        "fit": {
+          "label": "Adattamento",
+          "options": {
+            "contain": "Contieni",
+            "cover": "Riempi",
+            "stretch": "Allunga"
+          }
+        },
+        "cornerRadius": {
+          "label": "Raggio degli angoli",
+          "hint": "% del lato minore"
+        },
+        "background": {
+          "label": "Pannello di sfondo"
+        }
+      }
+    },
+    "dynamic-image": {
+      "name": "Immagine dinamica",
+      "description": "Un'immagine spostata, ruotata e scalata dai valori: un volante girato dall'angolo di sterzo, una lancetta, un'icona di auto...",
+      "fields": {
+        "src": {
+          "label": "Immagine"
+        },
+        "fit": {
+          "label": "Adattamento",
+          "options": {
+            "contain": "Contieni",
+            "cover": "Riempi",
+            "stretch": "Allunga"
+          }
+        },
+        "rotateId": {
+          "label": "Ruota in base a",
+          "hint": "Vuoto: nessuna rotazione"
+        },
+        "rotateScale": {
+          "label": "Gradi per unità"
+        },
+        "rotateOffset": {
+          "label": "Scostamento della rotazione (°)"
+        },
+        "translateXId": {
+          "label": "Sposta X in base a"
+        },
+        "translateXScale": {
+          "label": "Larghezze del riquadro per unità"
+        },
+        "translateYId": {
+          "label": "Sposta Y in base a"
+        },
+        "translateYScale": {
+          "label": "Altezze del riquadro per unità"
+        },
+        "scaleId": {
+          "label": "Scala in base a"
+        },
+        "scaleFactor": {
+          "label": "Scala per unità"
+        }
+      }
+    },
+    "shape": {
+      "name": "Forma",
+      "description": "Una forma a tinta unita per creare sfondi senza immagini: pannelli, barre inclinate da gara, cerchi, badge...",
+      "fields": {
+        "shape": {
+          "label": "Forma",
+          "options": {
+            "rectangle": "Rettangolo",
+            "rounded": "Rettangolo arrotondato",
+            "ellipse": "Ellisse / cerchio",
+            "parallelogram": "Parallelogramma (inclinato)",
+            "triangle": "Triangolo",
+            "diamond": "Rombo",
+            "hexagon": "Esagono"
+          }
+        },
+        "color": {
+          "label": "Riempimento"
+        },
+        "fill": {
+          "label": "Piena",
+          "hint": "Disattivato: solo il bordo"
+        },
+        "cornerRadius": {
+          "label": "Raggio degli angoli",
+          "hint": "Rettangolo arrotondato"
+        },
+        "slant": {
+          "label": "Inclinazione (%)",
+          "hint": "Parallelogramma"
+        },
+        "borderWidth": {
+          "label": "Spessore del bordo",
+          "hint": "0 = nessuno"
+        },
+        "borderColor": {
+          "label": "Bordo"
+        }
+      }
+    }
+  },
+  "values": {
+    "time": {
+      "timeline": {
+        "name": "Tempo sulla timeline",
+        "description": "Secondi dal tempo 0 della timeline"
+      },
+      "frame": {
+        "name": "Numero del fotogramma",
+        "description": "Indice del fotogramma in rendering"
+      },
+      "clock": {
+        "name": "Ora",
+        "description": "Ora UTC del fotogramma in millisecondi dall'epoca Unix (dal GPS o dall'orologio del logger)"
+      }
+    },
+    "session": {
+      "elapsed": {
+        "name": "Tempo di sessione trascorso",
+        "description": "Secondi dall'inizio della timeline"
+      },
+      "remaining": {
+        "name": "Tempo di sessione rimanente",
+        "description": "Secondi alla fine della timeline"
+      }
+    },
+    "speed": {
+      "kmh": {
+        "name": "Velocità (km/h)",
+        "description": "Migliore velocità disponibile in km/h"
+      },
+      "mph": {
+        "name": "Velocità (mph)",
+        "description": "Migliore velocità disponibile in mph"
+      },
+      "top": {
+        "kmh": {
+          "name": "Velocità massima (km/h)",
+          "description": "Velocità più alta finora in km/h, ignorando i picchi del GPS"
+        },
+        "mph": {
+          "name": "Velocità massima (mph)",
+          "description": "Velocità più alta finora in mph, ignorando i picchi del GPS"
+        }
+      }
+    },
+    "accel": {
+      "lateral": {
+        "name": "G laterale",
+        "description": "Accelerazione in curva: G laterale registrata o calcolata dal percorso GPS (positivo = curva a destra)"
+      },
+      "longitudinal": {
+        "name": "G longitudinale",
+        "description": "Accelerazione e frenata: G longitudinale registrata o calcolata dalla velocità GPS (positivo = in accelerazione)"
+      },
+      "combined": {
+        "name": "G combinata",
+        "description": "Accelerazione orizzontale totale: valore registrato o calcolato dalla G laterale e longitudinale"
+      }
+    },
+    "distance": {
+      "traveled": {
+        "name": "Distanza percorsa",
+        "description": "Metri percorsi dall'inizio: distanza registrata o sommata dalle posizioni GPS in movimento"
+      }
+    },
+    "lap": {
+      "number": {
+        "name": "Giro",
+        "description": "Numero del giro attuale (fonte di cronometraggio del progetto)"
+      },
+      "time": {
+        "name": "Tempo sul giro",
+        "description": "Secondi dall'inizio del giro attuale (vuoto nel giro di uscita) (fonte di cronometraggio del progetto)"
+      },
+      "last": {
+        "name": "Ultimo giro",
+        "description": "Ultimo giro completato (fonte di cronometraggio del progetto)"
+      },
+      "best": {
+        "name": "Giro migliore",
+        "description": "Miglior giro completato finora (fonte di cronometraggio del progetto)"
+      },
+      "count": {
+        "name": "Giri totali",
+        "description": "Giri della sessione (fonte di cronometraggio del progetto)"
+      },
+      "remaining": {
+        "name": "Giri rimanenti",
+        "description": "Giri totali meno il giro attuale (fonte di cronometraggio del progetto)"
+      },
+      "theoretical": {
+        "name": "Giro ideale",
+        "description": "Somma del miglior tempo di ogni settore finora (fonte di cronometraggio del progetto)"
+      }
+    },
+    "sector": {
+      "number": {
+        "name": "Settore",
+        "description": "Settore attuale (fonte di cronometraggio del progetto)"
+      },
+      "time": {
+        "name": "Tempo del settore",
+        "description": "Secondi dall'inizio del settore attuale (fonte di cronometraggio del progetto)"
+      },
+      "last": {
+        "name": "Ultimo settore",
+        "description": "Ultimo settore completato, qualsiasi settore (fonte di cronometraggio del progetto)"
+      },
+      "N": {
+        "last": {
+          "name": "Settore {n}",
+          "description": "Ultimo tempo del settore {n} (fonte di cronometraggio del progetto)"
+        },
+        "best": {
+          "name": "Miglior settore {n}",
+          "description": "Miglior tempo del settore {n} finora (fonte di cronometraggio del progetto)"
+        }
+      }
+    },
+    "imported": {
+      "lap": {
+        "number": {
+          "name": "Giro (dal logger)",
+          "description": "Numero del giro attuale, dal logger"
+        },
+        "time": {
+          "name": "Tempo sul giro (dal logger)",
+          "description": "Secondi dall'inizio del giro attuale (vuoto nel giro di uscita), dal logger"
+        },
+        "last": {
+          "name": "Ultimo giro (dal logger)",
+          "description": "Ultimo giro completato, dal logger"
+        },
+        "best": {
+          "name": "Giro migliore (dal logger)",
+          "description": "Miglior giro completato finora, dal logger"
+        },
+        "count": {
+          "name": "Giri totali (dal logger)",
+          "description": "Giri della sessione, dal logger"
+        },
+        "remaining": {
+          "name": "Giri rimanenti (dal logger)",
+          "description": "Giri totali meno il giro attuale, dal logger"
+        }
+      }
+    },
+    "lines": {
+      "lap": {
+        "number": {
+          "name": "Giro (dalle linee del tracciato)",
+          "description": "Numero del giro attuale, dalle linee del tracciato"
+        },
+        "time": {
+          "name": "Tempo sul giro (dalle linee del tracciato)",
+          "description": "Secondi dall'inizio del giro attuale (vuoto nel giro di uscita), dalle linee del tracciato"
+        },
+        "last": {
+          "name": "Ultimo giro (dalle linee del tracciato)",
+          "description": "Ultimo giro completato, dalle linee del tracciato"
+        },
+        "best": {
+          "name": "Giro migliore (dalle linee del tracciato)",
+          "description": "Miglior giro completato finora, dalle linee del tracciato"
+        },
+        "count": {
+          "name": "Giri totali (dalle linee del tracciato)",
+          "description": "Giri della sessione, dalle linee del tracciato"
+        },
+        "remaining": {
+          "name": "Giri rimanenti (dalle linee del tracciato)",
+          "description": "Giri totali meno il giro attuale, dalle linee del tracciato"
+        },
+        "theoretical": {
+          "name": "Giro ideale (dalle linee del tracciato)",
+          "description": "Somma del miglior tempo di ogni settore finora, dalle linee del tracciato"
+        }
+      },
+      "sector": {
+        "number": {
+          "name": "Settore (dalle linee del tracciato)",
+          "description": "Settore attuale, dalle linee del tracciato"
+        },
+        "time": {
+          "name": "Tempo del settore (dalle linee del tracciato)",
+          "description": "Secondi dall'inizio del settore attuale, dalle linee del tracciato"
+        },
+        "last": {
+          "name": "Ultimo settore (dalle linee del tracciato)",
+          "description": "Ultimo settore completato, qualsiasi settore, dalle linee del tracciato"
+        },
+        "N": {
+          "last": {
+            "name": "Settore {n} (dalle linee del tracciato)",
+            "description": "Ultimo tempo del settore {n}, dalle linee del tracciato"
+          },
+          "best": {
+            "name": "Miglior settore {n} (dalle linee del tracciato)",
+            "description": "Miglior tempo del settore {n} finora, dalle linee del tracciato"
+          }
+        }
+      }
+    }
+  },
+  "presets": {
+    "youtube-sdr-h264": {
+      "label": "YouTube SDR · H.264",
+      "description": "Impostazioni di caricamento consigliate da YouTube: H.264 High, 2 fotogrammi B, GOP chiuso di metà frequenza fotogrammi, AAC 384 kbps."
+    },
+    "youtube-sdr-hevc": {
+      "label": "YouTube SDR · HEVC",
+      "description": "Impostazioni SDR di YouTube con H.265, che YouTube accetta: codifica i video a 10 bit sulla GPU."
+    },
+    "youtube-hdr-hevc": {
+      "label": "YouTube HDR · HEVC",
+      "description": "Raccomandazioni HDR di YouTube: H.265 a 10 bit per un'uscita Rec.2020 HLG o PQ, 2 fotogrammi B, GOP chiuso di metà frequenza fotogrammi, AAC 384 kbps."
+    },
+    "youtube-hdr-av1": {
+      "label": "YouTube HDR · AV1",
+      "description": "Raccomandazioni HDR di YouTube con AV1, consigliato anche per l'HDR: veloce sulle GPU con codifica AV1, lento sulla CPU."
+    },
+    "youtubeBitrate": "{bitrate} Mbps: il massimo dell'intervallo {table} di YouTube per {resolution} a {fps}.",
+    "tiktok": {
+      "label": "TikTok · 9:16",
+      "description": "Video verticale a schermo intero 1080 × 1920 per TikTok: H.264 High, 2 fotogrammi B, GOP di 1 s, AAC 192 kbps."
+    },
+    "instagram-reels": {
+      "label": "Instagram Reels · 9:16",
+      "description": "Video verticale a schermo intero 1080 × 1920 per Reels e storie di Instagram: H.264 High, 2 fotogrammi B, GOP di 1 s, AAC 192 kbps."
+    },
+    "instagram-feed": {
+      "label": "Feed di Instagram · 4:5",
+      "description": "Video verticale 1080 × 1350, il più alto che Instagram mostra nel feed: H.264 High, 2 fotogrammi B, GOP di 1 s, AAC 192 kbps."
+    },
+    "socialBitrate": "{bitrate} Mbps a {fps}: l'app ricodifica ogni video caricato.",
+    "archive": {
+      "label": "Archivio ad alta qualità",
+      "description": "H.265 al doppio del bitrate di YouTube, GOP di 1 s, audio originale copiato."
+    },
+    "editing": {
+      "label": "Per il montaggio",
+      "description": "GOP corto di 0,25 s senza fotogrammi B per scorrere fluidamente negli editor video, H.264."
+    }
+  }
+}

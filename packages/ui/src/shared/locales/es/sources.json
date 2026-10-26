@@ -1,0 +1,15 @@
+{
+  "card": {
+    "embedded": "incluida en el vídeo",
+    "loading": "cargando…",
+    "error": "error",
+    "use": "Usar"
+  },
+  "unsupported": "Fuente de datos no compatible: {name}",
+  "add": "Añadir fuente de datos…",
+  "empty": {
+    "title": "Todavía no hay fuentes de datos.",
+    "drop": "Suelta aquí exportaciones CSV de RaceChrono, subtítulos .SRT de DJI o vídeos con telemetría (GoPro, DJI) para usar solo sus datos."
+  },
+  "supported": "Compatibles: exportación CSV de RaceChrono (v2/v3), telemetría MP4 de GoPro (GPS, acelerómetro, giroscopio), subtítulos .SRT de DJI (GPS, altitud, ajustes de cámara)."
+}

@@ -1,0 +1,60 @@
+{
+  "filters": {
+    "videos": "Vídeos",
+    "telemetry": "Telemetria",
+    "videoTelemetry": "Vídeo (só telemetria: GoPro ou DJI)",
+    "djiSubtitles": "Legendas de telemetria da DJI",
+    "project": "Projeto de overlay",
+    "values": "Scripts de valores",
+    "trackOrProject": "Pista ou projeto",
+    "widgets": "Widgets ou template",
+    "template": "Template de overlay",
+    "widget": "Widget de overlay",
+    "track": "Pista",
+    "mp4": "Vídeo MP4"
+  },
+  "dialogs": {
+    "addVideos": "Adicionar vídeos",
+    "addSources": "Adicionar fontes de dados",
+    "importWidgets": "Importar widgets",
+    "exportWidget": "Exportar widget",
+    "importTrack": "Importar linhas da pista",
+    "exportTrack": "Exportar linhas da pista",
+    "importValues": "Importar valores",
+    "exportValues": "Exportar valores",
+    "openProject": "Abrir projeto",
+    "saveProject": "Salvar projeto",
+    "loadTemplate": "Carregar template",
+    "saveTemplate": "Salvar template",
+    "outputFolder": "Selecione a pasta de saída da sequência de imagens",
+    "exportVideo": "Exportar vídeo"
+  },
+  "chapters": {
+    "title": "Capítulos da GoPro",
+    "message": {
+      "one": "Este vídeo faz parte de uma gravação mais longa da GoPro",
+      "other": "Estes vídeos fazem parte de gravações mais longas da GoPro"
+    },
+    "explanation": "A GoPro divide gravações longas em arquivos de capítulo:",
+    "files": {
+      "one": "{count} arquivo",
+      "other": "{count} arquivos"
+    },
+    "question": {
+      "one": "Adicionar também o outro capítulo ({count})? Os capítulos ficam um após o outro na linha do tempo, cada um com sua telemetria.",
+      "other": "Adicionar também os outros {count} capítulos? Eles ficam um após o outro na linha do tempo, cada um com sua telemetria."
+    },
+    "addAll": "Adicionar todos os capítulos",
+    "onlySelected": "Só os vídeos selecionados"
+  },
+  "closeDuringExport": {
+    "title": "Exportação em andamento",
+    "message": "Uma exportação ainda está em andamento.",
+    "detail": "Fechar cancela a exportação e remove o arquivo incompleto.",
+    "keep": "Continuar exportando",
+    "cancelAndClose": "Cancelar exportação e fechar"
+  },
+  "errors": {
+    "exportRunning": "Já existe uma exportação em andamento"
+  }
+}

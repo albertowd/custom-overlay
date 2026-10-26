@@ -1,0 +1,53 @@
+title: "[Values]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Share value scripts (`*.values.json`): lap times, deltas, fuel, G-force, anything computed from other values.
+  - type: markdown
+    attributes:
+      value: |
+        > [!WARNING]
+        > Value scripts are JavaScript that runs on the computer of whoever imports them. Only import scripts you have read, and never post code that reads files, uses the network or is obfuscated.
+  - type: textarea
+    id: description
+    attributes:
+      label: What does it calculate?
+      description: Each value's id, name, unit and a short explanation of the method.
+    validations:
+      required: true
+  - type: textarea
+    id: inputs
+    attributes:
+      label: Input values
+      description: Value ids it reads (source + column, e.g. `racechrono.latitude`) and which loggers or cameras you tested with.
+    validations:
+      required: true
+  - type: textarea
+    id: file
+    attributes:
+      label: File
+      description: Attach the .values.json (zip it if GitHub rejects it), or paste it in a ```json code block.
+    validations:
+      required: true
+  - type: textarea
+    id: preview
+    attributes:
+      label: Example output
+      description: Optional screenshot of the Values tab or a widget using it.
+  - type: input
+    id: version
+    attributes:
+      label: App version it was made with
+      placeholder: "0.1.0"
+    validations:
+      required: true
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Sharing
+      options:
+        - label: I wrote this (or have permission to share it) and release it under [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) (public domain).
+          required: true
+        - label: The script only computes values. It does not read files, use the network or hide what it does.
+          required: true

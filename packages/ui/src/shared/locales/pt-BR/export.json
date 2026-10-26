@@ -1,0 +1,98 @@
+{
+  "range": {
+    "title": "Intervalo",
+    "help": "A prévia mostra o vídeo com os widgets como serão exportados. Reproduza ou navegue por ele e defina onde a exportação começa e termina: arraste as alças, digite os tempos como m:ss.mmm ou pressione I / O na posição atual.",
+    "followsData": "Sem início ou fim, a exportação segue o intervalo de dados definido na etapa Pista ({start} – {end}).",
+    "dataRange": "Intervalo de dados da pista",
+    "followsDataField": "Segue o intervalo de dados da pista"
+  },
+  "output": {
+    "title": "Saída",
+    "video": "Vídeo final",
+    "videoHelp": "Os vídeos com os widgets aplicados na imagem.",
+    "sequence": "Sequência de imagens transparentes",
+    "sequenceHelp": "Um PNG por quadro só com os widgets, para compor em um editor.",
+    "none": "Nenhuma saída selecionada",
+    "choose": "Escolher…",
+    "defaultHint": "Não escolhido: vai para a pasta dos vídeos (ou dos dados), com o nome do projeto, sem substituir uma exportação anterior.",
+    "zipHint": "O navegador não consegue gravar em uma pasta: os quadros são baixados em um único arquivo zip.",
+    "useDefault": "Usar o local padrão"
+  },
+  "format": {
+    "title": "Formato",
+    "resolution": "Resolução",
+    "customResolution": "Personalizada ({width} × {height})",
+    "width": "Largura",
+    "height": "Altura",
+    "frameRate": "Taxa de quadros",
+    "colorSpace": "Espaço de cor",
+    "rangeDepth": "Faixa / profundidade",
+    "limited": "Limitada · {bits} bits",
+    "full": "Completa · {bits} bits",
+    "matchVideo": "Igual ao primeiro vídeo",
+    "canvasHelp": "O tamanho de saída é a tela onde os widgets são posicionados (etapa Template): mudar o formato dela os move."
+  },
+  "encoding": {
+    "title": "Codificação",
+    "preset": "Predefinição",
+    "custom": "Personalizada",
+    "customHelp": "Valores personalizados, salvos com o projeto.",
+    "codec": "Codec",
+    "bitrate": "Taxa de bits (Mbps)",
+    "keyframe": "Quadro-chave a cada (s)",
+    "bFrames": "Quadros B",
+    "audio": "Áudio",
+    "audioOptions": {
+      "aac": "AAC",
+      "copy": "Copiar do vídeo",
+      "none": "Sem áudio"
+    },
+    "acceleration": "Decodificar / codificar com",
+    "accelerationOptions": {
+      "auto": "GPU quando disponível",
+      "software": "Somente CPU"
+    },
+    "scaling": "Redimensionamento (quando o tamanho de saída difere de um vídeo)",
+    "scalers": {
+      "bilinear": "Bilinear (rápido)",
+      "bicubic": "Bicúbico",
+      "lanczos": "Lanczos (nítido)",
+      "fsr1": "Estilo FSR 1 (Lanczos + nitidez AMD CAS)"
+    },
+    "scalingHelp": "DLSS e XeSS não estão disponíveis: são upscalers temporais que precisam de vetores de movimento e profundidade de um motor de jogo, que vídeos gravados não têm. A opção estilo FSR 1 amplia com Lanczos e aplica nitidez com o CAS da AMD, as duas etapas do FSR 1.",
+    "notes": {
+      "sdrConverted": "O YouTube converte uploads SDR para Rec.709 limitado de 8 bits: uma saída Rec.709 limitada fica igual antes e depois do upload.",
+      "h264TenBit": "H.264 de 10 bits só é codificado na CPU (os codificadores H.264 de GPU são de 8 bits) e o YouTube o converte para 8 bits de qualquer forma: escolha uma saída de 8 bits ou a predefinição HEVC.",
+      "hdrNeedsHdrOutput": "O YouTube só trata um vídeo como HDR com saída Rec.2020 HLG ou PQ de 10 bits: defina o espaço de cor e a profundidade em Formato.",
+      "hdrResolution": "O YouTube aceita HDR a partir de 720p.",
+      "frameRate": "A taxa de quadros da saída está fora da faixa desta predefinição (o YouTube reproduz no máximo 60 fps): escolha a predefinição de novo para convertê-la.",
+      "socialSdr": "O app reproduz vídeo SDR Rec.709 de 8 bits: outras configurações de cor são convertidas no envio.",
+      "socialSize": "A saída não está no formato desta predefinição: escolha a predefinição de novo para levar a tela a ele.",
+      "socialFrameRate": "A taxa de quadros da saída está fora da faixa desta predefinição (os apps reproduzem no máximo 60 fps): escolha a predefinição de novo para convertê-la."
+    },
+    "estimatedSize": "Tamanho estimado do arquivo: cerca de {size} para {duration}.",
+    "estimatedSizeHelp": "Pela taxa de bits e pela duração do intervalo: o tamanho real varia um pouco com o codificador e o vídeo.",
+    "otherPresets": "Outras predefinições"
+  },
+  "run": {
+    "title": "Exportar",
+    "start": "Exportar",
+    "help": "Os widgets são desenhados em várias threads; o vídeo é decodificado e codificado na GPU quando possível. Você pode continuar trabalhando enquanto isso.",
+    "helpSequence": "Os widgets são desenhados em várias threads e cada quadro é gravado como um arquivo PNG. Você pode continuar trabalhando enquanto isso.",
+    "preparing": "Preparando: carregando valores, escolhendo o codificador…",
+    "progress": "{percent}% · quadro {frame} / {frames}",
+    "speed": "{fps} fps · {elapsed} decorrido · {left} restante",
+    "done": {
+      "one": "{count} quadro exportado",
+      "other": "{count} quadros exportados"
+    },
+    "doneTime": "em {time}.",
+    "doneTimeEncoder": "em {time} com {encoder}.",
+    "showInFolder": "Mostrar na pasta",
+    "dismiss": "Fechar",
+    "failed": "A exportação falhou.",
+    "cancelled": "Exportação cancelada; o arquivo incompleto foi removido.",
+    "cancelledSequence": "Exportação cancelada; os quadros já gravados foram mantidos.",
+    "cancelledZip": "Exportação cancelada; nada foi baixado."
+  }
+}

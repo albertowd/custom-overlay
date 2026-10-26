@@ -1,0 +1,70 @@
+name: Add or fix a track
+description: Get a track into the app's list of known tracks, correct its lines, or report a detection problem.
+title: "[Track]: "
+labels: [track]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        The app ships with a [list of known tracks](https://github.com/albertowd/custom-overlay/tree/main/packages/core/src/tracks) and loads their lines on its own when a session is driven there. Tracks added from this form are detected for everyone in the next release.
+
+        Developer? Open a pull request with the file instead, as the [tracks guide](https://github.com/albertowd/custom-overlay/blob/main/packages/core/src/tracks/README.md#adding-or-improving-a-track) explains. Please search the open issues first, there may already be one for your track.
+  - type: dropdown
+    id: kind
+    attributes:
+      label: What is it about?
+      options:
+        - A new track or layout
+        - Wrong or missing lines of a track of the list
+        - The app detected the wrong track, or none
+    validations:
+      required: true
+  - type: input
+    id: name
+    attributes:
+      label: Track name and layout
+      description: The full official name, as it should appear in the app.
+      placeholder: "Autódromo José Carlos Pace – GP layout"
+    validations:
+      required: true
+  - type: input
+    id: location
+    attributes:
+      label: City, region and country
+      placeholder: "São Paulo, São Paulo, Brazil"
+    validations:
+      required: true
+  - type: input
+    id: sectors
+    attributes:
+      label: Sector lines
+      description: How many, and whether they are the official timing lines.
+      placeholder: "2 lines (3 official sectors) / none"
+  - type: textarea
+    id: notes
+    attributes:
+      label: Details
+      description: Where the lines are and why. For a correction or a detection problem, what is wrong and what you expected.
+  - type: textarea
+    id: file
+    attributes:
+      label: Track file and screenshot
+      description: In the Track step, give the track its full name and use _Export lines…_. Attach the `.track.json` (zip it if GitHub rejects it) and a screenshot of the Track step showing laps timed by the lines. For a detection problem, attach the session's GPS file if you can share it.
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: App version
+      placeholder: "0.1.0"
+    validations:
+      required: true
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Sharing
+      options:
+        - label: I placed these lines myself (on the map or from my own logs) and did not copy them from another app's track library.
+          required: true
+        - label: I release them under [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) (public domain) so they can be bundled with the app.
+          required: true

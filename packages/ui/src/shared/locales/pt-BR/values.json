@@ -1,0 +1,37 @@
+{
+  "origins": {
+    "source": "de fonte",
+    "builtin": "interno",
+    "script": "de script"
+  },
+  "groups": {
+    "script": "Scripts",
+    "builtin": "Internos",
+    "source": "Fontes"
+  },
+  "panel": {
+    "replaces": "Substitui um valor {origin}",
+    "error": "erro",
+    "new": "+ Novo valor",
+    "newScriptName": "Meu valor",
+    "filter": "Filtrar valores…",
+    "failed": {
+      "one": "{count} valor falhou — passe o mouse sobre ele para ver detalhes.",
+      "other": "{count} valores falharam — passe o mouse sobre eles para ver detalhes."
+    },
+    "evaluating": "Calculando…",
+    "trust": "Scripts são JavaScript executado com as permissões do app: importe coleções apenas de pessoas em quem você confia."
+  },
+  "editor": {
+    "id": "Id",
+    "initial": "Valor inicial",
+    "initialPlaceholder": "vazio (sem valor)",
+    "initialInvalid": "O valor inicial deve ser um número ou ficar vazio",
+    "scriptBefore": "Script: corpo de",
+    "scriptAfter": "que retorna um número por quadro",
+    "scriptError": "Erro no script: {error}",
+    "atPlayhead": "Na posição atual:",
+    "saveClose": "Salvar e fechar",
+    "back": "Voltar"
+  }
+}

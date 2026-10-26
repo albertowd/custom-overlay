@@ -1,0 +1,18 @@
+title: "[Q&A]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Ask anything about using the app. Mark the reply that solved it as the answer.
+        Found a bug? Please [open an issue](https://github.com/albertowd/custom-overlay/issues/new/choose) instead.
+  - type: textarea
+    id: question
+    attributes:
+      label: Question
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Setup
+      description: App version, OS, camera and logger, and what you tried.

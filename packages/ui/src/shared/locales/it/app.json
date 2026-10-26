@@ -1,0 +1,95 @@
+{
+  "toolbar": {
+    "new": "Nuovo",
+    "open": "Apri…",
+    "saveAs": "Salva con nome…",
+    "unsavedProject": "Progetto non salvato",
+    "unsavedChanges": "Modifiche non salvate",
+    "confirmDiscard": "Annullare le modifiche non salvate?"
+  },
+  "footer": {
+    "back": "Indietro",
+    "next": "Avanti",
+    "skip": "Salta",
+    "projectPage": "Pagina del progetto su GitHub"
+  },
+  "stepState": {
+    "complete": "completato",
+    "incomplete": "incompleto",
+    "skipped": "saltato",
+    "not-applicable": "non applicabile"
+  },
+  "notices": {
+    "checkSync": "Controlla la sincronizzazione di: {items}",
+    "openProjectFailed": "Impossibile aprire il progetto: {error}",
+    "saveProjectFailed": "Impossibile salvare il progetto: {error}",
+    "loadFailed": "Impossibile caricare {path}: {error}",
+    "trackImported": "Linee di '{name}' importate",
+    "trackImportedUnnamed": "Linee del tracciato importate",
+    "trackDetected": "Rilevato {name}: le sue linee cronometrano i giri",
+    "trackLoaded": "Caricate le linee di {name}",
+    "importTrackFailed": "Impossibile importare il tracciato: {error}",
+    "exportTrackFailed": "Impossibile esportare il tracciato: {error}",
+    "duplicateValueId": "Esiste già un valore del progetto con id '{id}'",
+    "valuesImported": {
+      "one": "{count} valore importato da '{name}'",
+      "other": "{count} valori importati da '{name}'"
+    },
+    "importValuesFailed": "Impossibile importare i valori: {error}",
+    "exportValuesFailed": "Impossibile esportare i valori: {error}",
+    "importWidgetsFailed": "Impossibile importare i widget: {error}",
+    "exportWidgetFailed": "Impossibile esportare il widget: {error}"
+  },
+  "channel": {
+    "tooltip": {
+      "one": "{label} — {count} campione, {rate} Hz",
+      "other": "{label} — {count} campioni, {rate} Hz"
+    }
+  },
+  "series": {
+    "startUtc": "Inizio (UTC)",
+    "channels": "Canali"
+  },
+  "dropFiles": "Trascina qui i file",
+  "newProject": {
+    "title": "Nuovo progetto",
+    "hint": "Dai un nome al progetto. È anche il nome di file proposto quando lo salvi.",
+    "placeholder": "es. Track day a Monza",
+    "create": "Crea",
+    "openInstead": "Apri un progetto…"
+  },
+  "update": {
+    "title": "È disponibile una nuova versione",
+    "message": "È uscito Custom Overlay {latest} (hai la {current}).",
+    "notes": "Novità",
+    "download": "Scarica {file}",
+    "page": "Apri la pagina della versione",
+    "later": "Più tardi",
+    "skip": "Salta questa versione",
+    "noInstaller": "Questa versione non ha un programma di installazione per questo sistema: scaricalo dalla pagina della versione.",
+    "change": {
+      "major": "Aggiornamento principale",
+      "minor": "Nuove funzionalità",
+      "patch": "Correzioni",
+      "prerelease": "Versione preliminare"
+    }
+  },
+  "busy": {
+    "export": {
+      "title": "Esportazione…",
+      "detail": "Il progetto non può essere modificato finché l’esportazione non termina o viene annullata."
+    },
+    "media": {
+      "title": "Caricamento dei media…",
+      "detail": "Lettura dei video e dei file di dati, con la loro telemetria.",
+      "more": {
+        "one": "e {count} altro file",
+        "other": "e altri {count} file"
+      }
+    },
+    "values": {
+      "title": "Aggiornamento dei valori…",
+      "detail": "Ricalcolo di giri, distanze e dati dei widget con le nuove impostazioni."
+    }
+  }
+}

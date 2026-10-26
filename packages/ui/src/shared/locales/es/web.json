@@ -1,0 +1,9 @@
+{
+  "filters": {
+    "projectWithMedia": "Proyecto de overlay con sus vídeos y archivos de datos"
+  },
+  "files": {
+    "notOpen": "'{name}' no está abierto en esta pestaña: añádelo de nuevo o abre el proyecto junto con sus archivos.",
+    "noProject": "Selecciona el archivo del proyecto (*.overlay.json) junto con sus vídeos y archivos de datos."
+  }
+}

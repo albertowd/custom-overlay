@@ -1,0 +1,14 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Question or help using the app
+    url: https://github.com/albertowd/custom-overlay/discussions/categories/q-a
+    about: Ask in Discussions. Issues are for bugs and feature requests only.
+  - name: Share a widget or template
+    url: https://github.com/albertowd/custom-overlay/discussions/categories/widgets-templates
+    about: Post your *.widget.json / *.template.json for others to use.
+  - name: Share value scripts
+    url: https://github.com/albertowd/custom-overlay/discussions/categories/value-scripts
+    about: Post your *.values.json calculations (lap times, deltas, fuel...).
+  - name: Talk about tracks
+    url: https://github.com/albertowd/custom-overlay/discussions/categories/tracks
+    about: Questions about timing lines and layouts. To add or fix a track in the app, use "Add or fix a track" above.

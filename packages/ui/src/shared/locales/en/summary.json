@@ -1,0 +1,59 @@
+{
+  "status": {
+    "disabled": "disabled",
+    "error": "error",
+    "reference": "reference",
+    "synced": "synced",
+    "notSynced": "not synced"
+  },
+  "output": {
+    "title": "Output",
+    "format": "Format",
+    "color": "Color",
+    "mode": "Mode",
+    "finalVideo": "Final video",
+    "imageSequence": "Transparent image sequence",
+    "encoder": "Encoder"
+  },
+  "timeline": {
+    "title": "Timeline",
+    "timeZero": "Time 0",
+    "span": "Span",
+    "length": "Length",
+    "timeZeroAt": "Time 0 at",
+    "basis": {
+      "video": "First video",
+      "source": "First data source",
+      "none": "Not defined yet"
+    }
+  },
+  "items": {
+    "title": "Videos and data sources",
+    "videos": "Videos",
+    "sources": "Sources",
+    "item": "Item",
+    "type": "Type",
+    "position": "Position",
+    "status": "Status",
+    "video": "Video",
+    "embedded": "embedded",
+    "channels": {
+      "one": "{count} channel",
+      "other": "{count} channels"
+    },
+    "followsVideo": "follows video"
+  },
+  "template": {
+    "title": "Template",
+    "widgets": "Widgets",
+    "antialias": "Anti-aliasing",
+    "on": "on",
+    "off": "off",
+    "file": "File",
+    "embedded": "embedded in project"
+  },
+  "checks": {
+    "title": "Checks",
+    "ready": "Everything is ready."
+  }
+}

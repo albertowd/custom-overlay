@@ -1,0 +1,185 @@
+{
+  "load": "Load template…",
+  "saveAs": "Save template as…",
+  "loadFailed": "Could not load the template: {error}",
+  "saveFailed": "Could not save the template: {error}",
+  "widgetsTitle": "Widgets",
+  "tabs": {
+    "widget": "Widget",
+    "values": "Values",
+    "style": "Style"
+  },
+  "visible": {
+    "title": "Widgets visible",
+    "hint": "For every widget, unless a widget sets its own range"
+  },
+  "editor": {
+    "snap": "Snap to guides",
+    "showGuides": "Show guides",
+    "hint": "Hold Alt while dragging to flip snapping. Guides are set in the Style tab."
+  },
+  "canvas": {
+    "title": "Canvas",
+    "hint": "The frame the widgets are placed on; the export uses it too",
+    "format": "Format",
+    "formats": {
+      "landscape": "Landscape 16:9 (YouTube)",
+      "vertical": "Vertical 9:16 (TikTok, Reels, Shorts)",
+      "square": "Square 1:1",
+      "portrait": "Portrait 4:5 (Instagram feed)"
+    },
+    "matchVideo": "Same as the video ({width} × {height})",
+    "custom": "Custom ({width} × {height})",
+    "width": "Width",
+    "height": "Height",
+    "fit": "Video placement",
+    "fitModes": {
+      "contain": "Fit (black bars)",
+      "cover": "Fill (crop)",
+      "blur": "Fit on a blurred copy",
+      "stretch": "Stretch"
+    },
+    "rotation": "Rotation",
+    "rotations": {
+      "0": "None",
+      "90": "90° clockwise",
+      "180": "180°",
+      "270": "90° counter-clockwise"
+    },
+    "fitHelp": {
+      "contain": "The whole video is shown; the rest of the canvas is black, room for widgets.",
+      "cover": "The video fills the canvas and what passes it is cropped: the position chooses the part kept.",
+      "blur": "The whole video is shown over a blurred copy filling the canvas, as social apps do.",
+      "stretch": "The video fills the canvas, distorted when the shapes differ."
+    },
+    "rotationHelp": "The video is turned first and then fitted: a landscape video turned 90° fills a vertical canvas.",
+    "rotateWidgets": "Turn the widgets with the video",
+    "rotateWidgetsOn": "The widgets turn with it: they are placed on the canvas turned back, so a landscape template works unchanged.",
+    "rotateWidgetsOff": "The widgets stay upright on the canvas.",
+    "zoom": "Zoom",
+    "horizontal": "Horizontal position",
+    "vertical": "Vertical position",
+    "noVideo": "Without a video only the canvas size matters: the widgets are exported on a transparent background."
+  },
+  "guides": {
+    "title": "Guides",
+    "description": "Snap lines for placing widgets, saved with the template (never rendered). The frame edges always snap.",
+    "columns": "Columns",
+    "rows": "Rows",
+    "margin": "Safe margin %",
+    "vertical": "Extra vertical lines %",
+    "horizontal": "Extra horizontal lines %",
+    "linesPlaceholder": "e.g. 25, 75",
+    "center": "Center lines",
+    "thirds": "Thirds",
+    "safeArea": "5% safe area",
+    "clear": "Clear"
+  },
+  "style": {
+    "templateName": "Template name",
+    "linkedFile": "Linked file: {path}",
+    "font": "Font family",
+    "fontHint": "CSS font list; the first installed one is used.",
+    "antialias": "Anti-alias widget edges (2× supersampling)",
+    "palette": "Project palette",
+    "paletteHint": "Widgets use these colors unless a color is explicitly set on the widget.",
+    "colorOf": "{name} color",
+    "hexOf": "{name} hex value"
+  },
+  "palette": {
+    "primary": "Primary",
+    "secondary": "Secondary",
+    "accent": "Accent",
+    "text": "Text",
+    "textMuted": "Muted text",
+    "background": "Panel background",
+    "positive": "Positive",
+    "negative": "Negative",
+    "warning": "Warning"
+  },
+  "field": {
+    "paletteColor": "Palette: {name}",
+    "customColor": "Custom color",
+    "replaceImage": "Replace…",
+    "chooseImage": "Choose image…",
+    "imageTooLarge": "Images are embedded in the template: keep them under 5 MB",
+    "valueId": "value id"
+  },
+  "preview": {
+    "noVideoNow": "No video at this time",
+    "noVideo": "No video — transparent output",
+    "decodeError": "This video cannot be decoded on this machine (H.265/HEVC needs hardware support). Telemetry and sync still work.",
+    "previousFrame": "Previous frame (←)",
+    "playPause": "Play / pause (space)",
+    "nextFrame": "Next frame (→)"
+  },
+  "widgets": {
+    "categories": {
+      "data": "Data",
+      "map": "Maps",
+      "text": "Text",
+      "asset": "Images"
+    },
+    "anchor": "Anchor",
+    "anchorTitle": "Anchor: {anchor}",
+    "anchors": {
+      "top-left": "top left",
+      "top": "top",
+      "top-right": "top right",
+      "left": "left",
+      "center": "center",
+      "right": "right",
+      "bottom-left": "bottom left",
+      "bottom": "bottom",
+      "bottom-right": "bottom right"
+    },
+    "testValues": "Test values",
+    "testValuesHint": "Type a value to see how the widget looks with it (not saved).",
+    "noSuchValue": "no such value",
+    "wholeVideo": "the whole video",
+    "rangeStart": "start",
+    "rangeEnd": "end",
+    "visible": "Visible",
+    "likeTemplate": "Like the template ({range})",
+    "ownRange": "Own time range",
+    "ownRangeShort": "own time range",
+    "unknownType": "Unknown widget type '{type}'",
+    "x": "X %",
+    "y": "Y %",
+    "width": "Width %",
+    "height": "Height %",
+    "opacity": "Opacity",
+    "antialias": "Anti-aliasing",
+    "templateDefault": "Template default",
+    "on": "On",
+    "off": "Off",
+    "lapTiming": "Lap timing",
+    "timingProject": "Project default (Track step)",
+    "timingImported": "From the logger",
+    "timingLines": "From the track lines",
+    "showWhen": "Show when value",
+    "alwaysShown": "always shown",
+    "condition": "Condition",
+    "conditions": {
+      "has-value": "has a value",
+      "non-zero": "is not zero",
+      "zero": "is zero",
+      "positive": "is positive",
+      "negative": "is negative"
+    },
+    "settings": "Settings",
+    "add": "+ Add widget",
+    "sampleData": "Sample data",
+    "sampleDataHint": "Preview widgets with a synthetic two minute session",
+    "empty": "No widgets yet: add one to start the overlay.",
+    "hide": "Hide",
+    "show": "Show",
+    "bringForward": "Bring forward",
+    "sendBackward": "Send backward",
+    "selectHint": "Select a widget in the list or on the video to edit it.",
+    "data": "Data",
+    "likeProject": "Like the project ({range})",
+    "ownData": "Own data range",
+    "ownDataShort": "own data range"
+  }
+}

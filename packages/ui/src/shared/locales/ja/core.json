@@ -1,0 +1,1066 @@
+{
+  "steps": {
+    "videos": {
+      "title": "動画",
+      "description": "オーバーレイする動画を選択します（チャプター、複数のカメラなど）。ウィジェット画像だけをエクスポートする場合はスキップしてください。"
+    },
+    "sources": {
+      "title": "データソース",
+      "description": "外部のテレメトリーを追加します。動画にテレメトリーが含まれている場合は任意です。"
+    },
+    "sync": {
+      "title": "同期",
+      "description": "すべての動画とデータソースを同じタイムラインに配置します。"
+    },
+    "track": {
+      "title": "コース",
+      "description": "任意：スタート/フィニッシュラインとセクターラインを描いて GPS からラップとセクターを計測し、ラップ値の取得元を選択します。"
+    },
+    "template": {
+      "title": "テンプレート",
+      "description": "動画の上にウィジェットを配置して設定します。"
+    },
+    "summary": {
+      "title": "概要",
+      "description": "エクスポートする前にプロジェクトを確認します。"
+    },
+    "export": {
+      "title": "エクスポート",
+      "description": "完成動画、またはウィジェットの透過画像シーケンスをレンダリングします。"
+    }
+  },
+  "issues": {
+    "notLoaded": "「{label}」を読み込めませんでした",
+    "noSourceForVideos": "動画にテレメトリーが含まれていません。データソースを 1 つ以上追加してください",
+    "noSourceWithoutVideo": "動画がない場合は、データソースが 1 つ以上必要です",
+    "notSynced": "「{label}」はまだ同期されていません",
+    "noStartFinish": "ラップ値はコースラインから取得されますが、スタート/フィニッシュラインがまだありません",
+    "noWidgets": "テンプレートにまだウィジェットがありません",
+    "videoExportWithoutVideo": "動画をエクスポートするには元の動画が必要です。画像シーケンスモードを選択してください",
+    "videoExportElsewhere": "最終動画はデスクトップアプリまたはCLIで書き出します。プロジェクトを動画と同じフォルダーに保存し、そちらで開いてください",
+    "noOutput": "出力先を選択してください"
+  },
+  "widgets": {
+    "speed-gauge": {
+      "name": "スピードメーター",
+      "description": "針、目盛り、デジタル表示付きのアナログメーター。任意の値（RPM、G など）に使えます。",
+      "fields": {
+        "valueId": {
+          "label": "値"
+        },
+        "label": {
+          "label": "単位ラベル"
+        },
+        "min": {
+          "label": "最小"
+        },
+        "max": {
+          "label": "最大",
+          "hint": "0 = セッションの最大値"
+        },
+        "majorStep": {
+          "label": "主目盛りの間隔",
+          "hint": "0 = 自動"
+        },
+        "minorTicks": {
+          "label": "補助目盛り"
+        },
+        "sweep": {
+          "label": "振れ幅（度）"
+        },
+        "decimals": {
+          "label": "小数点以下の桁数"
+        },
+        "color": {
+          "label": "値の弧"
+        },
+        "trackColor": {
+          "label": "背景の弧"
+        },
+        "needleColor": {
+          "label": "針"
+        },
+        "textColor": {
+          "label": "テキスト"
+        },
+        "showDigital": {
+          "label": "デジタル表示"
+        },
+        "digitalY": {
+          "label": "表示位置 (Y)",
+          "hint": "中心から下への半径に対する% (負の値: 上)"
+        },
+        "showLabels": {
+          "label": "目盛りラベル"
+        },
+        "background": {
+          "label": "背景の円"
+        }
+      }
+    },
+    "g-force": {
+      "name": "G",
+      "description": "摩擦円：横 G と前後 G を、消えていく軌跡付きの点で表示します。",
+      "fields": {
+        "lateralId": {
+          "label": "横 G"
+        },
+        "longitudinalId": {
+          "label": "前後 G"
+        },
+        "range": {
+          "label": "範囲（G）"
+        },
+        "ringStep": {
+          "label": "リングの間隔（G）"
+        },
+        "trailSeconds": {
+          "label": "軌跡（秒）"
+        },
+        "invertLateral": {
+          "label": "横方向を反転"
+        },
+        "invertLongitudinal": {
+          "label": "前後方向を反転"
+        },
+        "dotColor": {
+          "label": "点"
+        },
+        "trailColor": {
+          "label": "軌跡"
+        },
+        "gridColor": {
+          "label": "グリッド"
+        },
+        "showValue": {
+          "label": "合成 G の表示"
+        },
+        "valuePosition": {
+          "label": "表示位置",
+          "options": {
+            "bottom": "下",
+            "top": "上"
+          }
+        },
+        "showRings": {
+          "label": "リング",
+          "hint": "リング間隔ごとの円"
+        },
+        "showAxes": {
+          "label": "十字線",
+          "hint": "横方向と縦方向の軸"
+        },
+        "background": {
+          "label": "背景の円"
+        }
+      }
+    },
+    "gps-path": {
+      "name": "GPS 軌跡",
+      "description": "セッション全体の走行軌跡の地図（北が上）。これまでの進行状況と現在位置（点または任意の画像）を表示します。",
+      "fields": {
+        "latitudeId": {
+          "label": "緯度"
+        },
+        "longitudeId": {
+          "label": "経度"
+        },
+        "headingId": {
+          "label": "進行方向",
+          "hint": "マーカー画像を回転させます。ない場合は計算されます"
+        },
+        "lineWidth": {
+          "label": "線の太さ",
+          "hint": "短い辺に対する %"
+        },
+        "pathColor": {
+          "label": "軌跡"
+        },
+        "progressColor": {
+          "label": "進行状況"
+        },
+        "stroke": {
+          "label": "経路のアウトライン",
+          "hint": "背景なしでも経路が見やすくなります"
+        },
+        "strokeColor": {
+          "label": "アウトライン"
+        },
+        "strokeWidth": {
+          "label": "アウトラインの幅",
+          "hint": "短い辺に対する%"
+        },
+        "markerSrc": {
+          "label": "マーカー画像",
+          "hint": "車やカートなど。進行方向に合わせて回転します"
+        },
+        "markerSize": {
+          "label": "マーカーのサイズ",
+          "hint": "短い辺に対する %"
+        },
+        "markerAngle": {
+          "label": "マーカー画像の向き（°）",
+          "hint": "0 = 上、90 = 右"
+        },
+        "markerColor": {
+          "label": "マーカー"
+        },
+        "showProgress": {
+          "label": "進行状況を強調"
+        },
+        "background": {
+          "label": "背景パネル"
+        }
+      }
+    },
+    "live-map": {
+      "name": "ライブマップ",
+      "description": "現在位置を追従する（またはコース全体を表示する）地図。北が上または進行方向が上で、マーカー（または任意の画像）が進行方向に合わせて回転します。",
+      "fields": {
+        "latitudeId": {
+          "label": "緯度"
+        },
+        "longitudeId": {
+          "label": "経度"
+        },
+        "headingId": {
+          "label": "進行方向",
+          "hint": "ない場合は軌跡から計算されます"
+        },
+        "view": {
+          "label": "表示",
+          "options": {
+            "follow": "位置を追従",
+            "whole": "コース全体"
+          }
+        },
+        "radius": {
+          "label": "半径（m）",
+          "hint": "追従表示のとき"
+        },
+        "orientation": {
+          "label": "向き",
+          "hint": "コース全体の表示は常に北が上です",
+          "options": {
+            "heading-up": "進行方向が上（地図が回転）",
+            "north-up": "北が上（マーカーが回転）"
+          }
+        },
+        "shape": {
+          "label": "図形",
+          "options": {
+            "circle": "円",
+            "rounded": "角丸四角形"
+          }
+        },
+        "markerSrc": {
+          "label": "マーカー画像",
+          "hint": "車やカートなど。進行方向に合わせて回転します"
+        },
+        "markerSize": {
+          "label": "マーカーのサイズ",
+          "hint": "短い辺に対する %"
+        },
+        "markerAngle": {
+          "label": "マーカー画像の向き（°）",
+          "hint": "0 = 上、90 = 右"
+        },
+        "markerColor": {
+          "label": "マーカー"
+        },
+        "lineWidth": {
+          "label": "線の太さ"
+        },
+        "pathColor": {
+          "label": "軌跡"
+        },
+        "traveledColor": {
+          "label": "走行済み"
+        },
+        "stroke": {
+          "label": "経路のアウトライン",
+          "hint": "背景なしでも経路が見やすくなります"
+        },
+        "strokeColor": {
+          "label": "アウトライン"
+        },
+        "strokeWidth": {
+          "label": "アウトラインの幅",
+          "hint": "短い辺に対する%"
+        },
+        "showNorth": {
+          "label": "方位記号"
+        },
+        "background": {
+          "label": "背景"
+        }
+      }
+    },
+    "distance-bar": {
+      "name": "距離バー",
+      "description": "走行距離の進捗バー。距離の間隔ごと、または各ラップの開始位置に目盛り付き。",
+      "fields": {
+        "valueId": {
+          "label": "距離の値（m）"
+        },
+        "unit": {
+          "label": "単位",
+          "options": {
+            "km": "キロメートル",
+            "m": "メートル",
+            "mi": "マイル"
+          }
+        },
+        "total": {
+          "label": "合計",
+          "hint": "上の単位で指定。0 = セッション全体"
+        },
+        "ticks": {
+          "label": "主目盛り",
+          "options": {
+            "distance": "目盛りの間隔ごと",
+            "laps": "各ラップの開始位置"
+          }
+        },
+        "tickStep": {
+          "label": "目盛りの間隔",
+          "hint": "0 = 自動。距離の目盛りのみ"
+        },
+        "lapTimeId": {
+          "label": "ラップタイムの値（秒）",
+          "hint": "ラップの目盛りのみ"
+        },
+        "lapNumberId": {
+          "label": "ラップ数の値",
+          "hint": "ラップの目盛りのみ"
+        },
+        "minorTicks": {
+          "label": "補助目盛り",
+          "hint": "主目盛りの間（ラップの目盛りではラップごと）"
+        },
+        "decimals": {
+          "label": "小数点以下の桁数"
+        },
+        "color": {
+          "label": "進行状況"
+        },
+        "trackColor": {
+          "label": "バーの背景"
+        },
+        "textColor": {
+          "label": "テキスト"
+        },
+        "showLabels": {
+          "label": "目盛りラベル"
+        },
+        "showValue": {
+          "label": "現在の距離"
+        },
+        "background": {
+          "label": "背景パネル"
+        }
+      }
+    },
+    "elevation": {
+      "name": "標高",
+      "description": "現在の標高と、セッション全体の標高プロファイル。",
+      "fields": {
+        "valueId": {
+          "label": "標高の値（m）"
+        },
+        "unit": {
+          "label": "単位",
+          "options": {
+            "m": "メートル",
+            "ft": "フィート"
+          }
+        },
+        "label": {
+          "label": "ラベル"
+        },
+        "decimals": {
+          "label": "小数点以下の桁数"
+        },
+        "showProfile": {
+          "label": "プロファイル"
+        },
+        "color": {
+          "label": "プロファイルの色"
+        },
+        "markerColor": {
+          "label": "マーカー"
+        },
+        "textColor": {
+          "label": "テキスト"
+        },
+        "background": {
+          "label": "背景パネル"
+        }
+      }
+    },
+    "lap-timer": {
+      "name": "ラップタイマー",
+      "description": "現在のラップの経過タイム。ラップが終わると、最終タイムがベストまたは前のラップとの差と一緒に数秒間表示されます。",
+      "fields": {
+        "lapTimeId": {
+          "label": "ラップタイムの値（秒）"
+        },
+        "lapNumberId": {
+          "label": "ラップ数の値"
+        },
+        "holdSeconds": {
+          "label": "終了したラップの表示時間（秒）",
+          "hint": "0 = すぐに新しいラップへ"
+        },
+        "delta": {
+          "label": "終了したラップの比較対象",
+          "options": {
+            "best": "これまでのベストラップ",
+            "previous": "前のラップ",
+            "none": "差を表示しない"
+          }
+        },
+        "decimals": {
+          "label": "小数点以下の桁数"
+        },
+        "showLapNumber": {
+          "label": "ラップ数"
+        },
+        "beforeFirstLap": {
+          "label": "最初のラップの前",
+          "options": {
+            "dashes": "ダッシュを表示",
+            "hide": "非表示"
+          }
+        },
+        "color": {
+          "label": "タイム"
+        },
+        "bestColor": {
+          "label": "ベストラップ更新"
+        },
+        "background": {
+          "label": "背景パネル"
+        }
+      }
+    },
+    "lap-count": {
+      "name": "ラップカウンター",
+      "description": "セッションの現在のラップと総ラップ数（例: LAP 3 / 12）。",
+      "fields": {
+        "lapNumberId": {
+          "label": "ラップ数の値"
+        },
+        "lapCountId": {
+          "label": "総ラップ数の値"
+        },
+        "label": {
+          "label": "ラベル",
+          "hint": "空欄 = ラベルなし"
+        },
+        "showTotal": {
+          "label": "総ラップ数"
+        },
+        "beforeFirstLap": {
+          "label": "最初のラップの前",
+          "options": {
+            "dashes": "ダッシュを表示",
+            "hide": "非表示"
+          }
+        },
+        "color": {
+          "label": "現在のラップ"
+        },
+        "totalColor": {
+          "label": "合計"
+        },
+        "background": {
+          "label": "背景パネル"
+        }
+      }
+    },
+    "lap-table": {
+      "name": "ラップタイム",
+      "description": "ベストラップとの差付きのラップタイム表。これまでのラップ、またはセッション全体を表示します。現在のラップは経過タイムと進行状況付きで強調表示されます。",
+      "fields": {
+        "lapTimeId": {
+          "label": "ラップタイムの値（秒）"
+        },
+        "lapNumberId": {
+          "label": "ラップ数の値"
+        },
+        "mode": {
+          "label": "ラップ",
+          "hint": "セッション全体：今後のラップは薄く表示されます",
+          "options": {
+            "so-far": "これまで",
+            "session": "セッション全体"
+          }
+        },
+        "rows": {
+          "label": "行数"
+        },
+        "order": {
+          "label": "順序",
+          "options": {
+            "oldest-first": "古い順",
+            "newest-first": "新しい順"
+          }
+        },
+        "showCurrent": {
+          "label": "現在のラップの行"
+        },
+        "showDelta": {
+          "label": "ベストとの差"
+        },
+        "showHeader": {
+          "label": "ヘッダー"
+        },
+        "decimals": {
+          "label": "小数点以下の桁数"
+        },
+        "color": {
+          "label": "テキスト"
+        },
+        "currentColor": {
+          "label": "現在のラップ"
+        },
+        "bestColor": {
+          "label": "ベストラップ"
+        },
+        "background": {
+          "label": "背景パネル"
+        }
+      }
+    },
+    "date-time": {
+      "name": "日付と時刻",
+      "description": "フレームの時刻（GPS またはロガーの時計から）。日付の行を追加できます。",
+      "fields": {
+        "time": {
+          "label": "時刻の形式",
+          "hint": "トークン：HH mm ss SSS（空欄で非表示）"
+        },
+        "date": {
+          "label": "日付の形式",
+          "hint": "トークン：YYYY MM DD（空欄で非表示）"
+        },
+        "timezone": {
+          "label": "タイムゾーン",
+          "options": {
+            "local": "このコンピューター",
+            "utc": "UTC",
+            "custom": "カスタムオフセット"
+          }
+        },
+        "utcOffsetMinutes": {
+          "label": "オフセット（分）",
+          "hint": "カスタムタイムゾーンで使用"
+        },
+        "color": {
+          "label": "時刻の色"
+        },
+        "dateColor": {
+          "label": "日付の色"
+        },
+        "background": {
+          "label": "背景パネル"
+        }
+      }
+    },
+    "timespan": {
+      "name": "経過時間",
+      "description": "開始からの経過時間。開始は時計の日時（レーススタート）またはタイムライン上の位置です。開始前はカウントダウン、ゼロ表示、非表示のいずれかになります。",
+      "fields": {
+        "reference": {
+          "label": "開始の基準",
+          "options": {
+            "timeline": "タイムライン上の位置",
+            "clock": "時計の日時"
+          }
+        },
+        "startTimeline": {
+          "label": "開始（タイムライン）"
+        },
+        "startClock": {
+          "label": "開始（日時）",
+          "hint": "YYYY-MM-DD HH:mm:ss"
+        },
+        "timezone": {
+          "label": "開始のタイムゾーン",
+          "options": {
+            "local": "このコンピューター",
+            "utc": "UTC",
+            "custom": "カスタムオフセット"
+          }
+        },
+        "utcOffsetMinutes": {
+          "label": "オフセット（分）"
+        },
+        "beforeStart": {
+          "label": "開始前",
+          "options": {
+            "countdown": "カウントダウン",
+            "zero": "ゼロを表示",
+            "hide": "非表示"
+          }
+        },
+        "decimals": {
+          "label": "小数点以下の桁数"
+        },
+        "label": {
+          "label": "ラベル",
+          "hint": "上に表示する任意の行（例：RACE TIME）"
+        },
+        "color": {
+          "label": "色"
+        },
+        "countdownColor": {
+          "label": "カウントダウンの色"
+        },
+        "background": {
+          "label": "背景パネル"
+        }
+      }
+    },
+    "value-text": {
+      "name": "値テキスト",
+      "description": "リアルタイムの値を含むテキスト。例：「Lap {lap.number}  {lap.time|duration}」や「{speed.kmh|0} km/h」。",
+      "fields": {
+        "template": {
+          "label": "テキスト",
+          "hint": "{value.id} または {value.id|format}。形式：0、0.0、duration、duration.0、clock:HH:mm:ss"
+        },
+        "fallback": {
+          "label": "値がないとき"
+        },
+        "color": {
+          "label": "色"
+        },
+        "size": {
+          "label": "フォントサイズ",
+          "hint": "ボックスの高さに対する割合"
+        },
+        "weight": {
+          "label": "太さ",
+          "options": {
+            "400": "標準",
+            "600": "やや太字",
+            "800": "太字"
+          }
+        },
+        "align": {
+          "label": "配置",
+          "options": {
+            "left": "左",
+            "center": "中央",
+            "right": "右"
+          }
+        },
+        "italic": {
+          "label": "斜体"
+        },
+        "uppercase": {
+          "label": "大文字"
+        },
+        "background": {
+          "label": "背景パネル"
+        }
+      }
+    },
+    "text": {
+      "name": "テキスト",
+      "description": "固定テキスト：タイトル、ドライバー名、イベント名など。",
+      "fields": {
+        "text": {
+          "label": "テキスト"
+        },
+        "color": {
+          "label": "色"
+        },
+        "size": {
+          "label": "フォントサイズ",
+          "hint": "ボックスの高さに対する割合"
+        },
+        "weight": {
+          "label": "太さ",
+          "options": {
+            "400": "標準",
+            "600": "やや太字",
+            "800": "太字"
+          }
+        },
+        "align": {
+          "label": "配置",
+          "options": {
+            "left": "左",
+            "center": "中央",
+            "right": "右"
+          }
+        },
+        "italic": {
+          "label": "斜体"
+        },
+        "uppercase": {
+          "label": "大文字"
+        },
+        "background": {
+          "label": "背景パネル"
+        }
+      }
+    },
+    "image": {
+      "name": "画像",
+      "description": "固定の画像またはベクター（PNG、JPEG、WebP、SVG）：ロゴ、ゼッケン、スポンサーなど。",
+      "fields": {
+        "src": {
+          "label": "画像"
+        },
+        "fit": {
+          "label": "フィット",
+          "options": {
+            "contain": "全体を表示",
+            "cover": "全体を覆う",
+            "stretch": "引き伸ばす"
+          }
+        },
+        "cornerRadius": {
+          "label": "角の半径",
+          "hint": "短い辺に対する %"
+        },
+        "background": {
+          "label": "背景パネル"
+        }
+      }
+    },
+    "dynamic-image": {
+      "name": "動的画像",
+      "description": "値に応じて移動・回転・拡大縮小する画像：舵角で回るステアリング、針、車のアイコンなど。",
+      "fields": {
+        "src": {
+          "label": "画像"
+        },
+        "fit": {
+          "label": "フィット",
+          "options": {
+            "contain": "全体を表示",
+            "cover": "全体を覆う",
+            "stretch": "引き伸ばす"
+          }
+        },
+        "rotateId": {
+          "label": "回転の値",
+          "hint": "空欄：回転なし"
+        },
+        "rotateScale": {
+          "label": "1 単位あたりの角度"
+        },
+        "rotateOffset": {
+          "label": "回転オフセット（°）"
+        },
+        "translateXId": {
+          "label": "X 移動の値"
+        },
+        "translateXScale": {
+          "label": "1 単位あたりのボックス幅"
+        },
+        "translateYId": {
+          "label": "Y 移動の値"
+        },
+        "translateYScale": {
+          "label": "1 単位あたりのボックス高さ"
+        },
+        "scaleId": {
+          "label": "拡大縮小の値"
+        },
+        "scaleFactor": {
+          "label": "1 単位あたりの倍率"
+        }
+      }
+    },
+    "shape": {
+      "name": "図形",
+      "description": "画像を使わずに背景を作る単色の図形：パネル、斜めのレーシングバー、円、バッジなど。",
+      "fields": {
+        "shape": {
+          "label": "図形",
+          "options": {
+            "rectangle": "四角形",
+            "rounded": "角丸四角形",
+            "ellipse": "楕円 / 円",
+            "parallelogram": "平行四辺形（斜め）",
+            "triangle": "三角形",
+            "diamond": "ひし形",
+            "hexagon": "六角形"
+          }
+        },
+        "color": {
+          "label": "塗りつぶし"
+        },
+        "fill": {
+          "label": "塗りつぶす",
+          "hint": "オフ：枠線のみ"
+        },
+        "cornerRadius": {
+          "label": "角の半径",
+          "hint": "角丸四角形"
+        },
+        "slant": {
+          "label": "傾き（%）",
+          "hint": "平行四辺形"
+        },
+        "borderWidth": {
+          "label": "枠線の太さ",
+          "hint": "0 = なし"
+        },
+        "borderColor": {
+          "label": "枠線"
+        }
+      }
+    }
+  },
+  "values": {
+    "time": {
+      "timeline": {
+        "name": "タイムラインの時間",
+        "description": "タイムラインの 0 秒からの秒数"
+      },
+      "frame": {
+        "name": "フレーム番号",
+        "description": "レンダリング中のフレームの番号"
+      },
+      "clock": {
+        "name": "時刻",
+        "description": "フレームの UTC 時刻（エポックミリ秒、GPS またはロガーの時計から）"
+      }
+    },
+    "session": {
+      "elapsed": {
+        "name": "セッション経過時間",
+        "description": "タイムラインの開始からの秒数"
+      },
+      "remaining": {
+        "name": "セッション残り時間",
+        "description": "タイムラインの終了までの秒数"
+      }
+    },
+    "speed": {
+      "kmh": {
+        "name": "速度（km/h）",
+        "description": "利用可能な最適な速度（km/h）"
+      },
+      "mph": {
+        "name": "速度（mph）",
+        "description": "利用可能な最適な速度（mph）"
+      },
+      "top": {
+        "kmh": {
+          "name": "最高速度（km/h）",
+          "description": "これまでの最高速度（km/h、GPS の異常値を除く）"
+        },
+        "mph": {
+          "name": "最高速度（mph）",
+          "description": "これまでの最高速度（mph、GPS の異常値を除く）"
+        }
+      }
+    },
+    "accel": {
+      "lateral": {
+        "name": "横 G",
+        "description": "コーナリング加速度：記録された横 G、または GPS 軌跡から計算（正 = 右旋回）"
+      },
+      "longitudinal": {
+        "name": "前後 G",
+        "description": "加速とブレーキ：記録された前後 G、または GPS 速度から計算（正 = 加速）"
+      },
+      "combined": {
+        "name": "合成 G",
+        "description": "水平方向の合計加速度：記録された値、または横 G と前後 G から計算"
+      }
+    },
+    "distance": {
+      "traveled": {
+        "name": "走行距離",
+        "description": "開始からの走行メートル数：記録された距離、または移動中の GPS 位置から積算"
+      }
+    },
+    "lap": {
+      "number": {
+        "name": "ラップ",
+        "description": "現在のラップ数（プロジェクトの計時ソース）"
+      },
+      "time": {
+        "name": "ラップタイム",
+        "description": "現在のラップ開始からの秒数（アウトラップでは空）（プロジェクトの計時ソース）"
+      },
+      "last": {
+        "name": "前回のラップ",
+        "description": "最後に完了したラップ（プロジェクトの計時ソース）"
+      },
+      "best": {
+        "name": "ベストラップ",
+        "description": "これまでに完了したベストラップ（プロジェクトの計時ソース）"
+      },
+      "count": {
+        "name": "総ラップ数",
+        "description": "セッションのラップ数（プロジェクトの計時ソース）"
+      },
+      "remaining": {
+        "name": "残りラップ数",
+        "description": "総ラップ数から現在のラップを引いた数（プロジェクトの計時ソース）"
+      },
+      "theoretical": {
+        "name": "理論ベストラップ",
+        "description": "これまでの各セクターのベストタイムの合計（プロジェクトの計時ソース）"
+      }
+    },
+    "sector": {
+      "number": {
+        "name": "セクター",
+        "description": "現在のセクター（プロジェクトの計時ソース）"
+      },
+      "time": {
+        "name": "セクタータイム",
+        "description": "現在のセクター開始からの秒数（プロジェクトの計時ソース）"
+      },
+      "last": {
+        "name": "前回のセクター",
+        "description": "最後に完了したセクター、全セクター対象（プロジェクトの計時ソース）"
+      },
+      "N": {
+        "last": {
+          "name": "セクター{n}",
+          "description": "セクター{n}の直近タイム（プロジェクトの計時ソース）"
+        },
+        "best": {
+          "name": "ベストセクター{n}",
+          "description": "これまでのセクター{n}のベストタイム（プロジェクトの計時ソース）"
+        }
+      }
+    },
+    "imported": {
+      "lap": {
+        "number": {
+          "name": "ラップ（ロガー）",
+          "description": "現在のラップ数（ロガーから）"
+        },
+        "time": {
+          "name": "ラップタイム（ロガー）",
+          "description": "現在のラップ開始からの秒数（アウトラップでは空）、ロガーから"
+        },
+        "last": {
+          "name": "前回のラップ（ロガー）",
+          "description": "最後に完了したラップ（ロガーから）"
+        },
+        "best": {
+          "name": "ベストラップ（ロガー）",
+          "description": "これまでに完了したベストラップ（ロガーから）"
+        },
+        "count": {
+          "name": "総ラップ数（ロガー）",
+          "description": "セッションのラップ数（ロガーから）"
+        },
+        "remaining": {
+          "name": "残りラップ数（ロガー）",
+          "description": "総ラップ数から現在のラップを引いた数（ロガーから）"
+        }
+      }
+    },
+    "lines": {
+      "lap": {
+        "number": {
+          "name": "ラップ（コースライン）",
+          "description": "現在のラップ数（コースラインから）"
+        },
+        "time": {
+          "name": "ラップタイム（コースライン）",
+          "description": "現在のラップ開始からの秒数（アウトラップでは空）、コースラインから"
+        },
+        "last": {
+          "name": "前回のラップ（コースライン）",
+          "description": "最後に完了したラップ（コースラインから）"
+        },
+        "best": {
+          "name": "ベストラップ（コースライン）",
+          "description": "これまでに完了したベストラップ（コースラインから）"
+        },
+        "count": {
+          "name": "総ラップ数（コースライン）",
+          "description": "セッションのラップ数（コースラインから）"
+        },
+        "remaining": {
+          "name": "残りラップ数（コースライン）",
+          "description": "総ラップ数から現在のラップを引いた数（コースラインから）"
+        },
+        "theoretical": {
+          "name": "理論ベストラップ（コースライン）",
+          "description": "これまでの各セクターのベストタイムの合計（コースラインから）"
+        }
+      },
+      "sector": {
+        "number": {
+          "name": "セクター（コースライン）",
+          "description": "現在のセクター（コースラインから）"
+        },
+        "time": {
+          "name": "セクタータイム（コースライン）",
+          "description": "現在のセクター開始からの秒数（コースラインから）"
+        },
+        "last": {
+          "name": "前回のセクター（コースライン）",
+          "description": "最後に完了したセクター、全セクター対象（コースラインから）"
+        },
+        "N": {
+          "last": {
+            "name": "セクター{n}（コースライン）",
+            "description": "セクター{n}の直近タイム（コースラインから）"
+          },
+          "best": {
+            "name": "ベストセクター{n}（コースライン）",
+            "description": "これまでのセクター{n}のベストタイム（コースラインから）"
+          }
+        }
+      }
+    }
+  },
+  "presets": {
+    "youtube-sdr-h264": {
+      "label": "YouTube SDR · H.264",
+      "description": "YouTube 推奨のアップロード設定：H.264 High、B フレーム 2、フレームレートの半分のクローズド GOP、AAC 384 kbps。"
+    },
+    "youtube-sdr-hevc": {
+      "label": "YouTube SDR · HEVC",
+      "description": "YouTube の SDR 設定を H.265 で（YouTube は H.265 も受け付けます）：10 ビット映像を GPU でエンコード。"
+    },
+    "youtube-hdr-hevc": {
+      "label": "YouTube HDR · HEVC",
+      "description": "YouTube の HDR 推奨設定：Rec.2020 HLG / PQ 出力向けの 10 ビット H.265、B フレーム 2、フレームレートの半分のクローズド GOP、AAC 384 kbps。"
+    },
+    "youtube-hdr-av1": {
+      "label": "YouTube HDR · AV1",
+      "description": "YouTube の HDR 推奨設定を AV1 で（HDR に推奨されるコーデック）：AV1 エンコード対応 GPU では高速、CPU では低速。"
+    },
+    "youtubeBitrate": "{bitrate} Mbps：{resolution}・{fps} の YouTube {table} 推奨範囲の上限。",
+    "tiktok": {
+      "label": "TikTok · 9:16",
+      "description": "TikTok 向けの全画面縦長 1080 × 1920 動画：H.264 High、B フレーム 2、GOP 1 秒、AAC 192 kbps。"
+    },
+    "instagram-reels": {
+      "label": "Instagram リール · 9:16",
+      "description": "Instagram のリールとストーリーズ向けの全画面縦長 1080 × 1920 動画：H.264 High、B フレーム 2、GOP 1 秒、AAC 192 kbps。"
+    },
+    "instagram-feed": {
+      "label": "Instagram フィード · 4:5",
+      "description": "Instagram のフィードで最も縦長に表示される 1080 × 1350 動画：H.264 High、B フレーム 2、GOP 1 秒、AAC 192 kbps。"
+    },
+    "socialBitrate": "{fps} で {bitrate} Mbps。アプリはアップロードされた動画をすべて再エンコードします。",
+    "archive": {
+      "label": "高画質アーカイブ",
+      "description": "YouTube の 2 倍のビットレートの H.265、GOP 1 秒、元の音声をコピー。"
+    },
+    "editing": {
+      "label": "編集向け",
+      "description": "動画編集ソフトでスムーズにスクラブできる、B フレームなしの 0.25 秒の短い GOP、H.264。"
+    }
+  }
+}

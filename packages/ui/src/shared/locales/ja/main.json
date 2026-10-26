@@ -1,0 +1,57 @@
+{
+  "filters": {
+    "videos": "動画",
+    "telemetry": "テレメトリー",
+    "videoTelemetry": "動画 (テレメトリーのみ: GoPro または DJI)",
+    "djiSubtitles": "DJI のテレメトリー字幕",
+    "project": "オーバーレイ プロジェクト",
+    "values": "値スクリプト",
+    "trackOrProject": "コースまたはプロジェクト",
+    "widgets": "ウィジェットまたはテンプレート",
+    "template": "オーバーレイ テンプレート",
+    "widget": "オーバーレイ ウィジェット",
+    "track": "コース",
+    "mp4": "MP4 動画"
+  },
+  "dialogs": {
+    "addVideos": "動画を追加",
+    "addSources": "データソースを追加",
+    "importWidgets": "ウィジェットをインポート",
+    "exportWidget": "ウィジェットをエクスポート",
+    "importTrack": "コースのラインをインポート",
+    "exportTrack": "コースのラインをエクスポート",
+    "importValues": "値をインポート",
+    "exportValues": "値をエクスポート",
+    "openProject": "プロジェクトを開く",
+    "saveProject": "プロジェクトを保存",
+    "loadTemplate": "テンプレートを読み込む",
+    "saveTemplate": "テンプレートを保存",
+    "outputFolder": "連番画像の出力フォルダーを選択",
+    "exportVideo": "動画をエクスポート"
+  },
+  "chapters": {
+    "title": "GoPro のチャプター",
+    "message": {
+      "other": "この動画は GoPro の長い録画の一部です"
+    },
+    "explanation": "GoPro は長い録画を複数のチャプターファイルに分割します:",
+    "files": {
+      "other": "{count} ファイル"
+    },
+    "question": {
+      "other": "残りの {count} 個のチャプターも追加しますか？タイムライン上に順番に配置され、それぞれのテレメトリーが使われます。"
+    },
+    "addAll": "すべてのチャプターを追加",
+    "onlySelected": "選択した動画のみ"
+  },
+  "closeDuringExport": {
+    "title": "エクスポート中",
+    "message": "エクスポートがまだ実行中です。",
+    "detail": "閉じるとエクスポートがキャンセルされ、未完成のファイルは削除されます。",
+    "keep": "エクスポートを続ける",
+    "cancelAndClose": "エクスポートをキャンセルして閉じる"
+  },
+  "errors": {
+    "exportRunning": "すでにエクスポートを実行中です"
+  }
+}

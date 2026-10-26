@@ -1,0 +1,37 @@
+{
+  "origins": {
+    "source": "di sorgente",
+    "builtin": "integrato",
+    "script": "di script"
+  },
+  "groups": {
+    "script": "Script",
+    "builtin": "Integrati",
+    "source": "Sorgenti"
+  },
+  "panel": {
+    "replaces": "Sostituisce un valore {origin}",
+    "error": "errore",
+    "new": "+ Nuovo valore",
+    "newScriptName": "Il mio valore",
+    "filter": "Filtra valori…",
+    "failed": {
+      "one": "{count} valore non riuscito — passaci sopra con il mouse per i dettagli.",
+      "other": "{count} valori non riusciti — passaci sopra con il mouse per i dettagli."
+    },
+    "evaluating": "Calcolo in corso…",
+    "trust": "Gli script sono JavaScript eseguito con i permessi dell'app: importa raccolte solo da persone di cui ti fidi."
+  },
+  "editor": {
+    "id": "Id",
+    "initial": "Valore iniziale",
+    "initialPlaceholder": "vuoto (nessun valore)",
+    "initialInvalid": "Il valore iniziale deve essere un numero o vuoto",
+    "scriptBefore": "Script: corpo di",
+    "scriptAfter": "che restituisce un numero per fotogramma",
+    "scriptError": "Errore dello script: {error}",
+    "atPlayhead": "Alla testina:",
+    "saveClose": "Salva e chiudi",
+    "back": "Indietro"
+  }
+}

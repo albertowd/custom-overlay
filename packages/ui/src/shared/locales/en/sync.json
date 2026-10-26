@@ -1,0 +1,59 @@
+{
+  "offset": {
+    "label": "Position on the timeline",
+    "minusFrame": "−1 frame",
+    "plusFrame": "+1 frame",
+    "formula": "timeline time = item time + position"
+  },
+  "results": {
+    "none": "No automatic match: no shared absolute time, chapter or speed signal. Align manually using the video and the live values."
+  },
+  "methods": {
+    "timestamp": "By GPS time",
+    "camera-clock": "By camera clock",
+    "chapter": "GoPro chapter",
+    "correlation": "By speed signal"
+  },
+  "messages": {
+    "gpsTime": "GPS / logger time compared with '{label}'",
+    "cameraClocks": "Camera clocks compared with '{label}' (same timezone assumed)",
+    "placedClockAsZone": "Camera clock of '{label}' ({clock}) read as {zone}",
+    "clockAsZone": "Camera clock ({clock}) read as {zone}",
+    "speedMatch": "Speed matched with '{label}' (r = {r}, {overlap} s compared)",
+    "chapterContinues": "Continues '{label}' (GoPro chapter {chapter})",
+    "chapterEndsBefore": "Ends where '{label}' starts (GoPro chapter {chapter})"
+  },
+  "notes": {
+    "farFromTimeline": "far from the timeline, recorded at another time?",
+    "ambiguous": "ambiguous, repeating pattern"
+  },
+  "empty": {
+    "title": "Nothing to sync.",
+    "description": "The only video or data source defines the timeline, and embedded telemetry always follows its video.",
+    "continue": "Continue"
+  },
+  "chart": {
+    "title": "Speed",
+    "zoom": "±{seconds} s around the playhead",
+    "noSpeed": "No speed channel to plot."
+  },
+  "auto": {
+    "run": "Auto sync",
+    "busy": "Analyzing…"
+  },
+  "synced": "Synced",
+  "live": {
+    "title": "At the playhead",
+    "timeline": "Timeline",
+    "itemTime": "Item time",
+    "itemClock": "Item clock",
+    "referenceSpeed": "Reference speed",
+    "itemSpeed": "Item speed",
+    "lap": "Lap"
+  },
+  "timeInput": {
+    "format": "Type e.g. 530, 2.530, 2:30 or 1:05:00",
+    "rejected": "Not allowed here",
+    "followsTimeline": "Follows the timeline"
+  }
+}

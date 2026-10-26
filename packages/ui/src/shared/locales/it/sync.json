@@ -1,0 +1,59 @@
+{
+  "offset": {
+    "label": "Posizione sulla timeline",
+    "minusFrame": "−1 fotogramma",
+    "plusFrame": "+1 fotogramma",
+    "formula": "tempo della timeline = tempo dell'elemento + posizione"
+  },
+  "results": {
+    "none": "Nessuna corrispondenza automatica: nessun orario assoluto, capitolo o segnale di velocità in comune. Allinea manualmente con il video e i valori in tempo reale."
+  },
+  "methods": {
+    "timestamp": "Tramite orario GPS",
+    "camera-clock": "Tramite orologio della videocamera",
+    "chapter": "Capitolo GoPro",
+    "correlation": "Tramite segnale di velocità"
+  },
+  "messages": {
+    "gpsTime": "Orario GPS / del logger confrontato con '{label}'",
+    "cameraClocks": "Orologi delle videocamere confrontati con '{label}' (stesso fuso orario presunto)",
+    "placedClockAsZone": "Orologio della videocamera di '{label}' ({clock}) letto come {zone}",
+    "clockAsZone": "Orologio della videocamera ({clock}) letto come {zone}",
+    "speedMatch": "Velocità corrispondente a '{label}' (r = {r}, {overlap} s confrontati)",
+    "chapterContinues": "Continua '{label}' (capitolo GoPro {chapter})",
+    "chapterEndsBefore": "Finisce dove inizia '{label}' (capitolo GoPro {chapter})"
+  },
+  "notes": {
+    "farFromTimeline": "lontano dalla timeline, registrato in un altro momento?",
+    "ambiguous": "ambiguo, andamento ripetitivo"
+  },
+  "empty": {
+    "title": "Niente da sincronizzare.",
+    "description": "L'unico video o fonte di dati definisce la timeline, e la telemetria incorporata segue sempre il suo video.",
+    "continue": "Continua"
+  },
+  "chart": {
+    "title": "Velocità",
+    "zoom": "±{seconds} s attorno alla testina",
+    "noSpeed": "Nessun canale di velocità da mostrare."
+  },
+  "auto": {
+    "run": "Sincronizzazione automatica",
+    "busy": "Analisi in corso…"
+  },
+  "synced": "Sincronizzato",
+  "live": {
+    "title": "Alla testina",
+    "timeline": "Timeline",
+    "itemTime": "Tempo dell'elemento",
+    "itemClock": "Orologio dell'elemento",
+    "referenceSpeed": "Velocità di riferimento",
+    "itemSpeed": "Velocità dell'elemento",
+    "lap": "Giro"
+  },
+  "timeInput": {
+    "format": "Digita ad es. 530, 2.530, 2:30 o 1:05:00",
+    "rejected": "Non consentito qui",
+    "followsTimeline": "Segue la timeline"
+  }
+}

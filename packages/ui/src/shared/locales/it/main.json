@@ -1,0 +1,60 @@
+{
+  "filters": {
+    "videos": "Video",
+    "telemetry": "Telemetria",
+    "videoTelemetry": "Video (solo telemetria: GoPro o DJI)",
+    "djiSubtitles": "Sottotitoli di telemetria DJI",
+    "project": "Progetto overlay",
+    "values": "Script dei valori",
+    "trackOrProject": "Circuito o progetto",
+    "widgets": "Widget o modello",
+    "template": "Modello overlay",
+    "widget": "Widget overlay",
+    "track": "Circuito",
+    "mp4": "Video MP4"
+  },
+  "dialogs": {
+    "addVideos": "Aggiungi video",
+    "addSources": "Aggiungi sorgenti dati",
+    "importWidgets": "Importa widget",
+    "exportWidget": "Esporta widget",
+    "importTrack": "Importa linee del tracciato",
+    "exportTrack": "Esporta linee del tracciato",
+    "importValues": "Importa valori",
+    "exportValues": "Esporta valori",
+    "openProject": "Apri progetto",
+    "saveProject": "Salva progetto",
+    "loadTemplate": "Carica modello",
+    "saveTemplate": "Salva modello",
+    "outputFolder": "Seleziona la cartella di output della sequenza di immagini",
+    "exportVideo": "Esporta video"
+  },
+  "chapters": {
+    "title": "Capitoli GoPro",
+    "message": {
+      "one": "Questo video fa parte di una registrazione GoPro più lunga",
+      "other": "Questi video fanno parte di registrazioni GoPro più lunghe"
+    },
+    "explanation": "GoPro divide le registrazioni lunghe in file di capitolo:",
+    "files": {
+      "one": "{count} file",
+      "other": "{count} file"
+    },
+    "question": {
+      "one": "Aggiungere anche l'altro capitolo ({count})? I capitoli vengono messi uno dopo l'altro sulla timeline, ciascuno con la propria telemetria.",
+      "other": "Aggiungere anche gli altri {count} capitoli? Vengono messi uno dopo l'altro sulla timeline, ciascuno con la propria telemetria."
+    },
+    "addAll": "Aggiungi tutti i capitoli",
+    "onlySelected": "Solo i video selezionati"
+  },
+  "closeDuringExport": {
+    "title": "Esportazione in corso",
+    "message": "C'è ancora un'esportazione in corso.",
+    "detail": "Chiudendo la annulli e il file incompleto viene eliminato.",
+    "keep": "Continua a esportare",
+    "cancelAndClose": "Annulla l'esportazione e chiudi"
+  },
+  "errors": {
+    "exportRunning": "C'è già un'esportazione in corso"
+  }
+}

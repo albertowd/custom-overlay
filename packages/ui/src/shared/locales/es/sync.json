@@ -1,0 +1,59 @@
+{
+  "offset": {
+    "label": "Posición en la línea de tiempo",
+    "minusFrame": "−1 fotograma",
+    "plusFrame": "+1 fotograma",
+    "formula": "tiempo de la línea de tiempo = tiempo del elemento + posición"
+  },
+  "results": {
+    "none": "Sin coincidencia automática: no hay hora absoluta, capítulo ni señal de velocidad en común. Alinea manualmente con el vídeo y los valores en directo."
+  },
+  "methods": {
+    "timestamp": "Por hora GPS",
+    "camera-clock": "Por reloj de la cámara",
+    "chapter": "Capítulo de GoPro",
+    "correlation": "Por señal de velocidad"
+  },
+  "messages": {
+    "gpsTime": "Hora del GPS / registrador comparada con '{label}'",
+    "cameraClocks": "Relojes de las cámaras comparados con '{label}' (se asume la misma zona horaria)",
+    "placedClockAsZone": "Reloj de la cámara de '{label}' ({clock}) leído como {zone}",
+    "clockAsZone": "Reloj de la cámara ({clock}) leído como {zone}",
+    "speedMatch": "Velocidad coincidente con '{label}' (r = {r}, {overlap} s comparados)",
+    "chapterContinues": "Continúa '{label}' (capítulo de GoPro {chapter})",
+    "chapterEndsBefore": "Termina donde empieza '{label}' (capítulo de GoPro {chapter})"
+  },
+  "notes": {
+    "farFromTimeline": "lejos de la línea de tiempo, ¿grabado en otro momento?",
+    "ambiguous": "ambiguo, patrón repetitivo"
+  },
+  "empty": {
+    "title": "Nada que sincronizar.",
+    "description": "El único vídeo o fuente de datos define la línea de tiempo, y la telemetría integrada siempre sigue a su vídeo.",
+    "continue": "Continuar"
+  },
+  "chart": {
+    "title": "Velocidad",
+    "zoom": "±{seconds} s alrededor del cabezal",
+    "noSpeed": "No hay canal de velocidad que mostrar."
+  },
+  "auto": {
+    "run": "Sincronización automática",
+    "busy": "Analizando…"
+  },
+  "synced": "Sincronizado",
+  "live": {
+    "title": "En el cabezal",
+    "timeline": "Línea de tiempo",
+    "itemTime": "Tiempo del elemento",
+    "itemClock": "Reloj del elemento",
+    "referenceSpeed": "Velocidad de referencia",
+    "itemSpeed": "Velocidad del elemento",
+    "lap": "Vuelta"
+  },
+  "timeInput": {
+    "format": "Escribe, por ejemplo, 530, 2.530, 2:30 o 1:05:00",
+    "rejected": "No permitido aquí",
+    "followsTimeline": "Sigue la línea de tiempo"
+  }
+}

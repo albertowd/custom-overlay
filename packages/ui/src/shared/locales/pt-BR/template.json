@@ -1,0 +1,185 @@
+{
+  "load": "Carregar template…",
+  "saveAs": "Salvar template como…",
+  "loadFailed": "Não foi possível carregar o template: {error}",
+  "saveFailed": "Não foi possível salvar o template: {error}",
+  "widgetsTitle": "Widgets",
+  "tabs": {
+    "widget": "Widget",
+    "values": "Valores",
+    "style": "Estilo"
+  },
+  "visible": {
+    "title": "Widgets visíveis",
+    "hint": "Para todos os widgets, exceto os que definem o próprio intervalo"
+  },
+  "editor": {
+    "snap": "Alinhar às guias",
+    "showGuides": "Mostrar guias",
+    "hint": "Segure Alt ao arrastar para inverter o alinhamento. As guias são definidas na aba Estilo."
+  },
+  "canvas": {
+    "title": "Tela",
+    "hint": "O quadro onde os widgets são posicionados; a exportação também o usa",
+    "format": "Formato",
+    "formats": {
+      "landscape": "Paisagem 16:9 (YouTube)",
+      "vertical": "Vertical 9:16 (TikTok, Reels, Shorts)",
+      "square": "Quadrado 1:1",
+      "portrait": "Retrato 4:5 (feed do Instagram)"
+    },
+    "matchVideo": "Igual ao vídeo ({width} × {height})",
+    "custom": "Personalizado ({width} × {height})",
+    "width": "Largura",
+    "height": "Altura",
+    "fit": "Posicionamento do vídeo",
+    "fitModes": {
+      "contain": "Ajustar (faixas pretas)",
+      "cover": "Preencher (cortar)",
+      "blur": "Ajustar sobre uma cópia desfocada",
+      "stretch": "Esticar"
+    },
+    "rotation": "Rotação",
+    "rotations": {
+      "0": "Nenhuma",
+      "90": "90° no sentido horário",
+      "180": "180°",
+      "270": "90° no sentido anti-horário"
+    },
+    "fitHelp": {
+      "contain": "O vídeo inteiro aparece; o resto da tela fica preto, com espaço para os widgets.",
+      "cover": "O vídeo preenche a tela e o que sobra é cortado: a posição escolhe a parte mantida.",
+      "blur": "O vídeo inteiro aparece sobre uma cópia desfocada que preenche a tela, como fazem os apps sociais.",
+      "stretch": "O vídeo preenche a tela, distorcido quando as proporções são diferentes."
+    },
+    "rotationHelp": "O vídeo é girado primeiro e depois ajustado: um vídeo paisagem girado 90° preenche uma tela vertical.",
+    "rotateWidgets": "Girar os widgets com o vídeo",
+    "rotateWidgetsOn": "Os widgets giram com ele: são posicionados na tela sem girar, assim um template paisagem funciona sem mudanças.",
+    "rotateWidgetsOff": "Os widgets ficam em pé na tela.",
+    "zoom": "Zoom",
+    "horizontal": "Posição horizontal",
+    "vertical": "Posição vertical",
+    "noVideo": "Sem vídeo só o tamanho da tela importa: os widgets são exportados sobre um fundo transparente."
+  },
+  "guides": {
+    "title": "Guias",
+    "description": "Linhas de alinhamento para posicionar widgets, salvas com o template (nunca renderizadas). As bordas do quadro sempre alinham.",
+    "columns": "Colunas",
+    "rows": "Linhas",
+    "margin": "Margem de segurança %",
+    "vertical": "Linhas verticais extras %",
+    "horizontal": "Linhas horizontais extras %",
+    "linesPlaceholder": "ex.: 25, 75",
+    "center": "Linhas centrais",
+    "thirds": "Terços",
+    "safeArea": "Área segura de 5%",
+    "clear": "Limpar"
+  },
+  "style": {
+    "templateName": "Nome do template",
+    "linkedFile": "Arquivo vinculado: {path}",
+    "font": "Família da fonte",
+    "fontHint": "Lista de fontes CSS; a primeira instalada é usada.",
+    "antialias": "Suavizar as bordas dos widgets (superamostragem 2×)",
+    "palette": "Paleta do projeto",
+    "paletteHint": "Os widgets usam estas cores, a menos que uma cor seja definida no próprio widget.",
+    "colorOf": "Cor {name}",
+    "hexOf": "Valor hexadecimal de {name}"
+  },
+  "palette": {
+    "primary": "Primária",
+    "secondary": "Secundária",
+    "accent": "Destaque",
+    "text": "Texto",
+    "textMuted": "Texto suave",
+    "background": "Fundo do painel",
+    "positive": "Positivo",
+    "negative": "Negativo",
+    "warning": "Aviso"
+  },
+  "field": {
+    "paletteColor": "Paleta: {name}",
+    "customColor": "Cor personalizada",
+    "replaceImage": "Substituir…",
+    "chooseImage": "Escolher imagem…",
+    "imageTooLarge": "As imagens ficam embutidas no template: use menos de 5 MB",
+    "valueId": "id do valor"
+  },
+  "preview": {
+    "noVideoNow": "Nenhum vídeo neste momento",
+    "noVideo": "Sem vídeo — saída transparente",
+    "decodeError": "Este vídeo não pode ser decodificado neste computador (H.265/HEVC precisa de suporte de hardware). A telemetria e a sincronização continuam funcionando.",
+    "previousFrame": "Quadro anterior (←)",
+    "playPause": "Reproduzir / pausar (espaço)",
+    "nextFrame": "Próximo quadro (→)"
+  },
+  "widgets": {
+    "categories": {
+      "data": "Dados",
+      "map": "Mapas",
+      "text": "Texto",
+      "asset": "Imagens"
+    },
+    "anchor": "Âncora",
+    "anchorTitle": "Âncora: {anchor}",
+    "anchors": {
+      "top-left": "superior esquerda",
+      "top": "superior",
+      "top-right": "superior direita",
+      "left": "esquerda",
+      "center": "centro",
+      "right": "direita",
+      "bottom-left": "inferior esquerda",
+      "bottom": "inferior",
+      "bottom-right": "inferior direita"
+    },
+    "testValues": "Valores de teste",
+    "testValuesHint": "Digite um valor para ver como o widget fica com ele (não é salvo).",
+    "noSuchValue": "valor inexistente",
+    "wholeVideo": "o vídeo inteiro",
+    "rangeStart": "início",
+    "rangeEnd": "fim",
+    "visible": "Visível",
+    "likeTemplate": "Como o template ({range})",
+    "ownRange": "Intervalo próprio",
+    "ownRangeShort": "intervalo próprio",
+    "unknownType": "Tipo de widget desconhecido '{type}'",
+    "x": "X %",
+    "y": "Y %",
+    "width": "Largura %",
+    "height": "Altura %",
+    "opacity": "Opacidade",
+    "antialias": "Suavização",
+    "templateDefault": "Padrão do template",
+    "on": "Ligada",
+    "off": "Desligada",
+    "lapTiming": "Cronometragem de voltas",
+    "timingProject": "Padrão do projeto (etapa Pista)",
+    "timingImported": "Do datalogger",
+    "timingLines": "Das linhas da pista",
+    "showWhen": "Mostrar quando o valor",
+    "alwaysShown": "sempre visível",
+    "condition": "Condição",
+    "conditions": {
+      "has-value": "tem um valor",
+      "non-zero": "não é zero",
+      "zero": "é zero",
+      "positive": "é positivo",
+      "negative": "é negativo"
+    },
+    "settings": "Configurações",
+    "add": "+ Adicionar widget",
+    "sampleData": "Dados de exemplo",
+    "sampleDataHint": "Pré-visualizar os widgets com uma sessão sintética de dois minutos",
+    "empty": "Nenhum widget ainda: adicione um para começar o overlay.",
+    "hide": "Ocultar",
+    "show": "Mostrar",
+    "bringForward": "Trazer para frente",
+    "sendBackward": "Enviar para trás",
+    "selectHint": "Selecione um widget na lista ou no vídeo para editá-lo.",
+    "data": "Dados",
+    "likeProject": "Como o projeto ({range})",
+    "ownData": "Intervalo de dados próprio",
+    "ownDataShort": "intervalo de dados próprio"
+  }
+}

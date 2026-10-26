@@ -1,0 +1,26 @@
+{
+  "card": {
+    "reference": "reference",
+    "at": "at {offset}",
+    "notSynced": "not synced",
+    "gpmfTelemetry": "GPMF telemetry",
+    "loading": "loading…",
+    "error": "error",
+    "use": "Use",
+    "format": "Format",
+    "codec": "Codec",
+    "camera": "Camera",
+    "size": "Size"
+  },
+  "onlyVideos": "Only MP4 / MOV videos can be added here",
+  "reading": "Reading…",
+  "add": "Add videos…",
+  "readingVideos": "Reading videos…",
+  "drop": "Drop videos here (MP4 or MOV: chapters, several cameras…)",
+  "noVideo": {
+    "title": "No video?",
+    "text": "Export only the widgets as a transparent image sequence, timed by the telemetry, to composite later.",
+    "continue": "Continue without video"
+  },
+  "hint": "The first video is the timeline reference and sets the output format (editable in Export). Other videos are placed automatically: GoPro chapters chain, cameras align by GPS time or speed. Telemetry is read from GoPro videos and from the DJI .SRT file next to a video."
+}

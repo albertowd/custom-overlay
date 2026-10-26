@@ -1,0 +1,143 @@
+# Builds the desktop app for Windows, Linux and macOS and attaches the installers and portable
+# archives to a GitHub release.
+#
+# Run it by pushing a version tag:   git tag v0.2.0 && git push origin v0.2.0
+# or from the Actions tab (Run workflow) with an existing or new tag.
+# The tag must be a semantic version (vMAJOR.MINOR.PATCH); pre-release tags (v0.2.0-beta.1) are
+# published as pre-releases.
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Release tag, e.g. v0.2.0
+        required: true
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.event.inputs.tag || github.ref_name }}
+  cancel-in-progress: false
+
+env:
+  TAG: ${{ github.event.inputs.tag || github.ref_name }}
+  NODE_VERSION: 24
+
+jobs:
+  check:
+    name: Validate the version, lint, typecheck and test
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      prerelease: ${{ steps.version.outputs.prerelease }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - run: npm ci
+      - run: npm run build:core
+      # Same semantic version rules as the app's update check (packages/core/src/version.ts).
+      - name: Validate the version tag
+        id: version
+        run: |
+          node --input-type=module -e "
+            import { formatVersion, parseVersion } from './packages/core/dist/index.js';
+            import { appendFileSync } from 'node:fs';
+            const tag = process.env.TAG;
+            const version = parseVersion(tag);
+            if (!version) {
+              console.error('::error::' + JSON.stringify(tag) + ' is not a semantic version: use vMAJOR.MINOR.PATCH, e.g. v1.2.3 or v1.2.3-beta.1');
+              process.exit(1);
+            }
+            const text = formatVersion(version);
+            console.log('Version ' + text + (version.prerelease.length ? ' (pre-release)' : ''));
+            appendFileSync(process.env.GITHUB_OUTPUT, 'version=' + text + '\nprerelease=' + (version.prerelease.length > 0) + '\n');
+          "
+      - run: npm run check
+
+  package:
+    name: Package (${{ matrix.name }})
+    needs: check
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Windows x64
+            runner: windows-latest
+            platform: --win
+            arch: --x64
+          - name: Linux x64
+            runner: ubuntu-latest
+            platform: --linux
+            arch: --x64
+          - name: macOS Apple Silicon
+            runner: macos-latest
+            platform: --mac
+            arch: --arm64
+          # Native modules (ffmpeg, the Skia canvas) are per architecture: Intel Macs need their
+          # own runner.
+          - name: macOS Intel
+            runner: macos-26-intel
+            platform: --mac
+            arch: --x64
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      # Installs this platform's ffmpeg and Skia canvas binaries.
+      - run: npm ci
+      - run: npm run build
+      - name: Package
+        working-directory: apps/desktop
+        shell: bash
+        # No signing certificates yet: build unsigned (Windows SmartScreen and macOS Gatekeeper
+        # will warn on first launch).
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: "false"
+        run: >
+          npx electron-builder ${{ matrix.platform }} ${{ matrix.arch }}
+          --publish never
+          --config.extraMetadata.version="${{ needs.check.outputs.version }}"
+      - uses: actions/upload-artifact@v7
+        with:
+          name: packages-${{ matrix.runner }}
+          path: |
+            apps/desktop/release/*/custom-overlay-*.exe
+            apps/desktop/release/*/custom-overlay-*.zip
+            apps/desktop/release/*/custom-overlay-*.dmg
+            apps/desktop/release/*/custom-overlay-*.AppImage
+            apps/desktop/release/*/custom-overlay-*.tar.gz
+          if-no-files-found: error
+
+  release:
+    name: Publish the release
+    needs: [check, package]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          pattern: packages-*
+          path: packages
+          merge-multiple: true
+      - name: Checksums
+        working-directory: packages
+        run: sha256sum custom-overlay-* > SHA256SUMS.txt
+      - uses: softprops/action-gh-release@v3
+        with:
+          tag_name: ${{ env.TAG }}
+          name: Custom Overlay ${{ env.TAG }}
+          prerelease: ${{ needs.check.outputs.prerelease == 'true' }}
+          generate_release_notes: true
+          fail_on_unmatched_files: true
+          files: |
+            packages/custom-overlay-*
+            packages/SHA256SUMS.txt

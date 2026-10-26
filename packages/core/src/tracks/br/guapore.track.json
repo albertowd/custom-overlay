@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "country": "BR",
+  "location": "Guaporé, Rio Grande do Sul",
+  "track": {
+    "name": "Autódromo Internacional de Guaporé",
+    "startFinish": {
+      "a": {
+        "latitude": -28.8437851,
+        "longitude": -51.8515787
+      },
+      "b": {
+        "latitude": -28.8440262,
+        "longitude": -51.8513916
+      }
+    },
+    "sectors": [
+      {
+        "a": {
+          "latitude": -28.8494317,
+          "longitude": -51.854371
+        },
+        "b": {
+          "latitude": -28.8494799,
+          "longitude": -51.8539857
+        }
+      },
+      {
+        "a": {
+          "latitude": -28.8460716,
+          "longitude": -51.8504356
+        },
+        "b": {
+          "latitude": -28.8463262,
+          "longitude": -51.8504356
+        }
+      }
+    ],
+    "minLapSeconds": 10
+  }
+}

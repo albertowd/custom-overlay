@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64"><title>Custom Overlay</title>
+  <defs>
+    <clipPath id="arm">
+      <rect x="10" y="12" width="44" height="9" rx="2"/>
+    </clipPath>
+  </defs>
+  <rect x="0.5" y="0.5" width="63" height="63" rx="13.5" fill="#f0f5fb" stroke="#d5d9e0"/>
+  <g transform="rotate(-9 10 21)">
+    <g clip-path="url(#arm)">
+      <rect x="10" y="12" width="44" height="9" fill="#c0c8d6"/>
+      <path fill="#ff4f24" d="M6 12h10l-6 9H0z"/>
+      <path fill="#101010" d="M22 12h7l-6 9h-7zM35 12h7l-6 9h-7zM48 12h7l-6 9h-7z"/>
+    </g>
+  </g>
+  <rect x="10" y="24" width="44" height="30" rx="5" fill="#ff4f24"/>
+  <rect x="14" y="24" width="40" height="26" rx="3" fill="#d5dce8"/>
+  <path fill="#101010" stroke="#101010" stroke-width="2" stroke-linejoin="round" d="M29 30.5v13l11-6.5z"/>
+</svg>

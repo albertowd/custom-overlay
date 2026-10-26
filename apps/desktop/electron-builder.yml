@@ -1,0 +1,30 @@
+appId: dev.albertowd.custom-overlay
+productName: Custom Overlay
+directories:
+  output: release/${version}
+  buildResources: build
+files:
+  - out/**/*
+  - package.json
+# Chromium's own texts (menus, input validation): only the app languages, see LANGUAGES in
+# packages/ui/src/shared/i18n.ts. The rest fall back to English.
+electronLanguages: [en-US, pt-BR, es, it, ja]
+asar: true
+# ffmpeg must be a real file to run.
+asarUnpack:
+  - node_modules/ffmpeg-static/**
+# One name scheme for every file, so the release assets of each OS and architecture never collide
+# (e.g. custom-overlay-0.2.0-mac-arm64.dmg / custom-overlay-0.2.0-mac-x64.zip).
+artifactName: custom-overlay-${version}-${os}-${arch}.${ext}
+# Each OS gets an installer plus a portable archive of the whole app folder (unzip and run).
+win:
+  target: [nsis, zip]
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+mac:
+  target: [dmg, zip]
+  category: public.app-category.video
+linux:
+  target: [AppImage, tar.gz]
+  category: AudioVideo

@@ -1,0 +1,36 @@
+{
+  "origins": {
+    "source": "ソース",
+    "builtin": "組み込み",
+    "script": "スクリプト"
+  },
+  "groups": {
+    "script": "スクリプト",
+    "builtin": "組み込み",
+    "source": "ソース"
+  },
+  "panel": {
+    "replaces": "{origin}の値を置き換えます",
+    "error": "エラー",
+    "new": "+ 新しい値",
+    "newScriptName": "マイ値",
+    "filter": "値を絞り込む…",
+    "failed": {
+      "other": "{count} 件の値でエラーが発生しました。ポインターを合わせると詳細が表示されます。"
+    },
+    "evaluating": "計算中…",
+    "trust": "スクリプトはアプリの権限で実行される JavaScript です。信頼できる人のコレクションだけをインポートしてください。"
+  },
+  "editor": {
+    "id": "ID",
+    "initial": "初期値",
+    "initialPlaceholder": "空 (値なし)",
+    "initialInvalid": "初期値は数値か空にしてください",
+    "scriptBefore": "スクリプト:",
+    "scriptAfter": "の本体。フレームごとに 1 つの数値を返します",
+    "scriptError": "スクリプトエラー: {error}",
+    "atPlayhead": "再生位置の値:",
+    "saveClose": "保存して閉じる",
+    "back": "戻る"
+  }
+}

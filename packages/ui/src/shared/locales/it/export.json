@@ -1,0 +1,98 @@
+{
+  "range": {
+    "title": "Intervallo",
+    "help": "L'anteprima mostra il video con i widget come verranno esportati. Riproducilo o scorrilo, poi imposta dove l'esportazione inizia e finisce: trascina le maniglie, scrivi i tempi come m:ss.mmm o premi I / O sulla testina.",
+    "followsData": "Senza inizio o fine, l'esportazione segue l'intervallo dati impostato nel passo Tracciato ({start} – {end}).",
+    "dataRange": "Intervallo dati del tracciato",
+    "followsDataField": "Segue l'intervallo dati del tracciato"
+  },
+  "output": {
+    "title": "Uscita",
+    "video": "Video finale",
+    "videoHelp": "I video con i widget impressi.",
+    "sequence": "Sequenza di immagini trasparenti",
+    "sequenceHelp": "Un PNG per fotogramma con i soli widget, da comporre in un editor.",
+    "none": "Nessuna uscita selezionata",
+    "choose": "Scegli…",
+    "defaultHint": "Non scelto: va accanto ai video (o ai dati), con il nome del progetto, senza sostituire un’esportazione precedente.",
+    "zipHint": "Il browser non può scrivere in una cartella: i fotogrammi vengono scaricati in un unico file zip.",
+    "useDefault": "Usa la posizione predefinita"
+  },
+  "format": {
+    "title": "Formato",
+    "resolution": "Risoluzione",
+    "customResolution": "Personalizzata ({width} × {height})",
+    "width": "Larghezza",
+    "height": "Altezza",
+    "frameRate": "Frequenza fotogrammi",
+    "colorSpace": "Spazio colore",
+    "rangeDepth": "Gamma / profondità",
+    "limited": "Limitata · {bits} bit",
+    "full": "Completa · {bits} bit",
+    "matchVideo": "Come il primo video",
+    "canvasHelp": "La dimensione di uscita è l'area su cui si posizionano i widget (passo Modello): cambiarne la forma li sposta."
+  },
+  "encoding": {
+    "title": "Codifica",
+    "preset": "Preimpostazione",
+    "custom": "Personalizzata",
+    "customHelp": "Valori personalizzati, salvati con il progetto.",
+    "codec": "Codec",
+    "bitrate": "Bitrate (Mbps)",
+    "keyframe": "Fotogramma chiave ogni (s)",
+    "bFrames": "Fotogrammi B",
+    "audio": "Audio",
+    "audioOptions": {
+      "aac": "AAC",
+      "copy": "Copia dal video",
+      "none": "Nessun audio"
+    },
+    "acceleration": "Decodifica / codifica con",
+    "accelerationOptions": {
+      "auto": "GPU se disponibile",
+      "software": "Solo CPU"
+    },
+    "scaling": "Ridimensionamento (quando la dimensione d'uscita è diversa da un video)",
+    "scalers": {
+      "bilinear": "Bilineare (veloce)",
+      "bicubic": "Bicubico",
+      "lanczos": "Lanczos (nitido)",
+      "fsr1": "Stile FSR 1 (Lanczos + nitidezza AMD CAS)"
+    },
+    "scalingHelp": "DLSS e XeSS non sono disponibili: sono upscaler temporali che richiedono vettori di movimento e profondità da un motore di gioco, che un video registrato non ha. L'opzione stile FSR 1 ingrandisce con Lanczos e aumenta la nitidezza con il CAS di AMD, le due fasi di FSR 1.",
+    "notes": {
+      "sdrConverted": "YouTube converte i caricamenti SDR in Rec.709 a gamma limitata e 8 bit: un'uscita Rec.709 limitata appare uguale prima e dopo il caricamento.",
+      "h264TenBit": "L'H.264 a 10 bit si codifica solo sulla CPU (i codificatori H.264 su GPU sono a 8 bit) e YouTube lo converte comunque a 8 bit: scegli un'uscita a 8 bit o il preset HEVC.",
+      "hdrNeedsHdrOutput": "YouTube considera HDR un video solo con un'uscita Rec.2020 HLG o PQ a 10 bit: imposta spazio colore e profondità in Formato.",
+      "hdrResolution": "YouTube accetta l'HDR da 720p in su.",
+      "frameRate": "La frequenza fotogrammi dell'uscita è fuori dall'intervallo di questo preset (YouTube riproduce al massimo 60 fps): scegli di nuovo il preset per convertirla.",
+      "socialSdr": "L'app riproduce video SDR Rec.709 a 8 bit: le altre impostazioni colore vengono convertite al caricamento.",
+      "socialSize": "L'uscita non ha il formato di questo preset: scegli di nuovo il preset per portarvi l'area.",
+      "socialFrameRate": "La frequenza fotogrammi dell'uscita è fuori dall'intervallo di questo preset (le app riproducono al massimo 60 fps): scegli di nuovo il preset per convertirla."
+    },
+    "estimatedSize": "Dimensione stimata del file: circa {size} per {duration}.",
+    "estimatedSizeHelp": "Dal bitrate e dalla durata dell'intervallo: la dimensione reale varia un po' con il codificatore e il video.",
+    "otherPresets": "Altri preset"
+  },
+  "run": {
+    "title": "Esporta",
+    "start": "Esporta",
+    "help": "I widget vengono disegnati su più thread; il video viene decodificato e codificato sulla GPU quando possibile. Nel frattempo puoi continuare a lavorare.",
+    "helpSequence": "I widget vengono disegnati su più thread e ogni fotogramma viene salvato come file PNG. Nel frattempo puoi continuare a lavorare.",
+    "preparing": "Preparazione: caricamento dei valori, scelta del codificatore…",
+    "progress": "{percent}% · fotogramma {frame} / {frames}",
+    "speed": "{fps} fps · {elapsed} trascorsi · {left} rimanenti",
+    "done": {
+      "one": "{count} fotogramma esportato",
+      "other": "{count} fotogrammi esportati"
+    },
+    "doneTime": "in {time}.",
+    "doneTimeEncoder": "in {time} con {encoder}.",
+    "showInFolder": "Mostra nella cartella",
+    "dismiss": "Chiudi",
+    "failed": "L'esportazione non è riuscita.",
+    "cancelled": "Esportazione annullata; il file incompleto è stato rimosso.",
+    "cancelledSequence": "Esportazione annullata; i fotogrammi già salvati sono stati mantenuti.",
+    "cancelledZip": "Esportazione annullata; non è stato scaricato nulla."
+  }
+}

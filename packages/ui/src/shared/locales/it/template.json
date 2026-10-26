@@ -1,0 +1,185 @@
+{
+  "load": "Carica template…",
+  "saveAs": "Salva template con nome…",
+  "loadFailed": "Impossibile caricare il template: {error}",
+  "saveFailed": "Impossibile salvare il template: {error}",
+  "widgetsTitle": "Widget",
+  "tabs": {
+    "widget": "Widget",
+    "values": "Valori",
+    "style": "Stile"
+  },
+  "visible": {
+    "title": "Widget visibili",
+    "hint": "Per tutti i widget, tranne quelli con un proprio intervallo"
+  },
+  "editor": {
+    "snap": "Aggancia alle guide",
+    "showGuides": "Mostra guide",
+    "hint": "Tieni premuto Alt durante il trascinamento per invertire l'aggancio. Le guide si impostano nella scheda Stile."
+  },
+  "canvas": {
+    "title": "Area di disegno",
+    "hint": "Il fotogramma su cui si posizionano i widget; lo usa anche l'esportazione",
+    "format": "Formato",
+    "formats": {
+      "landscape": "Orizzontale 16:9 (YouTube)",
+      "vertical": "Verticale 9:16 (TikTok, Reels, Shorts)",
+      "square": "Quadrato 1:1",
+      "portrait": "Ritratto 4:5 (feed di Instagram)"
+    },
+    "matchVideo": "Come il video ({width} × {height})",
+    "custom": "Personalizzato ({width} × {height})",
+    "width": "Larghezza",
+    "height": "Altezza",
+    "fit": "Posizionamento del video",
+    "fitModes": {
+      "contain": "Adatta (bande nere)",
+      "cover": "Riempi (ritaglia)",
+      "blur": "Adatta su una copia sfocata",
+      "stretch": "Allunga"
+    },
+    "rotation": "Rotazione",
+    "rotations": {
+      "0": "Nessuna",
+      "90": "90° in senso orario",
+      "180": "180°",
+      "270": "90° in senso antiorario"
+    },
+    "fitHelp": {
+      "contain": "Si vede tutto il video; il resto dell'area è nero, con spazio per i widget.",
+      "cover": "Il video riempie l'area e ciò che avanza viene ritagliato: la posizione sceglie la parte mantenuta.",
+      "blur": "Si vede tutto il video sopra una copia sfocata che riempie l'area, come fanno le app social.",
+      "stretch": "Il video riempie l'area, deformato quando le proporzioni sono diverse."
+    },
+    "rotationHelp": "Il video viene prima ruotato e poi adattato: un video orizzontale ruotato di 90° riempie un'area verticale.",
+    "rotateWidgets": "Ruota i widget con il video",
+    "rotateWidgetsOn": "I widget ruotano con il video: si posizionano sull'area non ruotata, così un modello orizzontale funziona senza modifiche.",
+    "rotateWidgetsOff": "I widget restano dritti sull'area.",
+    "zoom": "Zoom",
+    "horizontal": "Posizione orizzontale",
+    "vertical": "Posizione verticale",
+    "noVideo": "Senza video conta solo la dimensione dell'area: i widget vengono esportati su sfondo trasparente."
+  },
+  "guides": {
+    "title": "Guide",
+    "description": "Linee di aggancio per posizionare i widget, salvate con il template (mai renderizzate). I bordi del fotogramma agganciano sempre.",
+    "columns": "Colonne",
+    "rows": "Righe",
+    "margin": "Margine di sicurezza %",
+    "vertical": "Linee verticali aggiuntive %",
+    "horizontal": "Linee orizzontali aggiuntive %",
+    "linesPlaceholder": "es. 25, 75",
+    "center": "Linee centrali",
+    "thirds": "Terzi",
+    "safeArea": "Area sicura del 5%",
+    "clear": "Cancella"
+  },
+  "style": {
+    "templateName": "Nome del template",
+    "linkedFile": "File collegato: {path}",
+    "font": "Famiglia di caratteri",
+    "fontHint": "Elenco di font CSS; viene usato il primo installato.",
+    "antialias": "Antialiasing dei bordi dei widget (supercampionamento 2×)",
+    "palette": "Tavolozza del progetto",
+    "paletteHint": "I widget usano questi colori, a meno che un colore non sia impostato sul widget.",
+    "colorOf": "Colore {name}",
+    "hexOf": "Valore esadecimale di {name}"
+  },
+  "palette": {
+    "primary": "Primario",
+    "secondary": "Secondario",
+    "accent": "Accento",
+    "text": "Testo",
+    "textMuted": "Testo attenuato",
+    "background": "Sfondo del pannello",
+    "positive": "Positivo",
+    "negative": "Negativo",
+    "warning": "Avviso"
+  },
+  "field": {
+    "paletteColor": "Tavolozza: {name}",
+    "customColor": "Colore personalizzato",
+    "replaceImage": "Sostituisci…",
+    "chooseImage": "Scegli immagine…",
+    "imageTooLarge": "Le immagini sono incorporate nel template: tienile sotto i 5 MB",
+    "valueId": "id del valore"
+  },
+  "preview": {
+    "noVideoNow": "Nessun video in questo momento",
+    "noVideo": "Nessun video — output trasparente",
+    "decodeError": "Questo video non può essere decodificato su questo computer (H.265/HEVC richiede supporto hardware). Telemetria e sincronizzazione funzionano comunque.",
+    "previousFrame": "Fotogramma precedente (←)",
+    "playPause": "Riproduci / pausa (spazio)",
+    "nextFrame": "Fotogramma successivo (→)"
+  },
+  "widgets": {
+    "categories": {
+      "data": "Dati",
+      "map": "Mappe",
+      "text": "Testo",
+      "asset": "Immagini"
+    },
+    "anchor": "Ancoraggio",
+    "anchorTitle": "Ancoraggio: {anchor}",
+    "anchors": {
+      "top-left": "in alto a sinistra",
+      "top": "in alto",
+      "top-right": "in alto a destra",
+      "left": "a sinistra",
+      "center": "al centro",
+      "right": "a destra",
+      "bottom-left": "in basso a sinistra",
+      "bottom": "in basso",
+      "bottom-right": "in basso a destra"
+    },
+    "testValues": "Valori di prova",
+    "testValuesHint": "Digita un valore per vedere come appare il widget (non viene salvato).",
+    "noSuchValue": "valore inesistente",
+    "wholeVideo": "l'intero video",
+    "rangeStart": "inizio",
+    "rangeEnd": "fine",
+    "visible": "Visibile",
+    "likeTemplate": "Come il template ({range})",
+    "ownRange": "Intervallo proprio",
+    "ownRangeShort": "intervallo proprio",
+    "unknownType": "Tipo di widget sconosciuto '{type}'",
+    "x": "X %",
+    "y": "Y %",
+    "width": "Larghezza %",
+    "height": "Altezza %",
+    "opacity": "Opacità",
+    "antialias": "Antialiasing",
+    "templateDefault": "Predefinito del template",
+    "on": "Attivo",
+    "off": "Disattivo",
+    "lapTiming": "Cronometraggio giri",
+    "timingProject": "Predefinito del progetto (fase Tracciato)",
+    "timingImported": "Dal logger",
+    "timingLines": "Dalle linee del tracciato",
+    "showWhen": "Mostra quando il valore",
+    "alwaysShown": "sempre visibile",
+    "condition": "Condizione",
+    "conditions": {
+      "has-value": "ha un valore",
+      "non-zero": "non è zero",
+      "zero": "è zero",
+      "positive": "è positivo",
+      "negative": "è negativo"
+    },
+    "settings": "Impostazioni",
+    "add": "+ Aggiungi widget",
+    "sampleData": "Dati di esempio",
+    "sampleDataHint": "Anteprima dei widget con una sessione sintetica di due minuti",
+    "empty": "Ancora nessun widget: aggiungine uno per iniziare l'overlay.",
+    "hide": "Nascondi",
+    "show": "Mostra",
+    "bringForward": "Porta avanti",
+    "sendBackward": "Porta indietro",
+    "selectHint": "Seleziona un widget nella lista o sul video per modificarlo.",
+    "data": "Dati",
+    "likeProject": "Come il progetto ({range})",
+    "ownData": "Intervallo dei dati proprio",
+    "ownDataShort": "intervallo dei dati proprio"
+  }
+}

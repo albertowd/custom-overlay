@@ -1,0 +1,59 @@
+{
+  "offset": {
+    "label": "Posição na linha do tempo",
+    "minusFrame": "−1 quadro",
+    "plusFrame": "+1 quadro",
+    "formula": "tempo da linha do tempo = tempo do item + posição"
+  },
+  "results": {
+    "none": "Nenhuma correspondência automática: não há horário absoluto, capítulo ou sinal de velocidade em comum. Alinhe manualmente usando o vídeo e os valores ao vivo."
+  },
+  "methods": {
+    "timestamp": "Pelo horário do GPS",
+    "camera-clock": "Pelo relógio da câmera",
+    "chapter": "Capítulo GoPro",
+    "correlation": "Pelo sinal de velocidade"
+  },
+  "messages": {
+    "gpsTime": "Horário do GPS / datalogger comparado com '{label}'",
+    "cameraClocks": "Relógios das câmeras comparados com '{label}' (mesmo fuso horário presumido)",
+    "placedClockAsZone": "Relógio da câmera de '{label}' ({clock}) lido como {zone}",
+    "clockAsZone": "Relógio da câmera ({clock}) lido como {zone}",
+    "speedMatch": "Velocidade correspondente a '{label}' (r = {r}, {overlap} s comparados)",
+    "chapterContinues": "Continua '{label}' (capítulo GoPro {chapter})",
+    "chapterEndsBefore": "Termina onde '{label}' começa (capítulo GoPro {chapter})"
+  },
+  "notes": {
+    "farFromTimeline": "longe da linha do tempo, gravado em outro momento?",
+    "ambiguous": "ambíguo, padrão repetitivo"
+  },
+  "empty": {
+    "title": "Nada para sincronizar.",
+    "description": "O único vídeo ou fonte de dados define a linha do tempo, e a telemetria embutida sempre acompanha seu vídeo.",
+    "continue": "Continuar"
+  },
+  "chart": {
+    "title": "Velocidade",
+    "zoom": "±{seconds} s em torno do cursor",
+    "noSpeed": "Nenhum canal de velocidade para exibir."
+  },
+  "auto": {
+    "run": "Sincronizar automaticamente",
+    "busy": "Analisando…"
+  },
+  "synced": "Sincronizado",
+  "live": {
+    "title": "No cursor",
+    "timeline": "Linha do tempo",
+    "itemTime": "Tempo do item",
+    "itemClock": "Relógio do item",
+    "referenceSpeed": "Velocidade de referência",
+    "itemSpeed": "Velocidade do item",
+    "lap": "Volta"
+  },
+  "timeInput": {
+    "format": "Digite, por exemplo, 530, 2.530, 2:30 ou 1:05:00",
+    "rejected": "Não permitido aqui",
+    "followsTimeline": "Acompanha a linha do tempo"
+  }
+}

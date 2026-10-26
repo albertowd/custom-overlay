@@ -1,0 +1,140 @@
+{
+  "importLines": "Importar linhas…",
+  "exportLines": "Exportar linhas…",
+  "list": {
+    "title": "Lista de pistas",
+    "none": "Esta sessão não está em nenhuma pista conhecida.",
+    "detected": "Esta sessão é em {name}.",
+    "several": "Esta sessão combina com várias pistas conhecidas: escolha uma abaixo.",
+    "inUse": "Linhas de {name} da lista de pistas.",
+    "use": "Usar as linhas dela",
+    "load": "Carregar uma pista conhecida",
+    "choose": "Escolha uma pista…",
+    "detectedGroup": "Nesta sessão",
+    "confirmReplace": "Substituir as linhas atuais pelas de {name}?",
+    "share": "Falta uma pista ou as linhas estão erradas?",
+    "shareLink": "Compartilhe suas linhas",
+    "search": "Buscar por nome, cidade ou país",
+    "resultsGroup": {
+      "one": "{count} pista encontrada",
+      "other": "{count} pistas encontradas"
+    },
+    "nearbyGroup": "Até {km} km",
+    "km": "{distance} km",
+    "noResults": "Nenhuma pista encontrada",
+    "source": {
+      "bundled": {
+        "one": "{count} pista inclusa nesta versão (GitHub inacessível)",
+        "other": "{count} pistas inclusas nesta versão (GitHub inacessível)"
+      },
+      "github": {
+        "one": "{count} pista, atualizada com o GitHub",
+        "other": "{count} pistas, atualizadas com o GitHub"
+      },
+      "cache": {
+        "one": "{count} pista do último download (GitHub inacessível)",
+        "other": "{count} pistas do último download (GitHub inacessível)"
+      }
+    }
+  },
+  "timing": {
+    "label": "Os valores de volta vêm de",
+    "options": {
+      "auto": "Automático: linhas da pista quando definidas, senão o datalogger",
+      "imported": "Do datalogger (ex.: voltas do RaceChrono)",
+      "lines": "Das linhas da pista"
+    },
+    "nowLines": "Agora: as linhas da pista. Cada widget pode alterar isso nas suas configurações (Cronometragem de voltas).",
+    "nowLogger": "Agora: o datalogger. Cada widget pode alterar isso nas suas configurações (Cronometragem de voltas)."
+  },
+  "startFinish": {
+    "title": "Linha de chegada",
+    "set": "Definida. Arraste as pontas no mapa para ajustar.",
+    "notSet": "Não definida: as voltas vêm do datalogger.",
+    "draw": "Desenhar",
+    "redraw": "Redesenhar",
+    "fromLogger": "Pelas voltas do datalogger",
+    "fromLoggerHint": "Posiciona onde o número da volta do datalogger muda",
+    "noLapChange": "As voltas do datalogger não mudam em nenhum ponto do trajeto GPS"
+  },
+  "sectors": {
+    "title": "Linhas de setor",
+    "hint": "Na ordem do percurso: n linhas formam n + 1 setores.",
+    "add": "Adicionar linha de setor"
+  },
+  "settings": {
+    "title": "Configurações",
+    "name": "Nome da pista",
+    "minLap": "Tempo mínimo de volta (s)",
+    "minLapHint": "Passagens mais próximas que isso são ruído do GPS, não uma nova volta"
+  },
+  "map": {
+    "loading": "Carregando a sessão…",
+    "scrubber": "Posição na linha do tempo",
+    "satellite": "Vista de satélite",
+    "drawHint": "Clique em dois pontos atravessando a pista para posicionar a linha. Esc cancela.",
+    "dragHint": "Arraste as pontas da linha para ajustá-las. Role para dar zoom, arraste para mover o mapa.",
+    "noGpsPath": "A sessão não tem posições de GPS: as linhas de volta precisam de um trajeto GPS.",
+    "noGps": "Nenhuma posição de GPS para desenhar.",
+    "imageryUnavailable": "Imagens de satélite indisponíveis (sem internet?)",
+    "startFinishShort": "L/C",
+    "split": "Parcial {number}"
+  },
+  "laps": {
+    "title": "Voltas",
+    "hint": "Clique em uma volta para ir ao seu início",
+    "none": "Nenhuma volta ainda.",
+    "lap": "Volta",
+    "logger": "Registrador",
+    "lines": "Linhas",
+    "diff": "Dif.",
+    "sectorShort": "S{number}",
+    "startsAt": "Começa em {time}"
+  },
+  "range": {
+    "rejected": "Deve estar dentro da linha do tempo, com o início antes do fim",
+    "dragStart": "Arraste o início",
+    "dragEnd": "Arraste o fim",
+    "frames": {
+      "one": "{count} quadro",
+      "other": "{count} quadros"
+    },
+    "shortcut": "Atalho: {key}",
+    "startAtPlayhead": "Início no cursor",
+    "endAtPlayhead": "Fim no cursor",
+    "goToStart": "Ir para o início",
+    "goToEnd": "Ir para o fim",
+    "wholeTimeline": "Linha do tempo inteira"
+  },
+  "dataRange": {
+    "title": "Intervalo de dados",
+    "hint": "A parte da sessão de onde vêm os dados dos widgets. Fora dele não há dados; dentro dele a sessão recomeça: distância a partir de 0, voltas numeradas a partir de 1, melhor volta entre as voltas mantidas. Cada widget pode usar o próprio intervalo.",
+    "start": "Início",
+    "end": "Fim",
+    "whole": "Sessão inteira",
+    "atTime": "Em um horário",
+    "lapStart": "Início de uma volta",
+    "lapEnd": "Fim de uma volta",
+    "leaveOut": "Deixar de fora as últimas voltas",
+    "time": "Tempo",
+    "lap": "Volta",
+    "lapsLeftOut": "Voltas deixadas de fora",
+    "summary": "Dados de {start} até {end}",
+    "sessionStart": "o início",
+    "sessionEnd": "o fim",
+    "untrimmed": "Dados da sessão inteira",
+    "keptLaps": {
+      "one": "{count} volta completa mantida de {total}",
+      "other": "{count} voltas completas mantidas de {total}"
+    },
+    "noLaps": "Esta sessão ainda não tem voltas: limites por volta precisam da cronometragem (voltas do logger ou uma linha de largada/chegada).",
+    "problems": {
+      "lapMissing": "Não existe a volta {lap}: esse lado não é cortado.",
+      "notEnoughLaps": {
+        "one": "Não há voltas completas suficientes para deixar {count} de fora: o fim não é cortado.",
+        "other": "Não há voltas completas suficientes para deixar {count} de fora: o fim não é cortado."
+      },
+      "empty": "O intervalo está vazio: o fim vem antes do início."
+    }
+  }
+}

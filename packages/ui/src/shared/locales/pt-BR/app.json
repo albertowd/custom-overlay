@@ -1,0 +1,95 @@
+{
+  "toolbar": {
+    "new": "Novo",
+    "open": "Abrir…",
+    "saveAs": "Salvar como…",
+    "unsavedProject": "Projeto não salvo",
+    "unsavedChanges": "Alterações não salvas",
+    "confirmDiscard": "Descartar as alterações não salvas?"
+  },
+  "footer": {
+    "back": "Voltar",
+    "next": "Avançar",
+    "skip": "Pular",
+    "projectPage": "Página do projeto no GitHub"
+  },
+  "stepState": {
+    "complete": "concluído",
+    "incomplete": "incompleto",
+    "skipped": "pulado",
+    "not-applicable": "não se aplica"
+  },
+  "notices": {
+    "checkSync": "Confira a sincronização de: {items}",
+    "openProjectFailed": "Não foi possível abrir o projeto: {error}",
+    "saveProjectFailed": "Não foi possível salvar o projeto: {error}",
+    "loadFailed": "Não foi possível carregar {path}: {error}",
+    "trackImported": "Linhas de '{name}' importadas",
+    "trackImportedUnnamed": "Linhas da pista importadas",
+    "trackDetected": "{name} detectada: as linhas dela cronometram as voltas",
+    "trackLoaded": "Linhas de {name} carregadas",
+    "importTrackFailed": "Não foi possível importar a pista: {error}",
+    "exportTrackFailed": "Não foi possível exportar a pista: {error}",
+    "duplicateValueId": "Já existe um valor do projeto com o id '{id}'",
+    "valuesImported": {
+      "one": "{count} valor importado de '{name}'",
+      "other": "{count} valores importados de '{name}'"
+    },
+    "importValuesFailed": "Não foi possível importar os valores: {error}",
+    "exportValuesFailed": "Não foi possível exportar os valores: {error}",
+    "importWidgetsFailed": "Não foi possível importar os widgets: {error}",
+    "exportWidgetFailed": "Não foi possível exportar o widget: {error}"
+  },
+  "channel": {
+    "tooltip": {
+      "one": "{label} — {count} amostra, {rate} Hz",
+      "other": "{label} — {count} amostras, {rate} Hz"
+    }
+  },
+  "series": {
+    "startUtc": "Início (UTC)",
+    "channels": "Canais"
+  },
+  "dropFiles": "Solte os arquivos aqui",
+  "newProject": {
+    "title": "Novo projeto",
+    "hint": "Dê um nome ao projeto. Ele também é o nome de arquivo sugerido ao salvar.",
+    "placeholder": "ex.: Track day em Interlagos",
+    "create": "Criar",
+    "openInstead": "Abrir um projeto…"
+  },
+  "update": {
+    "title": "Há uma nova versão disponível",
+    "message": "O Custom Overlay {latest} foi lançado (você tem a {current}).",
+    "notes": "Novidades",
+    "download": "Baixar {file}",
+    "page": "Abrir a página da versão",
+    "later": "Depois",
+    "skip": "Pular esta versão",
+    "noInstaller": "Esta versão não tem instalador para este sistema: baixe pela página da versão.",
+    "change": {
+      "major": "Atualização principal",
+      "minor": "Novos recursos",
+      "patch": "Correções",
+      "prerelease": "Pré-lançamento"
+    }
+  },
+  "busy": {
+    "export": {
+      "title": "Exportando…",
+      "detail": "O projeto não pode ser editado até a exportação terminar ou ser cancelada."
+    },
+    "media": {
+      "title": "Carregando mídia…",
+      "detail": "Lendo os vídeos e arquivos de dados, com a telemetria deles.",
+      "more": {
+        "one": "e mais {count} arquivo",
+        "other": "e mais {count} arquivos"
+      }
+    },
+    "values": {
+      "title": "Atualizando os valores…",
+      "detail": "Recalculando voltas, distâncias e dados dos widgets com as novas configurações."
+    }
+  }
+}

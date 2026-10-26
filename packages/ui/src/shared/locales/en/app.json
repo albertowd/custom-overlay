@@ -1,0 +1,95 @@
+{
+  "toolbar": {
+    "new": "New",
+    "open": "Open…",
+    "saveAs": "Save as…",
+    "unsavedProject": "Unsaved project",
+    "unsavedChanges": "Unsaved changes",
+    "confirmDiscard": "Discard unsaved changes?"
+  },
+  "footer": {
+    "back": "Back",
+    "next": "Next",
+    "skip": "Skip",
+    "projectPage": "Project page on GitHub"
+  },
+  "stepState": {
+    "complete": "complete",
+    "incomplete": "incomplete",
+    "skipped": "skipped",
+    "not-applicable": "not applicable"
+  },
+  "notices": {
+    "checkSync": "Check the sync of: {items}",
+    "openProjectFailed": "Could not open the project: {error}",
+    "saveProjectFailed": "Could not save the project: {error}",
+    "loadFailed": "Could not load {path}: {error}",
+    "trackImported": "Imported the lines of '{name}'",
+    "trackImportedUnnamed": "Imported the track lines",
+    "trackDetected": "Detected {name}: its lines time the laps",
+    "trackLoaded": "Loaded the lines of {name}",
+    "importTrackFailed": "Could not import the track: {error}",
+    "exportTrackFailed": "Could not export the track: {error}",
+    "duplicateValueId": "A project value with id '{id}' already exists",
+    "valuesImported": {
+      "one": "Imported {count} value from '{name}'",
+      "other": "Imported {count} values from '{name}'"
+    },
+    "importValuesFailed": "Could not import values: {error}",
+    "exportValuesFailed": "Could not export values: {error}",
+    "importWidgetsFailed": "Could not import widgets: {error}",
+    "exportWidgetFailed": "Could not export the widget: {error}"
+  },
+  "channel": {
+    "tooltip": {
+      "one": "{label} — {count} sample, {rate} Hz",
+      "other": "{label} — {count} samples, {rate} Hz"
+    }
+  },
+  "series": {
+    "startUtc": "Start (UTC)",
+    "channels": "Channels"
+  },
+  "dropFiles": "Drop files here",
+  "newProject": {
+    "title": "New project",
+    "hint": "Give the project a name. It is also the suggested file name when you save it.",
+    "placeholder": "e.g. Interlagos track day",
+    "create": "Create",
+    "openInstead": "Open a project…"
+  },
+  "update": {
+    "title": "A new version is available",
+    "message": "Custom Overlay {latest} is out (you have {current}).",
+    "notes": "What’s new",
+    "download": "Download {file}",
+    "page": "Open the release page",
+    "later": "Later",
+    "skip": "Skip this version",
+    "noInstaller": "There is no installer for this system in this release: download it from the release page.",
+    "change": {
+      "major": "Major update",
+      "minor": "New features",
+      "patch": "Fixes",
+      "prerelease": "Pre-release"
+    }
+  },
+  "busy": {
+    "export": {
+      "title": "Exporting…",
+      "detail": "The project cannot be edited until the export finishes or is cancelled."
+    },
+    "media": {
+      "title": "Loading media…",
+      "detail": "Reading the videos and data files, with their telemetry.",
+      "more": {
+        "one": "and {count} more file",
+        "other": "and {count} more files"
+      }
+    },
+    "values": {
+      "title": "Updating the values…",
+      "detail": "Recalculating laps, distances and widget data with the new settings."
+    }
+  }
+}

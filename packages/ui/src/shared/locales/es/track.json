@@ -1,0 +1,140 @@
+{
+  "importLines": "Importar líneas…",
+  "exportLines": "Exportar líneas…",
+  "list": {
+    "title": "Lista de circuitos",
+    "none": "Esta sesión no está en ningún circuito conocido.",
+    "detected": "Esta sesión es en {name}.",
+    "several": "Esta sesión coincide con varios circuitos conocidos: elige uno abajo.",
+    "inUse": "Líneas de {name} de la lista de circuitos.",
+    "use": "Usar sus líneas",
+    "load": "Cargar un circuito conocido",
+    "choose": "Elige un circuito…",
+    "detectedGroup": "En esta sesión",
+    "confirmReplace": "¿Reemplazar las líneas actuales por las de {name}?",
+    "share": "¿Falta un circuito o las líneas están mal?",
+    "shareLink": "Comparte tus líneas",
+    "search": "Buscar por nombre, ciudad o país",
+    "resultsGroup": {
+      "one": "{count} circuito encontrado",
+      "other": "{count} circuitos encontrados"
+    },
+    "nearbyGroup": "A menos de {km} km",
+    "km": "{distance} km",
+    "noResults": "Ningún circuito encontrado",
+    "source": {
+      "bundled": {
+        "one": "{count} circuito incluido en esta versión (GitHub inaccesible)",
+        "other": "{count} circuitos incluidos en esta versión (GitHub inaccesible)"
+      },
+      "github": {
+        "one": "{count} circuito, actualizado con GitHub",
+        "other": "{count} circuitos, actualizados con GitHub"
+      },
+      "cache": {
+        "one": "{count} circuito de la última descarga (GitHub inaccesible)",
+        "other": "{count} circuitos de la última descarga (GitHub inaccesible)"
+      }
+    }
+  },
+  "timing": {
+    "label": "Los valores de vuelta provienen de",
+    "options": {
+      "auto": "Automático: líneas del circuito si existen, si no el registrador",
+      "imported": "Del registrador (p. ej., vueltas de RaceChrono)",
+      "lines": "De las líneas del circuito"
+    },
+    "nowLines": "Ahora: las líneas del circuito. Cada widget puede cambiarlo en su configuración (Cronometraje de vueltas).",
+    "nowLogger": "Ahora: el registrador. Cada widget puede cambiarlo en su configuración (Cronometraje de vueltas)."
+  },
+  "startFinish": {
+    "title": "Línea de meta",
+    "set": "Definida. Arrastra sus extremos en el mapa para ajustarla.",
+    "notSet": "Sin definir: las vueltas vienen del registrador.",
+    "draw": "Dibujar",
+    "redraw": "Volver a dibujar",
+    "fromLogger": "Desde las vueltas del registrador",
+    "fromLoggerHint": "La coloca donde cambia el número de vuelta del registrador",
+    "noLapChange": "Las vueltas del registrador no cambian en ningún punto del recorrido GPS"
+  },
+  "sectors": {
+    "title": "Líneas de sector",
+    "hint": "En orden de recorrido: n líneas forman n + 1 sectores.",
+    "add": "Añadir línea de sector"
+  },
+  "settings": {
+    "title": "Configuración",
+    "name": "Nombre del circuito",
+    "minLap": "Tiempo mínimo de vuelta (s)",
+    "minLapHint": "Los cruces más cercanos que esto son ruido del GPS, no una vuelta nueva"
+  },
+  "map": {
+    "loading": "Cargando la sesión…",
+    "scrubber": "Posición en la línea de tiempo",
+    "satellite": "Vista de satélite",
+    "drawHint": "Haz clic en dos puntos a través del circuito para colocar la línea. Esc cancela.",
+    "dragHint": "Arrastra los extremos de la línea para ajustarlos. Desplaza para hacer zoom, arrastra para mover el mapa.",
+    "noGpsPath": "La sesión no tiene posiciones GPS: las líneas de vuelta necesitan un recorrido GPS.",
+    "noGps": "No hay posiciones GPS que dibujar.",
+    "imageryUnavailable": "Imágenes de satélite no disponibles (¿sin internet?)",
+    "startFinishShort": "Meta",
+    "split": "Parcial {number}"
+  },
+  "laps": {
+    "title": "Vueltas",
+    "hint": "Haz clic en una vuelta para ir a su inicio",
+    "none": "Aún no hay vueltas.",
+    "lap": "Vuelta",
+    "logger": "Registrador",
+    "lines": "Líneas",
+    "diff": "Dif.",
+    "sectorShort": "S{number}",
+    "startsAt": "Empieza en {time}"
+  },
+  "range": {
+    "rejected": "Debe estar dentro de la línea de tiempo, con el inicio antes del fin",
+    "dragStart": "Arrastra el inicio",
+    "dragEnd": "Arrastra el fin",
+    "frames": {
+      "one": "{count} fotograma",
+      "other": "{count} fotogramas"
+    },
+    "shortcut": "Atajo: {key}",
+    "startAtPlayhead": "Inicio en el cabezal",
+    "endAtPlayhead": "Fin en el cabezal",
+    "goToStart": "Ir al inicio",
+    "goToEnd": "Ir al fin",
+    "wholeTimeline": "Toda la línea de tiempo"
+  },
+  "dataRange": {
+    "title": "Rango de datos",
+    "hint": "La parte de la sesión de la que salen los datos de los widgets. Fuera de él no hay datos; dentro, la sesión empieza de nuevo: distancia desde 0, vueltas numeradas desde 1, mejor vuelta entre las vueltas conservadas. Cada widget puede usar su propio rango.",
+    "start": "Inicio",
+    "end": "Fin",
+    "whole": "Toda la sesión",
+    "atTime": "En un momento",
+    "lapStart": "Inicio de una vuelta",
+    "lapEnd": "Fin de una vuelta",
+    "leaveOut": "Dejar fuera las últimas vueltas",
+    "time": "Tiempo",
+    "lap": "Vuelta",
+    "lapsLeftOut": "Vueltas fuera",
+    "summary": "Datos desde {start} hasta {end}",
+    "sessionStart": "el inicio",
+    "sessionEnd": "el final",
+    "untrimmed": "Datos de toda la sesión",
+    "keptLaps": {
+      "one": "{count} vuelta completa conservada de {total}",
+      "other": "{count} vueltas completas conservadas de {total}"
+    },
+    "noLaps": "Esta sesión aún no tiene vueltas: los límites por vuelta necesitan cronometraje (vueltas del registrador o una línea de salida/meta).",
+    "problems": {
+      "lapMissing": "No existe la vuelta {lap}: ese lado no se recorta.",
+      "notEnoughLaps": {
+        "one": "No hay suficientes vueltas completas para dejar fuera {count}: el final no se recorta.",
+        "other": "No hay suficientes vueltas completas para dejar fuera {count}: el final no se recorta."
+      },
+      "empty": "El rango está vacío: su final está antes de su inicio."
+    }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "country": "BR",
+  "location": "Viamão, Rio Grande do Sul",
+  "track": {
+    "name": "Autódromo Internacional de Tarumã",
+    "startFinish": {
+      "a": {
+        "latitude": -30.0508592,
+        "longitude": -51.0173271
+      },
+      "b": {
+        "latitude": -30.0505943,
+        "longitude": -51.0173861
+      }
+    },
+    "sectors": [],
+    "minLapSeconds": 10
+  }
+}

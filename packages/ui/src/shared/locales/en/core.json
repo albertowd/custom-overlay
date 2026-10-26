@@ -1,0 +1,1066 @@
+{
+  "steps": {
+    "videos": {
+      "title": "Videos",
+      "description": "Select the videos to overlay (chapters, several cameras...). Skip to export only the widget images."
+    },
+    "sources": {
+      "title": "Data sources",
+      "description": "Add external telemetry. Optional when a video already embeds telemetry."
+    },
+    "sync": {
+      "title": "Sync",
+      "description": "Place every video and data source on the same timeline."
+    },
+    "track": {
+      "title": "Track",
+      "description": "Optional: draw the start/finish and sector lines to time laps and sectors from GPS, and choose where lap values come from."
+    },
+    "template": {
+      "title": "Template",
+      "description": "Place and configure widgets over the video."
+    },
+    "summary": {
+      "title": "Summary",
+      "description": "Review the project before exporting."
+    },
+    "export": {
+      "title": "Export",
+      "description": "Render the final video or a transparent image sequence of the widgets."
+    }
+  },
+  "issues": {
+    "notLoaded": "'{label}' could not be loaded",
+    "noSourceForVideos": "The videos have no embedded telemetry: add at least one data source",
+    "noSourceWithoutVideo": "Without a video, at least one data source is required",
+    "notSynced": "'{label}' is not synced yet",
+    "noStartFinish": "Lap values come from the track lines, but there is no start/finish line yet",
+    "noWidgets": "The template has no widgets yet",
+    "videoExportWithoutVideo": "Exporting a video requires a source video; choose the image sequence mode",
+    "videoExportElsewhere": "The final video is exported by the desktop app or the CLI: save the project next to its videos and open it there",
+    "noOutput": "Choose an output location"
+  },
+  "widgets": {
+    "speed-gauge": {
+      "name": "Speed gauge",
+      "description": "Analog gauge with needle, ticks and a digital readout. Works with any value (RPM, G...).",
+      "fields": {
+        "valueId": {
+          "label": "Value"
+        },
+        "label": {
+          "label": "Unit label"
+        },
+        "min": {
+          "label": "Minimum"
+        },
+        "max": {
+          "label": "Maximum",
+          "hint": "0 = session maximum"
+        },
+        "majorStep": {
+          "label": "Major tick step",
+          "hint": "0 = automatic"
+        },
+        "minorTicks": {
+          "label": "Minor ticks"
+        },
+        "sweep": {
+          "label": "Sweep (degrees)"
+        },
+        "decimals": {
+          "label": "Decimals"
+        },
+        "color": {
+          "label": "Value arc"
+        },
+        "trackColor": {
+          "label": "Track"
+        },
+        "needleColor": {
+          "label": "Needle"
+        },
+        "textColor": {
+          "label": "Text"
+        },
+        "showDigital": {
+          "label": "Digital readout"
+        },
+        "digitalY": {
+          "label": "Readout position (Y)",
+          "hint": "% of the radius below the center (negative: above)"
+        },
+        "showLabels": {
+          "label": "Tick labels"
+        },
+        "background": {
+          "label": "Background disc"
+        }
+      }
+    },
+    "g-force": {
+      "name": "G-force",
+      "description": "Friction circle: lateral and longitudinal G as a dot with a fading trail.",
+      "fields": {
+        "lateralId": {
+          "label": "Lateral G"
+        },
+        "longitudinalId": {
+          "label": "Longitudinal G"
+        },
+        "range": {
+          "label": "Range (G)"
+        },
+        "ringStep": {
+          "label": "Ring step (G)"
+        },
+        "trailSeconds": {
+          "label": "Trail (s)"
+        },
+        "invertLateral": {
+          "label": "Invert lateral"
+        },
+        "invertLongitudinal": {
+          "label": "Invert longitudinal"
+        },
+        "dotColor": {
+          "label": "Dot"
+        },
+        "trailColor": {
+          "label": "Trail"
+        },
+        "gridColor": {
+          "label": "Grid"
+        },
+        "showValue": {
+          "label": "Combined G readout"
+        },
+        "valuePosition": {
+          "label": "Readout position",
+          "options": {
+            "bottom": "Bottom",
+            "top": "Top"
+          }
+        },
+        "showRings": {
+          "label": "Rings",
+          "hint": "The circles at each ring step"
+        },
+        "showAxes": {
+          "label": "Cross lines",
+          "hint": "The lateral and longitudinal axes"
+        },
+        "background": {
+          "label": "Background disc"
+        }
+      }
+    },
+    "gps-path": {
+      "name": "GPS path",
+      "description": "Map of the whole session path (north up) with the progress so far and the current position (a dot or your image).",
+      "fields": {
+        "latitudeId": {
+          "label": "Latitude"
+        },
+        "longitudeId": {
+          "label": "Longitude"
+        },
+        "headingId": {
+          "label": "Heading",
+          "hint": "Turns the marker image; computed when missing"
+        },
+        "lineWidth": {
+          "label": "Line width",
+          "hint": "% of the smaller side"
+        },
+        "pathColor": {
+          "label": "Path"
+        },
+        "progressColor": {
+          "label": "Progress"
+        },
+        "stroke": {
+          "label": "Path outline",
+          "hint": "Keeps the path readable without a background"
+        },
+        "strokeColor": {
+          "label": "Outline"
+        },
+        "strokeWidth": {
+          "label": "Outline width",
+          "hint": "% of the smaller side"
+        },
+        "markerSrc": {
+          "label": "Marker image",
+          "hint": "A car, a kart… rotated with the heading"
+        },
+        "markerSize": {
+          "label": "Marker size",
+          "hint": "% of the smaller side"
+        },
+        "markerAngle": {
+          "label": "Marker image faces (°)",
+          "hint": "0 = up, 90 = right"
+        },
+        "markerColor": {
+          "label": "Marker"
+        },
+        "showProgress": {
+          "label": "Highlight progress"
+        },
+        "background": {
+          "label": "Background panel"
+        }
+      }
+    },
+    "live-map": {
+      "name": "Live map",
+      "description": "Map following the current position (or showing the whole track), north-up or heading-up, with a marker (or your image) rotated by the heading.",
+      "fields": {
+        "latitudeId": {
+          "label": "Latitude"
+        },
+        "longitudeId": {
+          "label": "Longitude"
+        },
+        "headingId": {
+          "label": "Heading",
+          "hint": "Computed from the path when missing"
+        },
+        "view": {
+          "label": "View",
+          "options": {
+            "follow": "Follow the position",
+            "whole": "Whole track"
+          }
+        },
+        "radius": {
+          "label": "Radius (m)",
+          "hint": "Follow view"
+        },
+        "orientation": {
+          "label": "Orientation",
+          "hint": "The whole track is always north up",
+          "options": {
+            "heading-up": "Heading up (map rotates)",
+            "north-up": "North up (marker rotates)"
+          }
+        },
+        "shape": {
+          "label": "Shape",
+          "options": {
+            "circle": "Circle",
+            "rounded": "Rounded rectangle"
+          }
+        },
+        "markerSrc": {
+          "label": "Marker image",
+          "hint": "A car, a kart… rotated with the heading"
+        },
+        "markerSize": {
+          "label": "Marker size",
+          "hint": "% of the smaller side"
+        },
+        "markerAngle": {
+          "label": "Marker image faces (°)",
+          "hint": "0 = up, 90 = right"
+        },
+        "markerColor": {
+          "label": "Marker"
+        },
+        "lineWidth": {
+          "label": "Line width"
+        },
+        "pathColor": {
+          "label": "Path"
+        },
+        "traveledColor": {
+          "label": "Traveled"
+        },
+        "stroke": {
+          "label": "Path outline",
+          "hint": "Keeps the path readable without a background"
+        },
+        "strokeColor": {
+          "label": "Outline"
+        },
+        "strokeWidth": {
+          "label": "Outline width",
+          "hint": "% of the smaller side"
+        },
+        "showNorth": {
+          "label": "North indicator"
+        },
+        "background": {
+          "label": "Background"
+        }
+      }
+    },
+    "distance-bar": {
+      "name": "Distance bar",
+      "description": "Progress bar of the distance covered, with tick marks every distance step or at each lap start.",
+      "fields": {
+        "valueId": {
+          "label": "Distance value (m)"
+        },
+        "unit": {
+          "label": "Unit",
+          "options": {
+            "km": "Kilometers",
+            "m": "Meters",
+            "mi": "Miles"
+          }
+        },
+        "total": {
+          "label": "Total",
+          "hint": "In the unit above; 0 = session total"
+        },
+        "ticks": {
+          "label": "Major ticks",
+          "options": {
+            "distance": "Every tick step",
+            "laps": "At each lap start"
+          }
+        },
+        "tickStep": {
+          "label": "Tick step",
+          "hint": "0 = automatic; distance ticks only"
+        },
+        "lapTimeId": {
+          "label": "Lap time value (s)",
+          "hint": "Lap ticks only"
+        },
+        "lapNumberId": {
+          "label": "Lap number value",
+          "hint": "Lap ticks only"
+        },
+        "minorTicks": {
+          "label": "Minor ticks",
+          "hint": "Between major ticks (per lap with lap ticks)"
+        },
+        "decimals": {
+          "label": "Decimals"
+        },
+        "color": {
+          "label": "Progress"
+        },
+        "trackColor": {
+          "label": "Track"
+        },
+        "textColor": {
+          "label": "Text"
+        },
+        "showLabels": {
+          "label": "Tick labels"
+        },
+        "showValue": {
+          "label": "Current distance"
+        },
+        "background": {
+          "label": "Background panel"
+        }
+      }
+    },
+    "elevation": {
+      "name": "Elevation",
+      "description": "Current altitude with the elevation profile of the whole session.",
+      "fields": {
+        "valueId": {
+          "label": "Altitude value (m)"
+        },
+        "unit": {
+          "label": "Unit",
+          "options": {
+            "m": "Meters",
+            "ft": "Feet"
+          }
+        },
+        "label": {
+          "label": "Label"
+        },
+        "decimals": {
+          "label": "Decimals"
+        },
+        "showProfile": {
+          "label": "Profile"
+        },
+        "color": {
+          "label": "Profile color"
+        },
+        "markerColor": {
+          "label": "Marker"
+        },
+        "textColor": {
+          "label": "Text"
+        },
+        "background": {
+          "label": "Background panel"
+        }
+      }
+    },
+    "lap-timer": {
+      "name": "Lap timer",
+      "description": "Running time of the current lap. When a lap ends its final time stays on screen for a few seconds, with the gap to the best or previous lap.",
+      "fields": {
+        "lapTimeId": {
+          "label": "Lap time value (s)"
+        },
+        "lapNumberId": {
+          "label": "Lap number value"
+        },
+        "holdSeconds": {
+          "label": "Show finished lap for (s)",
+          "hint": "0 = go straight to the new lap"
+        },
+        "delta": {
+          "label": "Finished lap gap to",
+          "options": {
+            "best": "Best lap so far",
+            "previous": "Previous lap",
+            "none": "No gap"
+          }
+        },
+        "decimals": {
+          "label": "Decimals"
+        },
+        "showLapNumber": {
+          "label": "Lap number"
+        },
+        "beforeFirstLap": {
+          "label": "Before the first lap",
+          "options": {
+            "dashes": "Show dashes",
+            "hide": "Hide"
+          }
+        },
+        "color": {
+          "label": "Time"
+        },
+        "bestColor": {
+          "label": "New best lap"
+        },
+        "background": {
+          "label": "Background panel"
+        }
+      }
+    },
+    "lap-count": {
+      "name": "Lap count",
+      "description": "Current lap and total laps of the session, e.g. LAP 3 / 12.",
+      "fields": {
+        "lapNumberId": {
+          "label": "Lap number value"
+        },
+        "lapCountId": {
+          "label": "Total laps value"
+        },
+        "label": {
+          "label": "Label",
+          "hint": "Empty = no label"
+        },
+        "showTotal": {
+          "label": "Total laps"
+        },
+        "beforeFirstLap": {
+          "label": "Before the first lap",
+          "options": {
+            "dashes": "Show dashes",
+            "hide": "Hide"
+          }
+        },
+        "color": {
+          "label": "Current lap"
+        },
+        "totalColor": {
+          "label": "Total"
+        },
+        "background": {
+          "label": "Background panel"
+        }
+      }
+    },
+    "lap-table": {
+      "name": "Lap times",
+      "description": "Table of lap times with the gap to the best lap: the laps done so far, or the whole session. The current lap is highlighted with its running time and progress.",
+      "fields": {
+        "lapTimeId": {
+          "label": "Lap time value (s)"
+        },
+        "lapNumberId": {
+          "label": "Lap number value"
+        },
+        "mode": {
+          "label": "Laps",
+          "hint": "Whole session: future laps are dimmed",
+          "options": {
+            "so-far": "Done so far",
+            "session": "Whole session"
+          }
+        },
+        "rows": {
+          "label": "Rows"
+        },
+        "order": {
+          "label": "Order",
+          "options": {
+            "oldest-first": "Oldest first",
+            "newest-first": "Newest first"
+          }
+        },
+        "showCurrent": {
+          "label": "Current lap row"
+        },
+        "showDelta": {
+          "label": "Gap to best"
+        },
+        "showHeader": {
+          "label": "Header"
+        },
+        "decimals": {
+          "label": "Decimals"
+        },
+        "color": {
+          "label": "Text"
+        },
+        "currentColor": {
+          "label": "Current lap"
+        },
+        "bestColor": {
+          "label": "Best lap"
+        },
+        "background": {
+          "label": "Background panel"
+        }
+      }
+    },
+    "date-time": {
+      "name": "Date and time",
+      "description": "Clock time of the frame (from GPS or the logger clock), with an optional date line.",
+      "fields": {
+        "time": {
+          "label": "Time format",
+          "hint": "Tokens: HH mm ss SSS (empty to hide)"
+        },
+        "date": {
+          "label": "Date format",
+          "hint": "Tokens: YYYY MM DD (empty to hide)"
+        },
+        "timezone": {
+          "label": "Timezone",
+          "options": {
+            "local": "This computer",
+            "utc": "UTC",
+            "custom": "Custom offset"
+          }
+        },
+        "utcOffsetMinutes": {
+          "label": "Offset (minutes)",
+          "hint": "Used with a custom timezone"
+        },
+        "color": {
+          "label": "Time color"
+        },
+        "dateColor": {
+          "label": "Date color"
+        },
+        "background": {
+          "label": "Background panel"
+        }
+      }
+    },
+    "timespan": {
+      "name": "Timespan",
+      "description": "Time since a start: a clock date/time (race start) or a timeline position. Before the start it counts down, shows zero or hides.",
+      "fields": {
+        "reference": {
+          "label": "Start from",
+          "options": {
+            "timeline": "Timeline position",
+            "clock": "Clock date/time"
+          }
+        },
+        "startTimeline": {
+          "label": "Start (timeline)"
+        },
+        "startClock": {
+          "label": "Start (date/time)",
+          "hint": "YYYY-MM-DD HH:mm:ss"
+        },
+        "timezone": {
+          "label": "Timezone of the start",
+          "options": {
+            "local": "This computer",
+            "utc": "UTC",
+            "custom": "Custom offset"
+          }
+        },
+        "utcOffsetMinutes": {
+          "label": "Offset (minutes)"
+        },
+        "beforeStart": {
+          "label": "Before the start",
+          "options": {
+            "countdown": "Count down",
+            "zero": "Show zero",
+            "hide": "Hide"
+          }
+        },
+        "decimals": {
+          "label": "Decimals"
+        },
+        "label": {
+          "label": "Label",
+          "hint": "Optional line above, e.g. RACE TIME"
+        },
+        "color": {
+          "label": "Color"
+        },
+        "countdownColor": {
+          "label": "Countdown color"
+        },
+        "background": {
+          "label": "Background panel"
+        }
+      }
+    },
+    "value-text": {
+      "name": "Value text",
+      "description": "Text with live values, e.g. \"Lap {lap.number}  {lap.time|duration}\" or \"{speed.kmh|0} km/h\".",
+      "fields": {
+        "template": {
+          "label": "Text",
+          "hint": "{value.id} or {value.id|format}; formats: 0, 0.0, duration, duration.0, clock:HH:mm:ss"
+        },
+        "fallback": {
+          "label": "Without value"
+        },
+        "color": {
+          "label": "Color"
+        },
+        "size": {
+          "label": "Font size",
+          "hint": "Fraction of the box height"
+        },
+        "weight": {
+          "label": "Weight",
+          "options": {
+            "400": "Regular",
+            "600": "Semibold",
+            "800": "Bold"
+          }
+        },
+        "align": {
+          "label": "Align",
+          "options": {
+            "left": "Left",
+            "center": "Center",
+            "right": "Right"
+          }
+        },
+        "italic": {
+          "label": "Italic"
+        },
+        "uppercase": {
+          "label": "Uppercase"
+        },
+        "background": {
+          "label": "Background panel"
+        }
+      }
+    },
+    "text": {
+      "name": "Text",
+      "description": "Static text: a title, the driver name, the event...",
+      "fields": {
+        "text": {
+          "label": "Text"
+        },
+        "color": {
+          "label": "Color"
+        },
+        "size": {
+          "label": "Font size",
+          "hint": "Fraction of the box height"
+        },
+        "weight": {
+          "label": "Weight",
+          "options": {
+            "400": "Regular",
+            "600": "Semibold",
+            "800": "Bold"
+          }
+        },
+        "align": {
+          "label": "Align",
+          "options": {
+            "left": "Left",
+            "center": "Center",
+            "right": "Right"
+          }
+        },
+        "italic": {
+          "label": "Italic"
+        },
+        "uppercase": {
+          "label": "Uppercase"
+        },
+        "background": {
+          "label": "Background panel"
+        }
+      }
+    },
+    "image": {
+      "name": "Image",
+      "description": "A static image or vector (PNG, JPEG, WebP, SVG): logo, car number, sponsor...",
+      "fields": {
+        "src": {
+          "label": "Image"
+        },
+        "fit": {
+          "label": "Fit",
+          "options": {
+            "contain": "Contain",
+            "cover": "Cover",
+            "stretch": "Stretch"
+          }
+        },
+        "cornerRadius": {
+          "label": "Corner radius",
+          "hint": "% of the smaller side"
+        },
+        "background": {
+          "label": "Background panel"
+        }
+      }
+    },
+    "dynamic-image": {
+      "name": "Dynamic image",
+      "description": "An image moved, rotated and scaled by values: a steering wheel turned by the steering angle, a needle, a car icon...",
+      "fields": {
+        "src": {
+          "label": "Image"
+        },
+        "fit": {
+          "label": "Fit",
+          "options": {
+            "contain": "Contain",
+            "cover": "Cover",
+            "stretch": "Stretch"
+          }
+        },
+        "rotateId": {
+          "label": "Rotate by",
+          "hint": "Empty: no rotation"
+        },
+        "rotateScale": {
+          "label": "Degrees per unit"
+        },
+        "rotateOffset": {
+          "label": "Rotation offset (°)"
+        },
+        "translateXId": {
+          "label": "Move X by"
+        },
+        "translateXScale": {
+          "label": "Box widths per unit"
+        },
+        "translateYId": {
+          "label": "Move Y by"
+        },
+        "translateYScale": {
+          "label": "Box heights per unit"
+        },
+        "scaleId": {
+          "label": "Scale by"
+        },
+        "scaleFactor": {
+          "label": "Scale per unit"
+        }
+      }
+    },
+    "shape": {
+      "name": "Shape",
+      "description": "A solid colour shape to build backgrounds without images: panels, slanted racing bars, circles, badges...",
+      "fields": {
+        "shape": {
+          "label": "Shape",
+          "options": {
+            "rectangle": "Rectangle",
+            "rounded": "Rounded rectangle",
+            "ellipse": "Ellipse / circle",
+            "parallelogram": "Parallelogram (slanted)",
+            "triangle": "Triangle",
+            "diamond": "Diamond",
+            "hexagon": "Hexagon"
+          }
+        },
+        "color": {
+          "label": "Fill"
+        },
+        "fill": {
+          "label": "Filled",
+          "hint": "Off: border only"
+        },
+        "cornerRadius": {
+          "label": "Corner radius",
+          "hint": "Rounded rectangle"
+        },
+        "slant": {
+          "label": "Slant (%)",
+          "hint": "Parallelogram"
+        },
+        "borderWidth": {
+          "label": "Border width",
+          "hint": "0 = none"
+        },
+        "borderColor": {
+          "label": "Border"
+        }
+      }
+    }
+  },
+  "values": {
+    "time": {
+      "timeline": {
+        "name": "Timeline time",
+        "description": "Seconds since timeline time 0"
+      },
+      "frame": {
+        "name": "Frame number",
+        "description": "Index of the frame being rendered"
+      },
+      "clock": {
+        "name": "Clock time",
+        "description": "UTC time of the frame as epoch milliseconds (from GPS or the logger clock)"
+      }
+    },
+    "session": {
+      "elapsed": {
+        "name": "Session elapsed",
+        "description": "Seconds since the start of the timeline"
+      },
+      "remaining": {
+        "name": "Session time left",
+        "description": "Seconds until the end of the timeline"
+      }
+    },
+    "speed": {
+      "kmh": {
+        "name": "Speed (km/h)",
+        "description": "Best available speed in km/h"
+      },
+      "mph": {
+        "name": "Speed (mph)",
+        "description": "Best available speed in mph"
+      },
+      "top": {
+        "kmh": {
+          "name": "Top speed (km/h)",
+          "description": "Highest speed so far in km/h, ignoring GPS spikes"
+        },
+        "mph": {
+          "name": "Top speed (mph)",
+          "description": "Highest speed so far in mph, ignoring GPS spikes"
+        }
+      }
+    },
+    "accel": {
+      "lateral": {
+        "name": "Lateral G",
+        "description": "Cornering acceleration: logged lateral G, or computed from the GPS track (positive = turning right)"
+      },
+      "longitudinal": {
+        "name": "Longitudinal G",
+        "description": "Acceleration and braking: logged longitudinal G, or computed from the GPS speed (positive = speeding up)"
+      },
+      "combined": {
+        "name": "Combined G",
+        "description": "Total horizontal acceleration: logged value, or computed from lateral and longitudinal G"
+      }
+    },
+    "distance": {
+      "traveled": {
+        "name": "Distance traveled",
+        "description": "Meters covered since the start: logged distance, or integrated from GPS positions while moving"
+      }
+    },
+    "lap": {
+      "number": {
+        "name": "Lap",
+        "description": "Current lap number (project timing source)"
+      },
+      "time": {
+        "name": "Lap time",
+        "description": "Seconds since the current lap started (empty on the out lap) (project timing source)"
+      },
+      "last": {
+        "name": "Last lap",
+        "description": "Last completed lap (project timing source)"
+      },
+      "best": {
+        "name": "Best lap",
+        "description": "Best completed lap so far (project timing source)"
+      },
+      "count": {
+        "name": "Total laps",
+        "description": "Laps of the session (project timing source)"
+      },
+      "remaining": {
+        "name": "Laps left",
+        "description": "Total laps minus the current lap (project timing source)"
+      },
+      "theoretical": {
+        "name": "Theoretical best lap",
+        "description": "Sum of the best time of each sector so far (project timing source)"
+      }
+    },
+    "sector": {
+      "number": {
+        "name": "Sector",
+        "description": "Current sector (project timing source)"
+      },
+      "time": {
+        "name": "Sector time",
+        "description": "Seconds since the current sector started (project timing source)"
+      },
+      "last": {
+        "name": "Last sector",
+        "description": "Last completed sector, any sector (project timing source)"
+      },
+      "N": {
+        "last": {
+          "name": "Sector {n}",
+          "description": "Latest time of sector {n} (project timing source)"
+        },
+        "best": {
+          "name": "Best sector {n}",
+          "description": "Best time of sector {n} so far (project timing source)"
+        }
+      }
+    },
+    "imported": {
+      "lap": {
+        "number": {
+          "name": "Lap (from the logger)",
+          "description": "Current lap number, from the logger"
+        },
+        "time": {
+          "name": "Lap time (from the logger)",
+          "description": "Seconds since the current lap started (empty on the out lap), from the logger"
+        },
+        "last": {
+          "name": "Last lap (from the logger)",
+          "description": "Last completed lap, from the logger"
+        },
+        "best": {
+          "name": "Best lap (from the logger)",
+          "description": "Best completed lap so far, from the logger"
+        },
+        "count": {
+          "name": "Total laps (from the logger)",
+          "description": "Laps of the session, from the logger"
+        },
+        "remaining": {
+          "name": "Laps left (from the logger)",
+          "description": "Total laps minus the current lap, from the logger"
+        }
+      }
+    },
+    "lines": {
+      "lap": {
+        "number": {
+          "name": "Lap (from the track lines)",
+          "description": "Current lap number, from the track lines"
+        },
+        "time": {
+          "name": "Lap time (from the track lines)",
+          "description": "Seconds since the current lap started (empty on the out lap), from the track lines"
+        },
+        "last": {
+          "name": "Last lap (from the track lines)",
+          "description": "Last completed lap, from the track lines"
+        },
+        "best": {
+          "name": "Best lap (from the track lines)",
+          "description": "Best completed lap so far, from the track lines"
+        },
+        "count": {
+          "name": "Total laps (from the track lines)",
+          "description": "Laps of the session, from the track lines"
+        },
+        "remaining": {
+          "name": "Laps left (from the track lines)",
+          "description": "Total laps minus the current lap, from the track lines"
+        },
+        "theoretical": {
+          "name": "Theoretical best lap (from the track lines)",
+          "description": "Sum of the best time of each sector so far, from the track lines"
+        }
+      },
+      "sector": {
+        "number": {
+          "name": "Sector (from the track lines)",
+          "description": "Current sector, from the track lines"
+        },
+        "time": {
+          "name": "Sector time (from the track lines)",
+          "description": "Seconds since the current sector started, from the track lines"
+        },
+        "last": {
+          "name": "Last sector (from the track lines)",
+          "description": "Last completed sector, any sector, from the track lines"
+        },
+        "N": {
+          "last": {
+            "name": "Sector {n} (from the track lines)",
+            "description": "Latest time of sector {n}, from the track lines"
+          },
+          "best": {
+            "name": "Best sector {n} (from the track lines)",
+            "description": "Best time of sector {n} so far, from the track lines"
+          }
+        }
+      }
+    }
+  },
+  "presets": {
+    "youtube-sdr-h264": {
+      "label": "YouTube SDR · H.264",
+      "description": "YouTube's recommended upload settings: H.264 High, 2 B-frames, closed GOP of half the frame rate, AAC 384 kbps."
+    },
+    "youtube-sdr-hevc": {
+      "label": "YouTube SDR · HEVC",
+      "description": "YouTube's SDR settings with H.265, which YouTube also accepts: encodes 10-bit footage on the GPU."
+    },
+    "youtube-hdr-hevc": {
+      "label": "YouTube HDR · HEVC",
+      "description": "YouTube's HDR recommendations: 10-bit H.265 for a Rec.2020 HLG or PQ output, 2 B-frames, closed GOP of half the frame rate, AAC 384 kbps."
+    },
+    "youtube-hdr-av1": {
+      "label": "YouTube HDR · AV1",
+      "description": "YouTube's HDR recommendations with AV1, also recommended for HDR: fast on GPUs with AV1 encoding, slow on the CPU."
+    },
+    "youtubeBitrate": "{bitrate} Mbps: the top of YouTube's {table} range for {resolution} at {fps}.",
+    "tiktok": {
+      "label": "TikTok · 9:16",
+      "description": "Full screen vertical 1080 × 1920 video for TikTok: H.264 High, 2 B-frames, 1 s GOP, AAC 192 kbps."
+    },
+    "instagram-reels": {
+      "label": "Instagram Reels · 9:16",
+      "description": "Full screen vertical 1080 × 1920 video for Instagram Reels and Stories: H.264 High, 2 B-frames, 1 s GOP, AAC 192 kbps."
+    },
+    "instagram-feed": {
+      "label": "Instagram feed · 4:5",
+      "description": "Portrait 1080 × 1350 video, the tallest Instagram shows in the feed: H.264 High, 2 B-frames, 1 s GOP, AAC 192 kbps."
+    },
+    "socialBitrate": "{bitrate} Mbps at {fps}: the app re-encodes every upload.",
+    "archive": {
+      "label": "High quality archive",
+      "description": "H.265 at twice the YouTube bitrate, 1 s GOP, original audio copied."
+    },
+    "editing": {
+      "label": "Editing friendly",
+      "description": "Short 0.25 s GOP without B-frames for smooth scrubbing in video editors, H.264."
+    }
+  }
+}

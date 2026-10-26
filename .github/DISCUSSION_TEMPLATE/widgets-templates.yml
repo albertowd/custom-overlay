@@ -1,0 +1,77 @@
+title: "[Widget]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Share a single widget (`*.widget.json`) or a whole overlay template (`*.template.json`).
+        One widget or template per post, so it is easy to find and comment on.
+  - type: markdown
+    attributes:
+      value: |
+        > [!WARNING]
+        > Value scripts are JavaScript that runs on the computer of whoever imports them. Only import scripts you have read, and never post code that reads files, uses the network or is obfuscated.
+  - type: dropdown
+    id: kind
+    attributes:
+      label: What are you sharing?
+      options:
+        - Single widget (*.widget.json)
+        - Template (*.template.json)
+    validations:
+      required: true
+  - type: dropdown
+    id: use
+    attributes:
+      label: Made for
+      multiple: true
+      options:
+        - Car / kart racing
+        - Motorcycle
+        - Bicycle / running
+        - Flying / drone
+        - Water sports
+        - Generic
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What it shows and how it looks.
+    validations:
+      required: true
+  - type: textarea
+    id: values
+    attributes:
+      label: Values it needs
+      description: Value ids the widgets read (e.g. `racechrono.speed`, `lap.time`) and any value scripts they depend on.
+    validations:
+      required: true
+  - type: textarea
+    id: preview
+    attributes:
+      label: Screenshot or short clip
+      description: Drag an image or GIF here.
+    validations:
+      required: true
+  - type: textarea
+    id: file
+    attributes:
+      label: File
+      description: Attach the .json file (zip it if GitHub rejects it), or paste it in a ```json code block.
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: App version it was made with
+      placeholder: "0.1.0"
+    validations:
+      required: true
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Sharing
+      options:
+        - label: I made this (or have permission to share it) and release it under [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) (public domain). Images inside it are mine or CC0 too.
+          required: true

@@ -1,0 +1,93 @@
+{
+  "toolbar": {
+    "new": "新規",
+    "open": "開く…",
+    "saveAs": "名前を付けて保存…",
+    "unsavedProject": "未保存のプロジェクト",
+    "unsavedChanges": "未保存の変更",
+    "confirmDiscard": "未保存の変更を破棄しますか？"
+  },
+  "footer": {
+    "back": "戻る",
+    "next": "次へ",
+    "skip": "スキップ",
+    "projectPage": "GitHub のプロジェクトページ"
+  },
+  "stepState": {
+    "complete": "完了",
+    "incomplete": "未完了",
+    "skipped": "スキップ",
+    "not-applicable": "該当なし"
+  },
+  "notices": {
+    "checkSync": "同期を確認してください: {items}",
+    "openProjectFailed": "プロジェクトを開けませんでした: {error}",
+    "saveProjectFailed": "プロジェクトを保存できませんでした: {error}",
+    "loadFailed": "{path} を読み込めませんでした: {error}",
+    "trackImported": "「{name}」のラインをインポートしました",
+    "trackImportedUnnamed": "コースのラインをインポートしました",
+    "trackDetected": "{name}を検出しました。ラインでラップを計測します",
+    "trackLoaded": "{name}のラインを読み込みました",
+    "importTrackFailed": "コースをインポートできませんでした: {error}",
+    "exportTrackFailed": "コースをエクスポートできませんでした: {error}",
+    "duplicateValueId": "ID「{id}」のプロジェクト値はすでに存在します",
+    "valuesImported": {
+      "other": "「{name}」から {count} 個の値をインポートしました"
+    },
+    "importValuesFailed": "値をインポートできませんでした: {error}",
+    "exportValuesFailed": "値をエクスポートできませんでした: {error}",
+    "importWidgetsFailed": "ウィジェットをインポートできませんでした: {error}",
+    "exportWidgetFailed": "ウィジェットをエクスポートできませんでした: {error}"
+  },
+  "channel": {
+    "tooltip": {
+      "other": "{label} — {count} サンプル、{rate} Hz"
+    }
+  },
+  "series": {
+    "startUtc": "開始 (UTC)",
+    "channels": "チャンネル"
+  },
+  "dropFiles": "ここにファイルをドロップ",
+  "newProject": {
+    "title": "新規プロジェクト",
+    "hint": "プロジェクトに名前を付けてください。保存時の既定のファイル名にもなります。",
+    "placeholder": "例: 鈴鹿 走行会",
+    "create": "作成",
+    "openInstead": "プロジェクトを開く…"
+  },
+  "update": {
+    "title": "新しいバージョンがあります",
+    "message": "Custom Overlay {latest} が公開されました (現在のバージョン: {current})。",
+    "notes": "変更点",
+    "download": "{file} をダウンロード",
+    "page": "リリースページを開く",
+    "later": "後で",
+    "skip": "このバージョンをスキップ",
+    "noInstaller": "このリリースにはこのシステム用のインストーラーがありません。リリースページからダウンロードしてください。",
+    "change": {
+      "major": "メジャーアップデート",
+      "minor": "新機能",
+      "patch": "修正",
+      "prerelease": "プレリリース"
+    }
+  },
+  "busy": {
+    "export": {
+      "title": "書き出し中…",
+      "detail": "書き出しが終わるかキャンセルされるまで、プロジェクトは編集できません。"
+    },
+    "media": {
+      "title": "メディアを読み込み中…",
+      "detail": "動画とデータファイル、そのテレメトリーを読み込んでいます。",
+      "more": {
+        "one": "ほか{count}ファイル",
+        "other": "ほか{count}ファイル"
+      }
+    },
+    "values": {
+      "title": "値を更新中…",
+      "detail": "新しい設定でラップ、距離、ウィジェットのデータを再計算しています。"
+    }
+  }
+}

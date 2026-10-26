@@ -1,0 +1,24 @@
+{
+  "bin": {
+    "custom-overlay": "./dist/index.js"
+  },
+  "dependencies": {
+    "@custom-overlay/core": "^0.1.0",
+    "commander": "^15.0.0"
+  },
+  "description": "Command line interface for custom-overlay",
+  "files": [
+    "dist"
+  ],
+  "license": "AGPL-3.0-only",
+  "name": "@custom-overlay/cli",
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage && node ../../scripts/normalize-lcov.mjs coverage/lcov.info",
+    "test:watch": "vitest"
+  },
+  "type": "module",
+  "version": "0.1.0"
+}

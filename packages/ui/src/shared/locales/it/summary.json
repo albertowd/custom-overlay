@@ -1,0 +1,59 @@
+{
+  "status": {
+    "disabled": "disattivato",
+    "error": "errore",
+    "reference": "riferimento",
+    "synced": "sincronizzato",
+    "notSynced": "non sincronizzato"
+  },
+  "output": {
+    "title": "Output",
+    "format": "Formato",
+    "color": "Colore",
+    "mode": "Modalità",
+    "finalVideo": "Video finale",
+    "imageSequence": "Sequenza di immagini trasparente",
+    "encoder": "Encoder"
+  },
+  "timeline": {
+    "title": "Timeline",
+    "timeZero": "Tempo 0",
+    "span": "Intervallo",
+    "length": "Durata",
+    "timeZeroAt": "Tempo 0 alle",
+    "basis": {
+      "video": "Primo video",
+      "source": "Prima sorgente dati",
+      "none": "Non ancora definito"
+    }
+  },
+  "items": {
+    "title": "Video e sorgenti dati",
+    "videos": "Video",
+    "sources": "Sorgenti",
+    "item": "Elemento",
+    "type": "Tipo",
+    "position": "Posizione",
+    "status": "Stato",
+    "video": "Video",
+    "embedded": "incorporata",
+    "channels": {
+      "one": "{count} canale",
+      "other": "{count} canali"
+    },
+    "followsVideo": "segue il video"
+  },
+  "template": {
+    "title": "Modello",
+    "widgets": "Widget",
+    "antialias": "Anti-aliasing",
+    "on": "attivo",
+    "off": "disattivo",
+    "file": "File",
+    "embedded": "incorporato nel progetto"
+  },
+  "checks": {
+    "title": "Controlli",
+    "ready": "Tutto pronto."
+  }
+}

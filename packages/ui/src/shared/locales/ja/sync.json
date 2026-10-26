@@ -1,0 +1,59 @@
+{
+  "offset": {
+    "label": "タイムライン上の位置",
+    "minusFrame": "−1 フレーム",
+    "plusFrame": "+1 フレーム",
+    "formula": "タイムラインの時間 = アイテムの時間 + 位置"
+  },
+  "results": {
+    "none": "自動で一致する候補がありません。共通の絶対時刻、チャプター、速度信号がありません。動画とライブ値を見ながら手動で合わせてください。"
+  },
+  "methods": {
+    "timestamp": "GPS 時刻で同期",
+    "camera-clock": "カメラの時計で同期",
+    "chapter": "GoPro チャプター",
+    "correlation": "速度信号で同期"
+  },
+  "messages": {
+    "gpsTime": "「{label}」と GPS / ロガーの時刻を比較",
+    "cameraClocks": "「{label}」とカメラの時計を比較（同じタイムゾーンと仮定）",
+    "placedClockAsZone": "「{label}」のカメラの時計（{clock}）を {zone} として読み取り",
+    "clockAsZone": "カメラの時計（{clock}）を {zone} として読み取り",
+    "speedMatch": "「{label}」と速度が一致（r = {r}、{overlap} s を比較）",
+    "chapterContinues": "「{label}」の続き（GoPro チャプター {chapter}）",
+    "chapterEndsBefore": "「{label}」の開始位置で終了（GoPro チャプター {chapter}）"
+  },
+  "notes": {
+    "farFromTimeline": "タイムラインから離れています。別の時間に記録されたものですか？",
+    "ambiguous": "あいまい（繰り返しパターン）"
+  },
+  "empty": {
+    "title": "同期するものはありません。",
+    "description": "唯一の動画またはデータソースがタイムラインを決め、埋め込みテレメトリーは常にその動画に従います。",
+    "continue": "続ける"
+  },
+  "chart": {
+    "title": "速度",
+    "zoom": "再生位置の前後 ±{seconds} s",
+    "noSpeed": "表示できる速度チャンネルがありません。"
+  },
+  "auto": {
+    "run": "自動同期",
+    "busy": "解析中…"
+  },
+  "synced": "同期済み",
+  "live": {
+    "title": "再生位置",
+    "timeline": "タイムライン",
+    "itemTime": "アイテムの時間",
+    "itemClock": "アイテムの時計",
+    "referenceSpeed": "基準の速度",
+    "itemSpeed": "アイテムの速度",
+    "lap": "ラップ"
+  },
+  "timeInput": {
+    "format": "例: 530、2.530、2:30、1:05:00",
+    "rejected": "ここでは使用できません",
+    "followsTimeline": "タイムラインに従う"
+  }
+}

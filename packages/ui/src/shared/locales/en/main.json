@@ -1,0 +1,60 @@
+{
+  "filters": {
+    "videos": "Videos",
+    "telemetry": "Telemetry",
+    "videoTelemetry": "Video (telemetry only: GoPro or DJI)",
+    "djiSubtitles": "DJI telemetry subtitles",
+    "project": "Overlay project",
+    "values": "Value scripts",
+    "trackOrProject": "Track or project",
+    "widgets": "Widgets or template",
+    "template": "Overlay template",
+    "widget": "Overlay widget",
+    "track": "Track",
+    "mp4": "MP4 video"
+  },
+  "dialogs": {
+    "addVideos": "Add videos",
+    "addSources": "Add data sources",
+    "importWidgets": "Import widgets",
+    "exportWidget": "Export widget",
+    "importTrack": "Import track lines",
+    "exportTrack": "Export track lines",
+    "importValues": "Import values",
+    "exportValues": "Export values",
+    "openProject": "Open project",
+    "saveProject": "Save project",
+    "loadTemplate": "Load template",
+    "saveTemplate": "Save template",
+    "outputFolder": "Select the output folder for the image sequence",
+    "exportVideo": "Export video"
+  },
+  "chapters": {
+    "title": "GoPro chapters",
+    "message": {
+      "one": "This video is part of a longer GoPro recording",
+      "other": "These videos are part of longer GoPro recordings"
+    },
+    "explanation": "GoPro splits long recordings into chapter files:",
+    "files": {
+      "one": "{count} file",
+      "other": "{count} files"
+    },
+    "question": {
+      "one": "Add the {count} other chapter too? Chapters are placed one after another on the timeline, each with its own telemetry.",
+      "other": "Add the {count} other chapters too? They are placed one after another on the timeline, each with its own telemetry."
+    },
+    "addAll": "Add all chapters",
+    "onlySelected": "Only the selected videos"
+  },
+  "closeDuringExport": {
+    "title": "Export running",
+    "message": "An export is still running.",
+    "detail": "Closing cancels it and removes the unfinished file.",
+    "keep": "Keep exporting",
+    "cancelAndClose": "Cancel export and close"
+  },
+  "errors": {
+    "exportRunning": "An export is already running"
+  }
+}

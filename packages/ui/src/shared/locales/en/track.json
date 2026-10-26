@@ -1,0 +1,140 @@
+{
+  "importLines": "Import lines…",
+  "exportLines": "Export lines…",
+  "list": {
+    "title": "Track list",
+    "none": "This session is on none of the known tracks.",
+    "detected": "This session is at {name}.",
+    "several": "This session matches several known tracks: pick one below.",
+    "inUse": "Lines of {name} from the track list.",
+    "use": "Use its lines",
+    "load": "Load a known track",
+    "choose": "Choose a track…",
+    "detectedGroup": "In this session",
+    "confirmReplace": "Replace the current lines with those of {name}?",
+    "share": "Missing track or wrong lines?",
+    "shareLink": "Share your lines",
+    "search": "Search by name, city or country",
+    "resultsGroup": {
+      "one": "{count} track found",
+      "other": "{count} tracks found"
+    },
+    "nearbyGroup": "Within {km} km",
+    "km": "{distance} km",
+    "noResults": "No track found",
+    "source": {
+      "bundled": {
+        "one": "{count} track built into this version (GitHub unreachable)",
+        "other": "{count} tracks built into this version (GitHub unreachable)"
+      },
+      "github": {
+        "one": "{count} track, up to date with GitHub",
+        "other": "{count} tracks, up to date with GitHub"
+      },
+      "cache": {
+        "one": "{count} track from the last download (GitHub unreachable)",
+        "other": "{count} tracks from the last download (GitHub unreachable)"
+      }
+    }
+  },
+  "timing": {
+    "label": "Lap values come from",
+    "options": {
+      "auto": "Automatic: track lines when set, else the logger",
+      "imported": "From the logger (e.g. RaceChrono laps)",
+      "lines": "From the track lines"
+    },
+    "nowLines": "Now: the track lines. Each widget can override this in its settings (Lap timing).",
+    "nowLogger": "Now: the logger. Each widget can override this in its settings (Lap timing)."
+  },
+  "startFinish": {
+    "title": "Start / finish",
+    "set": "Set. Drag its ends on the map to adjust.",
+    "notSet": "Not set: laps come from the logger.",
+    "draw": "Draw",
+    "redraw": "Redraw",
+    "fromLogger": "From logger laps",
+    "fromLoggerHint": "Place it where the logger's lap number changes",
+    "noLapChange": "The logger laps do not change anywhere on the GPS path"
+  },
+  "sectors": {
+    "title": "Sector lines",
+    "hint": "In driving order: n lines make n + 1 sectors.",
+    "add": "Add sector line"
+  },
+  "settings": {
+    "title": "Settings",
+    "name": "Track name",
+    "minLap": "Minimum lap time (s)",
+    "minLapHint": "Crossings closer than this are GPS jitter, not a new lap"
+  },
+  "map": {
+    "loading": "Loading the session…",
+    "scrubber": "Position on the timeline",
+    "satellite": "Satellite view",
+    "drawHint": "Click two points across the track to place the line. Esc cancels.",
+    "dragHint": "Drag the line ends to adjust them. Scroll to zoom, drag to move the map.",
+    "noGpsPath": "The session has no GPS positions: lap lines need a GPS path.",
+    "noGps": "No GPS positions to draw.",
+    "imageryUnavailable": "Satellite imagery unavailable (no internet?)",
+    "startFinishShort": "S/F",
+    "split": "Split {number}"
+  },
+  "laps": {
+    "title": "Laps",
+    "hint": "Click a lap to jump to its start",
+    "none": "No laps yet.",
+    "lap": "Lap",
+    "logger": "Logger",
+    "lines": "Lines",
+    "diff": "Diff",
+    "sectorShort": "S{number}",
+    "startsAt": "Starts at {time}"
+  },
+  "range": {
+    "rejected": "Must be inside the timeline, start before end",
+    "dragStart": "Drag the start",
+    "dragEnd": "Drag the end",
+    "frames": {
+      "one": "{count} frame",
+      "other": "{count} frames"
+    },
+    "shortcut": "Shortcut: {key}",
+    "startAtPlayhead": "Start at playhead",
+    "endAtPlayhead": "End at playhead",
+    "goToStart": "Go to start",
+    "goToEnd": "Go to end",
+    "wholeTimeline": "Whole timeline"
+  },
+  "dataRange": {
+    "title": "Data range",
+    "hint": "The part of the session the widgets’ data comes from. Outside it there is no data; inside it the session starts over: distance from 0, laps numbered from 1, best lap of the kept laps. Each widget can use its own range.",
+    "start": "Start",
+    "end": "End",
+    "whole": "Whole session",
+    "atTime": "At a time",
+    "lapStart": "Start of a lap",
+    "lapEnd": "End of a lap",
+    "leaveOut": "Leave out the last laps",
+    "time": "Time",
+    "lap": "Lap",
+    "lapsLeftOut": "Laps left out",
+    "summary": "Data from {start} to {end}",
+    "sessionStart": "the start",
+    "sessionEnd": "the end",
+    "untrimmed": "Data from the whole session",
+    "keptLaps": {
+      "one": "{count} complete lap kept of {total}",
+      "other": "{count} complete laps kept of {total}"
+    },
+    "noLaps": "This session has no laps yet: lap bounds need lap timing (logger laps or a start/finish line).",
+    "problems": {
+      "lapMissing": "There is no lap {lap}: that side is not trimmed.",
+      "notEnoughLaps": {
+        "one": "There are not enough completed laps to leave out {count}: the end is not trimmed.",
+        "other": "There are not enough completed laps to leave out {count}: the end is not trimmed."
+      },
+      "empty": "The range is empty: its end is before its start."
+    }
+  }
+}
