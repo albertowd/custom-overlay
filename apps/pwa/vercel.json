@@ -1,5 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "installCommand": "cd ../.. && npm ci --workspace @custom-overlay/pwa --include-workspace-root",
   "buildCommand": "cd ../.. && npm run build:pwa",
   "outputDirectory": "dist"
 }
