@@ -27,4 +27,6 @@ mac:
   category: public.app-category.video
 linux:
   target: [AppImage, tar.gz]
+  # Defaults to the package name (@custom-overlay/desktop), which the AppImage target rejects.
+  executableName: custom-overlay
   category: AudioVideo
