@@ -9,7 +9,7 @@ the final video or a transparent image sequence with only the widgets.
 [Download](https://github.com/albertowd/custom-overlay/releases/latest) ·
 [Discussions](https://github.com/albertowd/custom-overlay/discussions)
 
-![Custom Overlay editing a race overlay: speed gauge, track map, lap times and distance bar over a GoPro onboard video](docs/media/screenshot.webp)
+![Custom Overlay editing a race overlay: speed gauge, track map, lap times and lap bar over a GoPro onboard video](docs/media/screenshot.webp)
 
 - **Any camera, any logger.** GoPro telemetry (GPS, accelerometer, gyroscope) is read straight
   from the video; DJI `.SRT` subtitles and RaceChrono CSV exports are supported too.
@@ -38,17 +38,20 @@ info_ → _Run anyway_) and macOS Gatekeeper (right-click the app → _Open_) wa
 Each release lists the `SHA256SUMS.txt` of its files.
 
 When a newer version is out, the app offers to download it at start: now, later, or never for
-that version.
+that version. The web app offers to reload into its new version.
 
 ### Web app
 
 The web app runs in the browser, on computers, phones and tablets, and can be installed as an app
 (PWA). It edits projects like the desktop app, with files picked or dropped into the page.
 
-- **Final video**: encoded by the browser on the device's own hardware, written to a file you
-  pick (Chrome and Edge on a computer) or downloaded when done (phones, other browsers).
-- **Transparent PNG sequence**: into a folder in Chrome and Edge, as a zip download in other
-  browsers.
+- **Final video**: encoded by the browser on the device's own hardware, written to a file picked
+  when the export starts (Chrome and Edge on a computer) or downloaded when done (phones, other
+  browsers).
+- **Transparent PNG sequence**: into a folder picked when the export starts in Chrome and Edge, as
+  a zip download in other browsers.
+- **Projects**: a browser cannot open files by their path, so open a project together with its
+  videos and data files, or select them again from their cards.
 
 #### Browser limits
 
@@ -61,8 +64,7 @@ The web app tells when one of these applies, when it opens and in the Videos and
 - **Codecs and hardware.** What can be decoded and encoded depends on the browser and the device's
   graphics hardware: a codec or resolution it cannot encode falls back to H.264, or needs a smaller
   resolution; a video it cannot decode cannot be exported there.
-- **Colour.** 8-bit SDR (Rec.709) only, tagged full range; the 10-bit and HDR settings need the
-  desktop app.
+- **Colour.** 8-bit SDR (Rec.709) only; the 10-bit and HDR settings need the desktop app.
 - **Sound.** Always re-encoded (no copy), as AAC, or as Opus where the browser has no AAC encoder
   (some video editors do not read Opus). A sound the browser cannot decode is exported silent.
 - **Scaling and disk.** The scaling filters (Lanczos, FSR…), the slow disk options and the choice
@@ -85,14 +87,14 @@ added as a data source that follows the video.
 No video? Skip this step to export only the widgets, as a transparent image sequence, to overlay
 in your video editor.
 
-![Creating a project and adding a GoPro video with its chapter](docs/media/1-videos.webp)
+![Creating a project and adding a GoPro video with its chapters](docs/media/1-videos.webp)
 
 ### 2. Data sources
 
 Add RaceChrono CSV exports (v2 / v3), DJI `.SRT` subtitles, or videos used only for their
 telemetry. Optional when the video already has telemetry.
 
-![The telemetry channels embedded in the GoPro chapters](docs/media/2-sources.webp)
+![Adding a RaceChrono session next to the telemetry embedded in the GoPro chapters](docs/media/2-sources.webp)
 
 ### 3. Sync
 
@@ -106,7 +108,7 @@ Every video and data source is placed on the timeline **automatically** when it 
 Results the app is sure about are marked as synced; anything else is left for you to review. Play
 the video and look at the speed chart, nudge by a frame, 0.1 s or 1 s, or pick another candidate.
 
-![Reviewing the sync of the second chapter on the speed chart](docs/media/3-sync.webp)
+![Reviewing the sync of the second chapter: its candidates, and its speed on the chart](docs/media/3-sync.webp)
 
 ### 4. Track
 
@@ -167,7 +169,7 @@ then the resolution, frame rate and colour, the encoder preset, and the scaling.
 with live progress, telling whether drawing the widgets or ffmpeg (decoding, encoding, the disk)
 holds it back, and you can keep working meanwhile.
 
-![Setting the export range and output, then starting the export](docs/media/7-export.webp)
+![Setting the export range and output, then exporting](docs/media/7-export.webp)
 
 ## Widgets
 
@@ -228,7 +230,9 @@ The last used export settings are saved in the project.
 - **Project** (`*.overlay.json`): videos and data sources with their positions on the timeline,
   output format, colour palette, track lines, export settings, and the template (inline or a link
   to a template file). Paths are stored relative to the project file, so a project can be moved
-  together with its media.
+  together with its media. A video or data file that cannot be found can be selected again from its
+  card: the project keeps its sync, template and settings, and the app checks that it is the same
+  file.
 - **Template** (`*.template.json`): widgets only. It is independent of any video, so the same
   template can be applied to many sessions.
 - **Widget** (`*.widget.json`), **values** (`*.values.json`) and **track lines**
