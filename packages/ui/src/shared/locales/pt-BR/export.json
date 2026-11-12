@@ -15,7 +15,8 @@
     "none": "Nenhuma saída selecionada",
     "choose": "Escolher…",
     "defaultHint": "Não escolhido: vai para a pasta dos vídeos (ou dos dados), com o nome do projeto, sem substituir uma exportação anterior.",
-    "browserVideoHint": "Não escolhido: o navegador pergunta onde salvar ao iniciar a exportação, ou baixa o vídeo ao terminar.",
+    "browserVideoHint": "O navegador pergunta onde salvar ao iniciar a exportação, ou baixa o vídeo ao terminar.",
+    "browserFolderHint": "O navegador pergunta a pasta ao iniciar a exportação.",
     "zipHint": "O navegador não consegue gravar em uma pasta: os quadros são baixados em um único arquivo zip.",
     "useDefault": "Usar o local padrão"
   },

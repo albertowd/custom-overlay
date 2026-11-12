@@ -15,7 +15,8 @@
     "none": "Ninguna salida seleccionada",
     "choose": "Elegir…",
     "defaultHint": "Sin elegir: se guarda junto a los vídeos (o los datos), con el nombre del proyecto, sin reemplazar una exportación anterior.",
-    "browserVideoHint": "Sin elegir: el navegador pregunta dónde guardarlo al empezar la exportación, o lo descarga al terminar.",
+    "browserVideoHint": "El navegador pregunta dónde guardarlo al empezar la exportación, o lo descarga al terminar.",
+    "browserFolderHint": "El navegador pregunta por la carpeta al empezar la exportación.",
     "zipHint": "El navegador no puede escribir en una carpeta: los fotogramas se descargan en un único archivo zip.",
     "useDefault": "Usar la ubicación predeterminada"
   },

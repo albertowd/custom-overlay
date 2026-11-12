@@ -227,8 +227,14 @@ describe('ExportStep with a video', () => {
     expect(screen.queryByRole('checkbox', { name: 'Slow disk (hard drive)' })).toBeNull();
     expect(screen.queryByLabelText(/^Scaling/)).toBeNull();
     expect(screen.getByText(/Encoded by this browser on the device's hardware/)).toBeTruthy();
-    expect(screen.getByText(/the browser asks where to save it/)).toBeTruthy();
+    expect(screen.getByText(/The browser asks where to save it/)).toBeTruthy();
     expect(screen.queryByText(/Not chosen: it goes next to the videos/)).toBeNull();
+    // Nothing to choose ahead: no output field.
+    expect(screen.queryByRole('button', { name: 'Choose…' })).toBeNull();
+    expect(screen.queryByPlaceholderText('No output selected')).toBeNull();
+    act(() => state().setExport({ mode: 'image-sequence' }));
+    expect(screen.getByText('The browser asks for the folder when the export starts.')).toBeTruthy();
+    expect(screen.queryByRole('button', { name: 'Choose…' })).toBeNull();
   });
 
   it('says when open range bounds follow the Track data range', () => {

@@ -395,55 +395,46 @@ describe('export', () => {
     expect(vi.mocked(exportVideo).mock.calls[0]?.[0]).toMatchObject({ file: null, name: 'Race.mp4' });
   });
 
-  it('writes the final video to the file chosen in the Export step, or asks for it', async () => {
+  it('asks where to save the final video when the export starts, and stops when refused', async () => {
     vi.mocked(canExportVideo).mockReturnValue(true);
     vi.mocked(exportVideo).mockResolvedValue(result);
     const chosen = fileHandle(new File([], 'Chosen.mp4'));
     window.showSaveFilePicker = vi.fn(async () => chosen) as never;
     await freshApi();
-    expect(await api.selectOutput('video', '/videos/Race.mp4')).toBe('Chosen.mp4');
+    // Nothing to choose in the Export step.
+    expect(await api.selectOutput('video', '/videos/Race.mp4')).toBeNull();
+    expect(window.showSaveFilePicker).not.toHaveBeenCalled();
+    // Even with a path saved by the desktop app.
+    const project = createProject({ name: 'Race' });
+    await api.startExport({ ...project, export: { ...project.export, outputPath: 'D:\\Race.mp4' } });
     expect(window.showSaveFilePicker).toHaveBeenCalledWith(
       expect.objectContaining({ suggestedName: 'Race.mp4' }),
     );
-    const project = createProject({ name: 'Race' });
-    await api.startExport({ ...project, export: { ...project.export, outputPath: 'Chosen.mp4' } });
     expect(vi.mocked(exportVideo).mock.calls[0]?.[0].file).toBe(chosen);
-    expect(window.showSaveFilePicker).toHaveBeenCalledTimes(1);
-
-    // Not chosen yet: asked when the export starts; refusing stops it.
-    await api.startExport(project);
-    expect(window.showSaveFilePicker).toHaveBeenCalledTimes(2);
     window.showSaveFilePicker = vi.fn(async () => {
       throw abortError();
     }) as never;
     await expect(api.startExport(project)).rejects.toThrow('Export cancelled');
-    expect(await api.selectOutput('video')).toBeNull();
   });
 
   it('downloads a zip in browsers without a folder picker', async () => {
-    expect(await api.selectOutput('image-sequence')).toBe('frames');
-    expect(await api.startExport(sequence('frames'))).toBe(result);
+    expect(await api.selectOutput('image-sequence')).toBeNull();
+    expect(await api.startExport(sequence())).toBe(result);
     expect(vi.mocked(exportImageSequence).mock.calls[0]?.[0].target.name).toBe('Race frames.zip');
   });
 
-  it('writes into the folder chosen in the Export step', async () => {
-    window.showDirectoryPicker = vi.fn(async () => folderHandle('Race frames'));
-    await freshApi();
-    expect(await api.selectOutput('image-sequence')).toBe('Race frames');
-    await api.startExport(sequence('Race frames'));
-    expect(vi.mocked(exportImageSequence).mock.calls[0]?.[0].target.name).toBe('Race frames');
-    expect(window.showDirectoryPicker).toHaveBeenCalledTimes(1);
-  });
-
-  it('asks for the folder again when the project was reopened, and stops when refused', async () => {
+  it('asks for the folder when the export starts, and stops when refused', async () => {
     window.showDirectoryPicker = vi.fn(async () => folderHandle('Picked now'));
     await freshApi();
+    expect(await api.selectOutput('image-sequence')).toBeNull();
+    expect(window.showDirectoryPicker).not.toHaveBeenCalled();
     await api.startExport(sequence('Race frames'));
     expect(vi.mocked(exportImageSequence).mock.calls[0]?.[0].target.name).toBe('Picked now');
+    expect(window.showDirectoryPicker).toHaveBeenCalledTimes(1);
     window.showDirectoryPicker = async () => {
       throw abortError();
     };
-    await expect(api.startExport(sequence('Race frames'))).rejects.toThrow('Export cancelled');
+    await expect(api.startExport(sequence())).rejects.toThrow('Export cancelled');
   });
 
   it('runs one export at a time, reports its progress and cancels it', async () => {

@@ -294,8 +294,8 @@ export function ExportStep() {
   // Without a choice the export goes next to the videos (or the data).
   const defaultOutput = defaultOutputPath(project);
   const { videoExport, nativeExport, sequenceAsZip } = api().capabilities;
-  // A video export made elsewhere (web app) chooses its output there.
-  const choosesOutput = videoExport || settings.mode === 'image-sequence';
+  // The browser asks where to save when the export starts: only the desktop app chooses ahead.
+  const choosesOutput = nativeExport;
 
   const chooseOutput = async () => {
     try {
@@ -375,11 +375,14 @@ export function ExportStep() {
               </button>
             </div>
           )}
-          {choosesOutput && !settings.outputPath && defaultOutput && nativeExport && (
+          {choosesOutput && !settings.outputPath && defaultOutput && (
             <p className="muted small">{t('export.output.defaultHint')}</p>
           )}
-          {!nativeExport && videoExport && settings.mode === 'video' && !settings.outputPath && (
+          {!nativeExport && videoExport && settings.mode === 'video' && (
             <p className="muted small">{t('export.output.browserVideoHint')}</p>
+          )}
+          {!nativeExport && !sequenceAsZip && settings.mode === 'image-sequence' && (
+            <p className="muted small">{t('export.output.browserFolderHint')}</p>
           )}
           {choosesOutput && settings.outputPath && defaultOutput && (
             <button type="button" className="link" onClick={() => setExport({ outputPath: null })}>

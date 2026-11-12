@@ -15,7 +15,8 @@
     "none": "No output selected",
     "choose": "Choose…",
     "defaultHint": "Not chosen: it goes next to the videos (or the data), named after the project, without replacing an earlier export.",
-    "browserVideoHint": "Not chosen: the browser asks where to save it when the export starts, or downloads it when done.",
+    "browserVideoHint": "The browser asks where to save it when the export starts, or downloads it when done.",
+    "browserFolderHint": "The browser asks for the folder when the export starts.",
     "zipHint": "The browser cannot write into a folder: the frames are downloaded as one zip file.",
     "useDefault": "Use the default location"
   },

@@ -15,7 +15,8 @@
     "none": "Nessuna uscita selezionata",
     "choose": "Scegli…",
     "defaultHint": "Non scelto: va accanto ai video (o ai dati), con il nome del progetto, senza sostituire un’esportazione precedente.",
-    "browserVideoHint": "Non scelto: il browser chiede dove salvarlo all'avvio dell'esportazione, oppure lo scarica alla fine.",
+    "browserVideoHint": "Il browser chiede dove salvarlo all'avvio dell'esportazione, oppure lo scarica alla fine.",
+    "browserFolderHint": "Il browser chiede la cartella all'avvio dell'esportazione.",
     "zipHint": "Il browser non può scrivere in una cartella: i fotogrammi vengono scaricati in un unico file zip.",
     "useDefault": "Usa la posizione predefinita"
   },

@@ -142,27 +142,19 @@ async function downloadCatalog(): Promise<RemoteTrackCatalog | null> {
 let running: AbortController | null = null;
 const progressListeners = new Set<(progress: ExportProgress) => void>();
 
-/**
- * Where an image sequence goes: the folder chosen in the Export step, else one picked now (the
- * folder of a reopened project must be picked again), else a zip download.
- */
+/** Where an image sequence goes: a folder picked when the export starts, else a zip download. */
 async function sequenceTarget(project: Project): Promise<SequenceTarget | null> {
   if (!canPickFolder()) return zipTarget(project);
-  const chosen = project.export.outputPath && (await writableFolder(project.export.outputPath));
-  if (chosen) return folderTarget(chosen);
   const name = await pickFolder('export');
   const folder = name && (await writableFolder(name));
   return folder ? folderTarget(folder) : null;
 }
 
 /**
- * Where a video goes: the file chosen in the Export step, else one picked now, else the browser's
- * storage, downloaded at the end (phones and browsers without a save picker). Undefined when the
- * picker was cancelled.
+ * Where a video goes: a file picked when the export starts, else the browser's storage, downloaded
+ * at the end (phones and browsers without a save picker). Undefined when the picker was cancelled.
  */
-async function videoTarget(project: Project, name: string): Promise<FileSystemFileHandle | null | undefined> {
-  const chosen = project.export.outputPath && (await writableFile(project.export.outputPath));
-  if (chosen) return chosen;
+async function videoTarget(name: string): Promise<FileSystemFileHandle | null | undefined> {
   if (!canPickSaveFile()) return null;
   const picked = await pickVideoFile(name);
   return picked ? ((await writableFile(picked)) ?? undefined) : undefined;
@@ -271,11 +263,9 @@ export const webApi: AppApi = {
     });
   },
 
-  async selectOutput(mode, defaultPath) {
-    // Without a save picker the video is downloaded: nothing to choose.
-    if (mode === 'video') return pickVideoFile(defaultPath ? fileNameOf(defaultPath) : 'export.mp4');
-    // Without a folder picker the frames are downloaded as a zip: the name only marks the choice.
-    return canPickFolder() ? pickFolder('export') : 'frames';
+  async selectOutput() {
+    // Nothing to choose ahead: the browser asks where to save when the export starts.
+    return null;
   },
 
   evaluateValues(project, frameRate) {
@@ -341,7 +331,7 @@ export const webApi: AppApi = {
     if (project.export.mode === 'video') {
       if (!canExportVideo()) throw new Error(t('core.issues.videoExportElsewhere'));
       const name = `${outputBaseName(project)}.mp4`;
-      const file = await videoTarget(project, name);
+      const file = await videoTarget(name);
       if (file === undefined) throw new Error('Export cancelled');
       running = new AbortController();
       try {
