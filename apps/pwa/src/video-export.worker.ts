@@ -318,7 +318,8 @@ async function run(job: VideoJob, onProgress: (progress: ExportProgress) => void
     latencyMode: 'quality',
     hardwareAcceleration,
   });
-  output.addVideoTrack(video);
+  // The encoder spends the bitrate per frame by this rate: without it, browsers assume 30 fps.
+  output.addVideoTrack(video, { frameRate });
   const sound = audioCodec
     ? new AudioSampleSource({
         codec: audioCodec,
