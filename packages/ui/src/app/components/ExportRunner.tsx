@@ -42,12 +42,21 @@ export function ExportProgressView({ progress }: { progress: ExportProgress | nu
               elapsed: duration(progress.elapsedSeconds),
               left: duration(progress.etaSeconds),
             })}
+            {/* The export tunes how many threads draw: shown so a change in speed makes sense. */}
+            {progress.threads ? ` · ${t('export.run.threads', { count: progress.threads })}` : ''}
           </span>
         )}
         <button type="button" className="danger" onClick={cancel}>
           {t('common.cancel')}
         </button>
       </div>
+      {progress?.phase === 'move' && <p className="muted small">{t('export.run.moving')}</p>}
+      {progress?.phase !== 'move' && progress?.throttled && (
+        <p className="warning small">{t('export.run.throttled')}</p>
+      )}
+      {progress?.phase !== 'move' && !progress?.throttled && progress?.waitingOn && (
+        <p className="muted small">{t(`export.run.waitingOn.${progress.waitingOn}`)}</p>
+      )}
     </>
   );
 }
@@ -110,6 +119,7 @@ export function ExportRunner({ issues }: { issues: StepIssue[] }) {
                 encoder: state.result.encoder,
               })
             : t('export.run.doneTime', { time: duration(state.result.seconds) })}
+          {state.result.pipeline === 'cuda' && <> {t('export.run.doneGpu')}</>}
           <div className="row">
             {revealFiles && (
               <button type="button" onClick={() => void api().revealPath(state.result.outputPath)}>

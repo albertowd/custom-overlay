@@ -26,6 +26,7 @@ const result = {
   seconds: 75,
   encoder: 'h264_nvenc',
   workers: 4,
+  pipeline: 'cuda' as const,
   warnings: [],
 };
 
@@ -42,6 +43,28 @@ describe('ExportProgressView', () => {
     render(<ExportProgressView progress={null} />);
     expect(screen.getByText(t('export.run.preparing'))).toBeTruthy();
     expect(screen.getByRole('progressbar').getAttribute('aria-valuenow')).toBe('0');
+  });
+
+  it('tells what holds the export back, a busy disk, and the move from the temporary folder', () => {
+    const progress = { frame: 10, frames: 100, fps: 5, elapsedSeconds: 2, etaSeconds: 18 };
+    const { rerender } = render(<ExportProgressView progress={{ ...progress, waitingOn: 'drawing' }} />);
+    expect(screen.getByText('Limited by drawing the widgets.')).toBeTruthy();
+    rerender(<ExportProgressView progress={{ ...progress, waitingOn: 'encoder' }} />);
+    expect(screen.getByText(/Limited by ffmpeg/)).toBeTruthy();
+    rerender(<ExportProgressView progress={{ ...progress, waitingOn: 'encoder', throttled: true }} />);
+    expect(screen.getByText(/Slowed down: the disk of the videos is busy/)).toBeTruthy();
+    expect(screen.queryByText(/Limited by/)).toBeNull();
+    rerender(<ExportProgressView progress={{ ...progress, phase: 'move', throttled: true }} />);
+    expect(screen.getByText(/Moving the video from the temporary folder/)).toBeTruthy();
+    expect(screen.queryByText(/Slowed down/)).toBeNull();
+  });
+
+  it('shows how many threads draw the widgets right now', () => {
+    const progress = { frame: 10, frames: 100, fps: 5, elapsedSeconds: 2, etaSeconds: 18 };
+    const { rerender } = render(<ExportProgressView progress={{ ...progress, threads: 6 }} />);
+    expect(screen.getByText(/6 drawing threads/)).toBeTruthy();
+    rerender(<ExportProgressView progress={{ ...progress, threads: 0 }} />);
+    expect(screen.queryByText(/drawing thread/)).toBeNull();
   });
 
   it('shows the progress, speed and time left, and cancels', async () => {
@@ -111,6 +134,7 @@ describe('ExportRunner', () => {
         },
       ),
     ).toBeTruthy();
+    expect(screen.getByText(t('export.run.doneGpu'), { exact: false })).toBeTruthy();
     expect(screen.getByText('Widget x failed')).toBeTruthy();
     await user.click(screen.getByRole('button', { name: t('export.run.showInFolder') }));
     expect(api().revealPath).toHaveBeenCalledWith('/videos/out.mp4');
@@ -119,10 +143,11 @@ describe('ExportRunner', () => {
   });
 
   it('reports an image sequence export without encoder', () => {
-    renderWith({ status: 'done', result: { ...result, encoder: null } });
+    renderWith({ status: 'done', result: { ...result, encoder: null, pipeline: 'cpu' } });
     expect(
       screen.getByText(t('export.run.doneTime', { time: formatTime(75, false) }), { exact: false }),
     ).toBeTruthy();
+    expect(screen.queryByText(t('export.run.doneGpu'), { exact: false })).toBeNull();
     expect(screen.queryByRole('list')).toBeNull();
   });
 

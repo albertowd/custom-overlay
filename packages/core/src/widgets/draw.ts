@@ -1,4 +1,5 @@
-import type { WidgetFrame } from './types.js';
+import { z } from 'zod';
+import type { FieldSpec, WidgetFrame } from './types.js';
 
 /** Helpers shared by the built-in widgets (and available to custom widgets). */
 
@@ -32,6 +33,128 @@ export function drawPanel(ctx: CanvasRenderingContext2D, frame: WidgetFrame<unkn
   ctx.fill();
 }
 
+/**
+ * Shapes of a widget background: `circle` is the largest circle centred in the box (gauges),
+ * `ellipse` fills the box, `slanted` is a parallelogram leaning right.
+ */
+export const BACKGROUND_SHAPES = ['rounded', 'rectangle', 'pill', 'ellipse', 'circle', 'slanted'] as const;
+export type BackgroundShape = (typeof BACKGROUND_SHAPES)[number];
+
+const BACKGROUND_SHAPE_LABELS: Record<BackgroundShape, string> = {
+  rounded: 'Rounded rectangle',
+  rectangle: 'Rectangle',
+  pill: 'Pill',
+  ellipse: 'Ellipse',
+  circle: 'Circle',
+  slanted: 'Slanted',
+};
+
+/** Background settings of a widget, merged into its props schema (`...backgroundProps()`). */
+export function backgroundProps(defaults: { enabled?: boolean; shape?: BackgroundShape } = {}) {
+  return {
+    background: z.boolean().default(defaults.enabled ?? true),
+    backgroundColor: z.string().default('background'),
+    backgroundShape: z.enum(BACKGROUND_SHAPES).default(defaults.shape ?? 'rounded'),
+    /** Corner radius of a rounded background, % of the smaller side. */
+    backgroundRadius: z.number().min(0).max(50).default(8),
+    /** Multiplies the background color's own alpha. */
+    backgroundOpacity: z.number().min(0).max(1).default(1),
+  };
+}
+
+/** Editor fields of `backgroundProps`, shown once the background is on. */
+export function backgroundFields(label = 'Background panel'): FieldSpec[] {
+  const on = { key: 'background', values: [true] } as const;
+  return [
+    { key: 'background', label, kind: 'boolean' },
+    { key: 'backgroundColor', label: 'Background color', kind: 'color', dependsOn: on },
+    {
+      key: 'backgroundShape',
+      label: 'Background shape',
+      kind: 'select',
+      options: BACKGROUND_SHAPES.map((shape) => [shape, BACKGROUND_SHAPE_LABELS[shape]] as const),
+      dependsOn: on,
+    },
+    {
+      key: 'backgroundRadius',
+      label: 'Corner radius',
+      kind: 'number',
+      min: 0,
+      max: 50,
+      hint: '% of the smaller side',
+      dependsOn: { key: 'backgroundShape', values: ['rounded'] },
+    },
+    {
+      key: 'backgroundOpacity',
+      label: 'Background opacity',
+      kind: 'number',
+      min: 0,
+      max: 1,
+      step: 0.05,
+      dependsOn: on,
+    },
+  ];
+}
+
+export interface BackgroundStyle {
+  background: boolean;
+  backgroundColor: string;
+  backgroundShape: BackgroundShape;
+  backgroundRadius: number;
+  backgroundOpacity: number;
+}
+
+/** Path of a background shape filling (0, 0, width, height). */
+export function backgroundPath(
+  ctx: CanvasRenderingContext2D,
+  shape: BackgroundShape,
+  width: number,
+  height: number,
+  radius: number,
+): void {
+  switch (shape) {
+    case 'rectangle':
+      ctx.beginPath();
+      ctx.rect(0, 0, width, height);
+      break;
+    case 'pill':
+      roundRectPath(ctx, 0, 0, width, height, Math.min(width, height) / 2);
+      break;
+    case 'ellipse':
+      ctx.beginPath();
+      ctx.ellipse(width / 2, height / 2, width / 2, height / 2, 0, 0, Math.PI * 2);
+      break;
+    case 'circle':
+      ctx.beginPath();
+      ctx.arc(width / 2, height / 2, Math.min(width, height) / 2, 0, Math.PI * 2);
+      break;
+    case 'slanted': {
+      const slant = Math.min(width / 3, height * 0.35);
+      ctx.beginPath();
+      ctx.moveTo(slant, 0);
+      ctx.lineTo(width, 0);
+      ctx.lineTo(width - slant, height);
+      ctx.lineTo(0, height);
+      ctx.closePath();
+      break;
+    }
+    default:
+      roundRectPath(ctx, 0, 0, width, height, radius);
+  }
+}
+
+/** The widget background of `backgroundProps`, when it is on. */
+export function drawBackground(
+  ctx: CanvasRenderingContext2D,
+  frame: WidgetFrame<unknown, unknown>,
+  style: BackgroundStyle,
+): void {
+  if (!style.background || style.backgroundOpacity <= 0) return;
+  backgroundPath(ctx, style.backgroundShape, frame.width, frame.height, frame.unit * style.backgroundRadius);
+  ctx.fillStyle = withAlpha(frame.color(style.backgroundColor), style.backgroundOpacity);
+  ctx.fill();
+}
+
 /** Circular panel (gauges, G-force). */
 export function drawDisc(
   ctx: CanvasRenderingContext2D,
@@ -46,12 +169,66 @@ export function drawDisc(
   ctx.fill();
 }
 
+export const TEXT_ALIGNS = ['left', 'center', 'right'] as const;
+export type TextAlign = (typeof TEXT_ALIGNS)[number];
+export const VERTICAL_ALIGNS = ['top', 'middle', 'bottom'] as const;
+export type VerticalAlign = (typeof VERTICAL_ALIGNS)[number];
+
+/** Horizontal text alignment setting of a widget (`...textAlignProp`). */
+export const textAlignProp = { align: z.enum(TEXT_ALIGNS).default('center') };
+/** Vertical text alignment setting of a widget (`...verticalAlignProp`). */
+export const verticalAlignProp = { verticalAlign: z.enum(VERTICAL_ALIGNS).default('middle') };
+
+/** Editor fields of `textAlignProp` (and `verticalAlignProp` with `vertical`). */
+export function textAlignFields(vertical = false): FieldSpec[] {
+  const fields: FieldSpec[] = [
+    {
+      key: 'align',
+      label: 'Align',
+      kind: 'select',
+      options: [
+        ['left', 'Left'],
+        ['center', 'Center'],
+        ['right', 'Right'],
+      ],
+    },
+  ];
+  if (vertical) {
+    fields.push({
+      key: 'verticalAlign',
+      label: 'Vertical align',
+      kind: 'select',
+      options: [
+        ['top', 'Top'],
+        ['middle', 'Middle'],
+        ['bottom', 'Bottom'],
+      ],
+    });
+  }
+  return fields;
+}
+
+/** Inner margin of text in a widget box. */
+export function textPadding(frame: WidgetFrame<unknown, unknown>): number {
+  return frame.unit * 6;
+}
+
+/** X of text aligned in the box (with `ctx.textAlign` set to the same alignment). */
+export function alignedX(frame: WidgetFrame<unknown, unknown>, align: CanvasTextAlign): number {
+  const padding = textPadding(frame);
+  if (align === 'left' || align === 'start') return padding;
+  if (align === 'right' || align === 'end') return frame.width - padding;
+  return frame.width / 2;
+}
+
 export interface TextStyle {
   color: string;
   /** Font size as a fraction of the box height (per line). */
   size: number;
   weight: number | string;
   align: CanvasTextAlign;
+  /** Where the lines sit when the font leaves room above and below them; middle by default. */
+  verticalAlign?: VerticalAlign;
   italic?: boolean;
   uppercase?: boolean;
 }
@@ -64,7 +241,7 @@ export function drawTextBox(
   style: TextStyle,
 ): void {
   const lines = (style.uppercase ? text.toUpperCase() : text).split('\n');
-  const padding = frame.unit * 6;
+  const padding = textPadding(frame);
   const maxWidth = Math.max(1, frame.width - padding * 2);
   let size = (frame.height * style.size) / lines.length;
   const font = (px: number) => `${style.italic ? 'italic ' : ''}${frame.font(px, style.weight)}`;
@@ -77,11 +254,19 @@ export function drawTextBox(
   ctx.fillStyle = style.color;
   ctx.textAlign = style.align;
   ctx.textBaseline = 'middle';
-  const x =
-    style.align === 'left' ? padding : style.align === 'right' ? frame.width - padding : frame.width / 2;
+  const x = alignedX(frame, style.align);
+  // Lines keep their spacing; the block of lines (last line as tall as the font) is aligned.
   const lineHeight = frame.height / lines.length;
+  const block = lineHeight * (lines.length - 1) + size;
+  const margin = Math.min(frame.unit * 4, Math.max(0, (frame.height - block) / 2));
+  const top =
+    style.verticalAlign === 'top'
+      ? margin
+      : style.verticalAlign === 'bottom'
+        ? frame.height - block - margin
+        : (frame.height - block) / 2;
   lines.forEach((line, i) => {
-    ctx.fillText(line, x, lineHeight * (i + 0.5));
+    ctx.fillText(line, x, top + size / 2 + lineHeight * i);
   });
 }
 

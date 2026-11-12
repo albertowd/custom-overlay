@@ -7,7 +7,8 @@
   "tabs": {
     "widget": "Widget",
     "values": "Valores",
-    "style": "Estilo"
+    "style": "Estilo",
+    "label": "Panel"
   },
   "visible": {
     "title": "Widgets visibles",
@@ -16,7 +17,13 @@
   "editor": {
     "snap": "Ajustar a las guías",
     "showGuides": "Mostrar guías",
-    "hint": "Mantén Alt al arrastrar para invertir el ajuste. Las guías se definen en la pestaña Estilo."
+    "hint": "Mantén Alt al arrastrar para invertir el ajuste; Ctrl o Mayús + clic para seleccionar varios widgets. Las guías se definen en la pestaña Estilo.",
+    "snapTo": "Ajustar a",
+    "snapTargets": {
+      "guides": "Guías",
+      "group": "Grupo",
+      "both": "Ambos"
+    }
   },
   "canvas": {
     "title": "Lienzo",
@@ -181,5 +188,66 @@
     "likeProject": "Como el proyecto ({range})",
     "ownData": "Rango de datos propio",
     "ownDataShort": "rango de datos propio"
+  },
+  "groups": {
+    "title": "Grupo",
+    "defaultName": "Grupo {number}",
+    "group": "Grupo",
+    "none": "Ninguno",
+    "position": "Posición",
+    "relative": "Relativa",
+    "absolute": "Absoluta",
+    "absoluteShort": "absoluta",
+    "relativeHint": "Se mueve con el grupo; X e Y se miden desde el origen del grupo.",
+    "absoluteHint": "Se queda donde está cuando el grupo se mueve; X e Y son del fotograma.",
+    "relativeX": "X desde el grupo %",
+    "relativeY": "Y desde el grupo %",
+    "collapse": "Contraer grupo",
+    "expand": "Expandir grupo",
+    "count": {
+      "one": "{count} widget",
+      "other": "{count} widgets"
+    },
+    "groupAction": "Agrupar",
+    "groupHint": "Agrupar los widgets seleccionados (Ctrl+G)",
+    "multiSelectHint": "Ctrl o Mayús + clic para seleccionar varios widgets y luego agruparlos o alinearlos.",
+    "ungroup": "Desagrupar",
+    "visible": "Visible",
+    "originX": "Origen X %",
+    "originY": "Origen Y %",
+    "originHint": "Mover el origen mueve los widgets relativos del grupo.",
+    "absoluteCount": {
+      "one": "{count} widget absoluto se queda en su sitio.",
+      "other": "{count} widgets absolutos se quedan en su sitio."
+    },
+    "selected": {
+      "one": "{count} widget seleccionado",
+      "other": "{count} widgets seleccionados"
+    },
+    "dragHint": "{name}: arrastra para mover el grupo"
+  },
+  "align": {
+    "title": "Alinear",
+    "to": "Alinear a",
+    "targets": {
+      "group": "Grupo",
+      "guides": "Guías"
+    },
+    "edges": {
+      "left": "Alinear bordes izquierdos",
+      "center": "Alinear centros horizontales",
+      "right": "Alinear bordes derechos",
+      "top": "Alinear bordes superiores",
+      "middle": "Alinear centros verticales",
+      "bottom": "Alinear bordes inferiores"
+    },
+    "distribute": {
+      "horizontal": "Distribuir horizontalmente",
+      "vertical": "Distribuir verticalmente"
+    },
+    "hints": {
+      "group": "A la caja del grupo o de la selección; un widget solo se alinea al fotograma.",
+      "guides": "A la línea guía más cercana: bordes del fotograma, divisiones, margen seguro, líneas extra."
+    }
   }
 }

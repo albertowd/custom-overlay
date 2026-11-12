@@ -98,7 +98,7 @@ export function createProgram(): Command {
   const program = new Command()
     .name('custom-overlay')
     .description('Sync GoPro videos with telemetry and render overlay widgets')
-    .version('0.1.0');
+    .version('0.2.0');
 
   program
     .command('probe')
@@ -263,7 +263,25 @@ export function createProgram(): Command {
     .option('--start <time>', 'range start, e.g. 1:30 or 90.5 (instead of the saved range)')
     .option('--end <time>', 'range end')
     .option('--software', 'decode and encode on the CPU only')
-    .option('--threads <n>', 'threads drawing the widgets', (v) => Number.parseInt(v, 10))
+    .addOption(
+      new Option('--gpu <brand>', 'encode on this brand of graphics card').choices([
+        'nvidia',
+        'amd',
+        'intel',
+      ]),
+    )
+    .option(
+      '--slow-disk',
+      'flush the output regularly and slow down while the videos disk is busy (hard drives)',
+    )
+    .option('--max-speed <x>', 'highest encoding speed in x real time (0 = no limit)', (v) =>
+      Number.parseFloat(v),
+    )
+    .option('--stage-in-temp', 'write the video to the temporary folder first, then move it')
+    .option('--threads <n>', 'threads drawing the widgets (default: tuned while exporting)', (v) =>
+      Number.parseInt(v, 10),
+    )
+    .option('--cpu-blend', 'blend the widgets on the CPU even when an NVIDIA GPU could')
     .option('--ffmpeg <path>', 'ffmpeg executable (default: FFMPEG_PATH, then the bundled one)')
     .action(
       async (
@@ -273,7 +291,12 @@ export function createProgram(): Command {
           start?: string;
           end?: string;
           software?: boolean;
+          gpu?: 'nvidia' | 'amd' | 'intel';
+          slowDisk?: boolean;
+          maxSpeed?: number;
+          stageInTemp?: boolean;
           threads?: number;
+          cpuBlend?: boolean;
           ffmpeg?: string;
         },
       ) => {
@@ -300,10 +323,19 @@ export function createProgram(): Command {
             },
             encoder: {
               ...settings.encoder,
-              acceleration: options.software ? ('software' as const) : settings.encoder.acceleration,
+              acceleration: options.software
+                ? ('software' as const)
+                : (options.gpu ?? settings.encoder.acceleration),
+            },
+            disk: {
+              slow: options.slowDisk ?? settings.disk.slow,
+              maxSpeed: options.maxSpeed ?? settings.disk.maxSpeed,
+              stageInTemp: options.stageInTemp ?? settings.disk.stageInTemp,
             },
           },
         };
+        if (!(project.export.disk.maxSpeed >= 0))
+          throw new InvalidArgumentError('--max-speed must be 0 or more');
         const blocking = blockingIssues(evaluateWorkflow({ project }));
         if (blocking.length > 0) throw new Error(`Cannot export:\n  ${blocking.join('\n  ')}`);
         const template = await resolveProjectTemplate(project);
@@ -314,10 +346,14 @@ export function createProgram(): Command {
           template,
           ffmpegPath: options.ffmpeg,
           workers: options.threads,
+          pipeline: options.cpuBlend ? 'cpu' : 'auto',
           onProgress: (p) => {
-            const line = `${((p.frame / p.frames) * 100).toFixed(1)}%  frame ${p.frame}/${p.frames}  ${p.fps.toFixed(1)} fps  ${
-              Number.isFinite(p.etaSeconds) ? `${formatDuration(p.etaSeconds)} left` : ''
-            }`;
+            const line =
+              p.phase === 'move'
+                ? 'moving the video from the temporary folder...'
+                : `${((p.frame / p.frames) * 100).toFixed(1)}%  frame ${p.frame}/${p.frames}  ${p.fps.toFixed(1)} fps  ${p.threads ? `${p.threads} threads  ` : ''}${
+                    Number.isFinite(p.etaSeconds) ? `${formatDuration(p.etaSeconds)} left` : ''
+                  }${p.throttled ? '  (slowed down for the disk)' : p.waitingOn === 'drawing' ? '  (limited by drawing the widgets)' : p.waitingOn === 'encoder' ? '  (limited by ffmpeg: decoding, encoding or the disk)' : ''}`;
             if (interactive) process.stderr.write(`\r${line.padEnd(70)}`);
             else if (p.frame === p.frames || p.frame % 600 === 0) console.error(line);
           },
@@ -325,7 +361,13 @@ export function createProgram(): Command {
         if (interactive) process.stderr.write('\n');
         console.log(
           `Exported ${result.frames} frames to ${result.outputPath} in ${formatDuration(result.seconds)}${
-            result.encoder ? ` (${result.encoder})` : ''
+            result.encoder
+              ? ` (${[
+                  result.encoder,
+                  ...(result.pipeline === 'cuda' ? ['widgets blended on the GPU'] : []),
+                  ...(result.workers > 0 ? [`${result.workers} drawing threads`] : []),
+                ].join(', ')})`
+              : ''
           }`,
         );
         for (const warning of result.warnings) console.warn(`warning: ${warning}`);

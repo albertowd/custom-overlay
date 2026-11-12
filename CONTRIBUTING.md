@@ -115,8 +115,47 @@ skips the videos.
   and depth from a game engine. NVIDIA RTX Video Super Resolution could come later as a native
   add-on.
 
+- **Slow disks.** With _Slow disk_ (`export.disk.slow`), a `DiskGuard` flushes the output file every
+  second (so the system never writes a large cache at once) and reads 4 KB at random places of the
+  videos twice a second: while that takes much longer than when the export started (6×, at least
+  120 ms), frames are delayed, and they stop until the disk answers again when it nearly stalls.
+  `maxSpeed` caps frames per second at the output rate × the factor. `stageInTemp` encodes to the
+  system's temporary folder (checking its free space first) and moves the video at the end (a copy
+  in chunks across disks). Fast start is skipped for a slow disk, as it rewrites the whole file.
+- **Graphics card.** `encoder.acceleration` is `auto` (NVENC, AMF, QSV, then the CPU), a brand
+  (`nvidia`, `amd`, `intel`: that brand's encoder, then the CPU, with a warning) or `software`. The
+  desktop app lists the cards from Chromium's GPU info (PCI vendor ids). Decoding stays on the
+  system's default adapter.
+- **Several instances.** Chromium locks its data folder, so each running copy of the desktop app
+  points `sessionData` at a numbered slot (`<userData>/instances/<n>`), claimed with a lock file
+  holding its pid (taken over when that process is gone) and reused later. A new slot is seeded
+  with a copy of the code, shader and Local Storage data of the most recently used folder; the
+  source is only read. `settings.json` and the track list stay shared in `userData`.
+- **Priority.** The exporting process (its drawing threads) and ffmpeg run above normal priority:
+  Windows otherwise keeps windowless background work on the efficiency cores of hybrid CPUs. The
+  progress tells whether waiting for drawn frames or for ffmpeg to take them dominated lately.
+
 The web app exports the transparent PNG sequence itself (into a folder in Chrome and Edge, as a
-streamed zip elsewhere). The final video is exported by the desktop app or the CLI.
+streamed zip elsewhere), and the final video without ffmpeg, with WebCodecs and
+[Mediabunny](https://mediabunny.dev) (MP4 reading and writing), in `video-export.worker.ts`:
+
+- `videoExportPlan` (core) gives the frames and the pieces (videos and gaps) like the desktop
+  export; `pieceFrames` maps each output frame to its piece and video time, and the videos are
+  decoded at those times (`samplesAtTimestamps`, on the GPU when the browser can).
+- Each frame is put together on an `OffscreenCanvas`: black, the video placed like `videoPlacement`
+  (fit rotation plus the file's rotation metadata), the `blur` fit's background drawn small and
+  blurred about as much as the desktop's box blur, then the widgets, drawn as `ImageBitmap`s by the
+  same drawing workers as the PNG sequence.
+- The canvas is encoded with the chosen codec (H.264 when the browser cannot encode it); the
+  sound is cut to the pieces, converted to 48 kHz stereo (`audio-convert.ts`; the encoder takes
+  one format) with silence for gaps, and kept about a second ahead of the video so the MP4 writer
+  holds little. AAC, else Opus.
+- The MP4 is written as it goes: to a file from the save picker, else to the origin private file
+  system and downloaded from there (phones, Firefox, Safari), so its size is only limited by the
+  disk. A failed or cancelled export removes it.
+
+Browsers encode 8-bit SDR, tagged full range; 10-bit, HDR, the scaling filters and the disk
+options are desktop only (`nativeExport`).
 
 ## Widgets and values
 

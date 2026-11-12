@@ -1,10 +1,13 @@
 import { join } from 'node:path';
 import { app, BrowserWindow, dialog, shell } from 'electron';
 import { cancelExport, exportRunning } from './export';
+import { useOwnInstanceData } from './instance';
 import { registerIpcHandlers } from './ipc';
 import { handleMediaProtocol, registerMediaScheme } from './media-protocol';
 import { applyChromiumLanguage, t } from './settings';
 
+// Several copies may run at once: each keeps its Chromium caches in a folder of its own.
+useOwnInstanceData();
 registerMediaScheme();
 applyChromiumLanguage();
 
@@ -24,7 +27,7 @@ function createWindow(): void {
     minWidth: 1024,
     minHeight: 680,
     show: false,
-    backgroundColor: '#14161a',
+    backgroundColor: '#111113',
     title: 'Custom Overlay',
     icon: devIcon(),
     autoHideMenuBar: true,

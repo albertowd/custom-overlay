@@ -179,6 +179,58 @@ describe('ExportStep with a video', () => {
     expect(document.querySelectorAll('p.warning')).toHaveLength(notes.length);
   });
 
+  it('sets the slow disk options, the temporary folder only for a video', () => {
+    seedVideo();
+    render(<ExportStep />);
+    const disk = () => state().project.export.disk;
+    fireEvent.click(screen.getByRole('checkbox', { name: 'Slow disk (hard drive)' }));
+    expect(disk().slow).toBe(true);
+    fireEvent.click(screen.getByRole('checkbox', { name: 'Write to the temporary folder first' }));
+    expect(disk().stageInTemp).toBe(true);
+    const speed = screen.getByLabelText('Max speed (× real time)') as HTMLInputElement;
+    expect(speed.placeholder).toBe('No limit');
+    fireEvent.change(speed, { target: { value: '1.5' } });
+    expect(disk().maxSpeed).toBe(1.5);
+    fireEvent.change(speed, { target: { value: '' } });
+    expect(disk().maxSpeed).toBe(0);
+    act(() => state().setExport({ mode: 'image-sequence' }));
+    expect(screen.queryByRole('checkbox', { name: 'Write to the temporary folder first' })).toBeNull();
+  });
+
+  it('encodes on a chosen graphics card, listing the installed ones', async () => {
+    api().graphicsCards.mockResolvedValue([
+      { name: 'NVIDIA GeForce RTX 3070', brand: 'nvidia' },
+      { name: 'Intel UHD 770', brand: 'intel' },
+    ]);
+    seedVideo();
+    render(<ExportStep />);
+    const select = screen.getByLabelText('Decode / encode on') as HTMLSelectElement;
+    await screen.findByRole('option', { name: 'NVIDIA GeForce RTX 3070' });
+    expect([...select.options].map((o) => o.text)).toEqual([
+      'GPU when available',
+      'NVIDIA GeForce RTX 3070',
+      'Intel UHD 770',
+      'CPU only',
+    ]);
+    fireEvent.change(select, { target: { value: 'nvidia' } });
+    expect(encoder().acceleration).toBe('nvidia');
+    // A saved choice stays listed without the card.
+    api().graphicsCards.mockResolvedValue([]);
+    act(() => state().setEncoder({ acceleration: 'amd' }));
+    expect(screen.getByRole('option', { name: 'AMD graphics card' })).toBeTruthy();
+  });
+
+  it('shows what the browser does when it exports the video itself', () => {
+    seedVideo();
+    Object.assign(api().capabilities, { nativeExport: false });
+    render(<ExportStep />);
+    expect(screen.queryByRole('checkbox', { name: 'Slow disk (hard drive)' })).toBeNull();
+    expect(screen.queryByLabelText(/^Scaling/)).toBeNull();
+    expect(screen.getByText(/Encoded by this browser on the device's hardware/)).toBeTruthy();
+    expect(screen.getByText(/the browser asks where to save it/)).toBeTruthy();
+    expect(screen.queryByText(/Not chosen: it goes next to the videos/)).toBeNull();
+  });
+
   it('says when open range bounds follow the Track data range', () => {
     seedVideo();
     useStore.setState({ values: { ...circleSnapshot(), dataRange: { start: 10, end: 50 } } });

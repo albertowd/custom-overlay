@@ -10,6 +10,7 @@ import { useMemo } from 'react';
 import { api } from '../api';
 import { Badge, ChannelChips, DropZone, KeyValues, StepHeader } from '../components/common';
 import { Preview } from '../components/Preview';
+import { DECODE_CODES, SupportAlerts, useSupportIssues } from '../components/SupportAlerts';
 import { formatBytes, formatColor, formatFormat, formatOffset, formatTime } from '../format';
 import { coreText, useT } from '../i18n';
 import { useStore } from '../store';
@@ -79,6 +80,12 @@ function VideoCard({ video, isReference }: { video: VideoRef; isReference: boole
   );
 }
 
+/** Videos this browser cannot decode (the web app). */
+function VideoSupportAlerts() {
+  const project = useStore((s) => s.project);
+  return <SupportAlerts issues={useSupportIssues(project)} codes={DECODE_CODES} />;
+}
+
 export function VideosStep() {
   const t = useT();
   const project = useStore((s) => s.project);
@@ -136,6 +143,7 @@ export function VideosStep() {
   return (
     <div className="step">
       <StepHeader title={title} description={description} actions={addButton} />
+      <VideoSupportAlerts />
       <div className="split">
         <Preview />
         <DropZone onFiles={onDrop} className="list-drop">

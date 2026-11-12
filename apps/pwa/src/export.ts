@@ -1,14 +1,8 @@
-import {
-  type FrameRendererInit,
-  outputBaseName,
-  type Project,
-  sequenceFrameName,
-  ZipWriter,
-} from '@custom-overlay/core';
+import { outputBaseName, type Project, sequenceFrameName, ZipWriter } from '@custom-overlay/core';
 import type { ExportProgress, ExportResult } from '@custom-overlay/core/node';
 import { runInEngine } from './engine';
-import type { ExportWorkerRequest, ExportWorkerResponse } from './export-protocol';
 import { download } from './files';
+import { type DrawnFrame, defaultWorkers, FramePool } from './frame-pool';
 
 /** Where the frames of an image sequence go. */
 export interface SequenceTarget {
@@ -53,81 +47,6 @@ export function zipTarget(project: Project): SequenceTarget {
   };
 }
 
-interface RenderedPng {
-  png: Uint8Array;
-  warnings: string[];
-}
-
-interface Pending {
-  resolve(frame: RenderedPng): void;
-  reject(error: Error): void;
-}
-
-/** Frame workers sharing the drawing: frame n goes to worker n mod count. */
-class FramePool {
-  private readonly waiting: Map<number, Pending>[];
-
-  private constructor(private readonly workers: Worker[]) {
-    this.waiting = workers.map(() => new Map());
-  }
-
-  get size(): number {
-    return this.workers.length;
-  }
-
-  static async start(init: FrameRendererInit, count: number): Promise<FramePool> {
-    const workers = Array.from(
-      { length: count },
-      () => new Worker(new URL('./export.worker.ts', import.meta.url), { type: 'module' }),
-    );
-    const pool = new FramePool(workers);
-    try {
-      await Promise.all(workers.map((worker, w) => pool.listen(worker, w, init)));
-    } catch (error) {
-      pool.close();
-      throw error;
-    }
-    return pool;
-  }
-
-  /** Wire a worker's answers; resolves once it is set up. */
-  private listen(worker: Worker, w: number, init: FrameRendererInit): Promise<void> {
-    return new Promise((ready, failed) => {
-      const fail = (error: Error) => {
-        failed(error);
-        for (const pending of this.waiting[w]?.values() ?? []) pending.reject(error);
-        this.waiting[w]?.clear();
-      };
-      worker.addEventListener('error', (event) => fail(new Error(event.message || 'Export worker failed')));
-      worker.addEventListener('message', (event: MessageEvent<ExportWorkerResponse>) => {
-        const message = event.data;
-        if (message.type === 'ready') ready();
-        else if (message.type === 'error') fail(new Error(message.message));
-        else {
-          this.waiting[w]?.get(message.frame)?.resolve({ png: message.png, warnings: message.warnings });
-          this.waiting[w]?.delete(message.frame);
-        }
-      });
-      worker.postMessage({ type: 'init', init } satisfies ExportWorkerRequest);
-    });
-  }
-
-  frame(n: number): Promise<RenderedPng> {
-    const w = n % this.workers.length;
-    return new Promise((resolve, reject) => {
-      this.waiting[w]?.set(n, { resolve, reject });
-      this.workers[w]?.postMessage({ type: 'frame', frame: n } satisfies ExportWorkerRequest);
-    });
-  }
-
-  close(): void {
-    for (const worker of this.workers) worker.terminate();
-  }
-}
-
-/** Drawing workers: half the cores (the page and the writes need the rest), 1 to 6. */
-const defaultWorkers = () => Math.max(1, Math.min(6, Math.floor((navigator.hardwareConcurrency || 2) / 2)));
-
 export interface SequenceExportOptions {
   project: Project;
   target: SequenceTarget;
@@ -149,11 +68,12 @@ export async function exportImageSequence(options: SequenceExportOptions): Promi
   const pool = await FramePool.start(
     { project, media, template: project.template, palette: project.palette, width, height, frameRate, start },
     options.workers ?? defaultWorkers(),
+    'png',
   );
   const warnings = new Set<string>();
   // Frames requested ahead, so every worker stays busy while frames are written in order.
   const ahead = Math.max(2, pool.size * 3);
-  const requested = new Map<number, Promise<RenderedPng>>();
+  const requested = new Map<number, Promise<DrawnFrame<'png'>>>();
   let scheduled = 0;
   let lastReport = 0;
   try {
@@ -167,7 +87,7 @@ export async function exportImageSequence(options: SequenceExportOptions): Promi
       requested.delete(n);
       if (!frame) break;
       for (const warning of frame.warnings) warnings.add(warning);
-      await target.write(sequenceFrameName(n), frame.png);
+      await target.write(sequenceFrameName(n), frame.data);
       const now = performance.now();
       if (now - lastReport > 250 || n === frames - 1) {
         lastReport = now;
@@ -195,6 +115,7 @@ export async function exportImageSequence(options: SequenceExportOptions): Promi
     seconds: (performance.now() - started) / 1000,
     encoder: null,
     workers: pool.size,
+    pipeline: 'cpu',
     warnings: [...warnings],
   };
 }

@@ -37,7 +37,7 @@
     "noStartFinish": "Los valores de vuelta salen de las líneas del circuito, pero aún no hay línea de salida/meta",
     "noWidgets": "La plantilla aún no tiene widgets",
     "videoExportWithoutVideo": "Exportar un vídeo requiere un vídeo de origen; elige el modo de secuencia de imágenes",
-    "videoExportElsewhere": "El vídeo final se exporta con la aplicación de escritorio o la CLI: guarda el proyecto junto a sus vídeos y ábrelo allí",
+    "videoExportElsewhere": "Este navegador no puede codificar vídeo: usa un Chrome o Edge reciente, o la aplicación de escritorio",
     "noOutput": "Elige una ubicación de salida"
   },
   "widgets": {
@@ -298,7 +298,7 @@
     },
     "distance-bar": {
       "name": "Barra de distancia",
-      "description": "Barra de progreso de la distancia recorrida, con marcas en cada intervalo de distancia o al inicio de cada vuelta.",
+      "description": "Barra de progreso de la distancia recorrida, con marcas en cada paso de distancia.",
       "fields": {
         "valueId": {
           "label": "Valor de distancia (m)"
@@ -315,28 +315,13 @@
           "label": "Total",
           "hint": "En la unidad de arriba; 0 = total de la sesión"
         },
-        "ticks": {
-          "label": "Marcas principales",
-          "options": {
-            "distance": "En cada intervalo",
-            "laps": "Al inicio de cada vuelta"
-          }
-        },
         "tickStep": {
           "label": "Intervalo de marcas",
-          "hint": "0 = automático; solo marcas por distancia"
-        },
-        "lapTimeId": {
-          "label": "Valor de tiempo de vuelta (s)",
-          "hint": "Solo marcas por vuelta"
-        },
-        "lapNumberId": {
-          "label": "Valor de número de vuelta",
-          "hint": "Solo marcas por vuelta"
+          "hint": "0 = automático"
         },
         "minorTicks": {
           "label": "Marcas secundarias",
-          "hint": "Entre las marcas principales (por vuelta con marcas por vuelta)"
+          "hint": "Entre marcas mayores"
         },
         "decimals": {
           "label": "Decimales"
@@ -358,6 +343,69 @@
         },
         "background": {
           "label": "Panel de fondo"
+        }
+      }
+    },
+    "lap-bar": {
+      "name": "Barra de vueltas",
+      "description": "Barra de progreso de las vueltas: toda la sesión con una marca al inicio de cada vuelta con su número, o solo la vuelta actual.",
+      "fields": {
+        "view": {
+          "label": "Mostrar",
+          "options": {
+            "session": "Toda la sesión, una marca por vuelta",
+            "lap": "Solo la vuelta actual"
+          }
+        },
+        "valueId": {
+          "label": "Valor de distancia (m)"
+        },
+        "unit": {
+          "label": "Unidad",
+          "options": {
+            "km": "Kilómetros",
+            "m": "Metros",
+            "mi": "Millas"
+          }
+        },
+        "total": {
+          "label": "Total",
+          "hint": "En la unidad de arriba; 0 = total de la sesión"
+        },
+        "decimals": {
+          "label": "Decimales"
+        },
+        "color": {
+          "label": "Progreso"
+        },
+        "trackColor": {
+          "label": "Fondo de la barra"
+        },
+        "textColor": {
+          "label": "Texto"
+        },
+        "showLabels": {
+          "label": "Etiquetas de las marcas"
+        },
+        "showValue": {
+          "label": "Distancia actual"
+        },
+        "background": {
+          "label": "Panel de fondo"
+        },
+        "lapTimeId": {
+          "label": "Valor de tiempo de vuelta (s)"
+        },
+        "lapNumberId": {
+          "label": "Valor de número de vuelta"
+        },
+        "label": {
+          "label": "Etiqueta",
+          "hint": "Antes del número de vuelta"
+        },
+        "minorTicks": {
+          "label": "Marcas menores",
+          "hint": "Por vuelta"
         }
       }
     },
@@ -1061,6 +1109,45 @@
     "editing": {
       "label": "Para edición",
       "description": "GOP corto de 0,25 s sin fotogramas B para desplazarse con fluidez en editores de vídeo, H.264."
+    }
+  },
+  "fields": {
+    "backgroundColor": {
+      "label": "Color de fondo"
+    },
+    "backgroundShape": {
+      "label": "Forma del fondo",
+      "options": {
+        "rounded": "Rectángulo redondeado",
+        "rectangle": "Rectángulo",
+        "pill": "Píldora",
+        "ellipse": "Elipse",
+        "circle": "Círculo",
+        "slanted": "Inclinado"
+      }
+    },
+    "backgroundRadius": {
+      "label": "Radio de las esquinas",
+      "hint": "% del lado menor"
+    },
+    "backgroundOpacity": {
+      "label": "Opacidad del fondo"
+    },
+    "align": {
+      "label": "Alineación",
+      "options": {
+        "left": "Izquierda",
+        "center": "Centro",
+        "right": "Derecha"
+      }
+    },
+    "verticalAlign": {
+      "label": "Alineación vertical",
+      "options": {
+        "top": "Arriba",
+        "middle": "Centro",
+        "bottom": "Abajo"
+      }
     }
   }
 }

@@ -15,6 +15,7 @@
     "none": "No output selected",
     "choose": "Choose…",
     "defaultHint": "Not chosen: it goes next to the videos (or the data), named after the project, without replacing an earlier export.",
+    "browserVideoHint": "Not chosen: the browser asks where to save it when the export starts, or downloads it when done.",
     "zipHint": "The browser cannot write into a folder: the frames are downloaded as one zip file.",
     "useDefault": "Use the default location"
   },
@@ -50,8 +51,12 @@
     "acceleration": "Decode / encode on",
     "accelerationOptions": {
       "auto": "GPU when available",
+      "nvidia": "NVIDIA graphics card",
+      "amd": "AMD graphics card",
+      "intel": "Intel graphics",
       "software": "CPU only"
     },
+    "accelerationHelp": "Choose a graphics card to encode the video on it; the CPU takes over when it cannot encode this format.",
     "scaling": "Scaling (when the output size differs from a video)",
     "scalers": {
       "bilinear": "Bilinear (fast)",
@@ -60,6 +65,7 @@
       "fsr1": "FSR 1 style (Lanczos + AMD CAS sharpening)"
     },
     "scalingHelp": "DLSS and XeSS are not offered: they are temporal upscalers that need motion vectors and depth from a game engine, which recorded video does not have. The FSR 1 style option upscales with Lanczos and sharpens with AMD's CAS, the two stages of FSR 1.",
+    "browserHelp": "Encoded by this browser on the device's hardware: 8-bit SDR, with the audio re-encoded. The scaling filter, 10-bit and HDR need the desktop app.",
     "notes": {
       "sdrConverted": "YouTube converts SDR uploads to 8-bit Rec.709 limited range: a Rec.709 limited output looks the same before and after uploading.",
       "h264TenBit": "10-bit H.264 is encoded on the CPU only (GPU H.264 encoders are 8-bit) and YouTube converts it to 8-bit anyway: choose an 8-bit output or the HEVC preset.",
@@ -82,17 +88,38 @@
     "preparing": "Preparing: loading values, choosing the encoder…",
     "progress": "{percent}% · frame {frame} / {frames}",
     "speed": "{fps} fps · {elapsed} elapsed · {left} left",
+    "threads": {
+      "one": "{count} drawing thread",
+      "other": "{count} drawing threads"
+    },
     "done": {
       "one": "Exported {count} frame",
       "other": "Exported {count} frames"
     },
     "doneTime": "in {time}.",
     "doneTimeEncoder": "in {time} with {encoder}.",
+    "doneGpu": "The widgets were blended on the graphics card.",
     "showInFolder": "Show in folder",
     "dismiss": "Dismiss",
     "failed": "The export failed.",
     "cancelled": "Export cancelled; the unfinished file was removed.",
     "cancelledSequence": "Export cancelled; the frames already written were kept.",
-    "cancelledZip": "Export cancelled; nothing was downloaded."
+    "cancelledZip": "Export cancelled; nothing was downloaded.",
+    "moving": "Moving the video from the temporary folder…",
+    "throttled": "Slowed down: the disk of the videos is busy.",
+    "waitingOn": {
+      "drawing": "Limited by drawing the widgets.",
+      "encoder": "Limited by ffmpeg: decoding, encoding or the disk."
+    }
+  },
+  "disk": {
+    "title": "Disk",
+    "slow": "Slow disk (hard drive)",
+    "slowHelp": "For a hard drive that also holds the videos: the video is flushed to the disk regularly instead of in large bursts, and the export slows down while the disk answers slowly, so reading the videos never stalls.",
+    "stageInTemp": "Write to the temporary folder first",
+    "stageInTempHelp": "The video is written to the system's temporary folder (usually on another disk) and moved to its place once done, so the disk of the videos only reads while encoding. Needs room for the whole video there.",
+    "maxSpeed": "Max speed (× real time)",
+    "noLimit": "No limit",
+    "maxSpeedHelp": "Caps the encoding speed, which caps the reads and writes too: 1 encodes as fast as the video plays. Empty for no limit."
   }
 }

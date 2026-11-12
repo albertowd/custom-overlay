@@ -2,7 +2,7 @@ import type { VideoInfo } from '../media/probe.js';
 import type { ResolvedDataRange } from '../model/data-range.js';
 import type { ColorSettings, EncoderSettings, Project, Scaling, VideoRef } from '../model/project.js';
 import { computeTimeline, enabledVideos, type ProjectMedia } from '../workflow/timeline.js';
-import { fitFilters, type ScaleRatio } from './canvas.js';
+import { fitFilters, rotatedSize, type ScaleRatio, sameAspect } from './canvas.js';
 
 /** A piece of the export: a part of one video, or a gap without video (black, silent). */
 export type ExportSegment =
@@ -124,7 +124,14 @@ const SOFTWARE: Record<EncoderSettings['codec'], VideoEncoder> = {
   av1: { name: 'libaom-av1', family: 'aom', hardware: false },
 };
 
-/** Encoders to try for a codec, best first: GPU encoders (NVIDIA, AMD, Intel), then the CPU one. */
+/** The GPU encoder family of each graphics card brand. */
+export const GPU_ENCODER_FAMILIES = { nvidia: 'nvenc', amd: 'amf', intel: 'qsv' } as const;
+export type GpuBrand = keyof typeof GPU_ENCODER_FAMILIES;
+
+/**
+ * Encoders to try for a codec, best first: GPU encoders (NVIDIA, AMD, Intel, or only the chosen
+ * brand's), then the CPU one.
+ */
 export function encoderCandidates(
   codec: EncoderSettings['codec'],
   acceleration: EncoderSettings['acceleration'],
@@ -134,7 +141,9 @@ export function encoderCandidates(
   // GPU H.264 encoders are 8-bit only.
   if (acceleration === 'software' || (codec === 'h264' && bitDepth === 10)) return [software];
   const prefix = codec === 'h264' ? 'h264' : codec;
-  const hardware = (['nvenc', 'amf', 'qsv'] as const).map((family) => ({
+  const families =
+    acceleration === 'auto' ? Object.values(GPU_ENCODER_FAMILIES) : [GPU_ENCODER_FAMILIES[acceleration]];
+  const hardware = families.map((family) => ({
     name: `${prefix}_${family}`,
     family,
     hardware: true,
@@ -268,10 +277,87 @@ function videoScaler(
   };
 }
 
+// --- GPU pipeline ------------------------------------------------------------------------------
+
+/**
+ * Where ffmpeg puts the widgets on the video: on the CPU, or on an NVIDIA graphics card (CUDA),
+ * where the videos are scaled and the widgets blended without leaving the card's memory until
+ * the encoder. The CPU blend of a 4K export is its slowest part.
+ */
+export type CompositePipeline = 'cpu' | 'cuda';
+
+/** CUDA filters allocate frames in multiples of this many pixels (2160 rows take 2176). */
+const CUDA_ALIGNMENT = 32;
+
+const CUDA_SCALING: Record<Exclude<Scaling, 'fsr1'>, string> = {
+  bilinear: 'bilinear',
+  bicubic: 'bicubic',
+  lanczos: 'lanczos',
+};
+
+/**
+ * Why a video export cannot use the CUDA pipeline, or null when it can. The CUDA filters of
+ * ffmpeg scale, change the range and blend 8-bit 4:2:0 frames, nothing more: every video must
+ * fill the canvas as it is (no blur, turn, zoom, crop or bars) in the output's Rec.709 colours,
+ * and the encoder must be NVIDIA's H.264 or HEVC one.
+ */
+export function cudaPipelineBlocker(options: {
+  project: Project;
+  media: ProjectMedia;
+  encoder: VideoEncoder;
+  dataRange?: ResolvedDataRange | null;
+}): string | null {
+  const { project, media, encoder } = options;
+  const { output } = project;
+  const { fit } = output;
+  if (encoder.family !== 'nvenc') return 'the encoder is not an NVIDIA one';
+  if (project.export.encoder.codec === 'av1') return 'AV1 cannot be cropped to the output size';
+  if (output.color.bitDepth !== 8 || output.color.space !== 'rec709') return 'not 8-bit Rec.709';
+  if (output.width % 2 !== 0 || output.height % 2 !== 0) return 'odd output size';
+  if (project.export.scaling === 'fsr1') return 'FSR 1 sharpens on the CPU';
+  if (fit.mode === 'blur' || fit.rotation !== 0 || fit.zoom !== 1) return 'the video placement';
+  const { start, end } = exportRange(project, media, options.dataRange);
+  for (const segment of exportSegments(project, media, start, end)) {
+    if (segment.kind !== 'video') continue;
+    const { info } = segment;
+    if (info.color.space !== 'rec709') return `${info.fileName} is not Rec.709`;
+    const shown = rotatedSize(info, info.rotation ?? 0);
+    if (fit.mode !== 'stretch' && !sameAspect(shown, output))
+      return `${info.fileName} does not fill the canvas`;
+  }
+  return null;
+}
+
+/** ffmpeg range name of a video's colours. */
+const rangeOf = (color: ColorSettings) => (color.range === 'full' ? 'pc' : 'tv');
+
+/**
+ * Range ffmpeg decodes a video in, from its description of the file (`ffmpeg -i`): GoPro HEVC
+ * says full range in the stream itself (`yuvj420p(pc, bt709)`), which the MP4 boxes do not show.
+ * Without one, limited range, as ffmpeg's scaler assumes. Null when there is no video stream.
+ */
+export function parseDecodedRange(description: string): 'tv' | 'pc' | null {
+  const video = description.split(/\r?\n/).find((line) => /Stream #.*Video:/.test(line));
+  if (!video) return null;
+  // The pixel format and its details come right before the frame size.
+  const format = /,\s([a-z][a-z0-9_]*)(?:\(([^)]*)\))?,\s\d+x\d+/.exec(video);
+  if (!format) return 'tv';
+  const details = (format[2] ?? '').split(/,\s*/);
+  return format[1]?.startsWith('yuvj') || details.includes('pc') ? 'pc' : 'tv';
+}
+
+/** Bitstream filter options cropping the rows and columns CUDA frames have past the output size. */
+function cudaCrop(width: number, height: number): string {
+  const align = (n: number) => Math.ceil(n / CUDA_ALIGNMENT) * CUDA_ALIGNMENT;
+  const right = align(width) - width;
+  const bottom = align(height) - height;
+  return `${right ? `:crop_right=${right}` : ''}${bottom ? `:crop_bottom=${bottom}` : ''}`;
+}
+
 // --- ffmpeg command ---------------------------------------------------------------------------
 
 export interface ExportCommand {
-  /** ffmpeg arguments; the overlay frames go to stdin as raw RGBA. */
+  /** ffmpeg arguments; the overlay frames go to stdin in `overlayFormat`. */
   args: string[];
   frames: number;
   width: number;
@@ -279,6 +365,9 @@ export interface ExportCommand {
   frameRate: number;
   /** Audio as encoded: `copy` only works for a single uncut video piece. */
   audio: EncoderSettings['audio'];
+  /** Pixels ffmpeg reads from stdin: premultiplied RGBA, or `yuva420p` for the CUDA pipeline. */
+  overlayFormat: 'rgba' | 'yuva420p';
+  pipeline: CompositePipeline;
 }
 
 const fmt = (n: number) => String(Math.round(n * 1e6) / 1e6);
@@ -297,7 +386,15 @@ export function videoExportCommand(options: {
   hardwareDecode: string | null;
   /** Resolved data range, where open range bounds go (see `defaultExportRange`). */
   dataRange?: ResolvedDataRange | null;
+  /** `cuda` only when `cudaPipelineBlocker` allows it; the CPU by default. */
+  pipeline?: CompositePipeline;
+  /**
+   * Range each video file (by path) decodes in (see `parseDecodedRange`), for the CUDA pipeline,
+   * which must be told: the probed `info.color` is used for the files missing here.
+   */
+  videoRanges?: Readonly<Record<string, 'tv' | 'pc'>>;
 }): ExportCommand {
+  if (options.pipeline === 'cuda') return cudaExportCommand(options);
   const { project, media, outputPath, encoder } = options;
   const { output } = project;
   const settings = project.export.encoder;
@@ -312,10 +409,7 @@ export function videoExportCommand(options: {
     output.color.bitDepth === 10
       ? { base: 'yuv444p10le', overlay: 'yuva444p10le', format: 'yuv444p10' }
       : { base: 'yuv444p', overlay: 'yuva444p', format: 'yuv444' };
-  const withAudio = settings.audio !== 'none';
-  // Stream copy needs the audio of one file, untouched by filters.
-  const single = segments.length === 1 && segments[0]?.kind === 'video' && segments[0].info.hasAudio;
-  const audio: EncoderSettings['audio'] = settings.audio === 'copy' && !single ? 'aac' : settings.audio;
+  const { audio, encodeAudio } = exportAudio(project, segments);
 
   const inputs: string[] = [];
   const filters: string[] = [];
@@ -357,7 +451,7 @@ export function videoExportCommand(options: {
         after: ['setpts=PTS-STARTPTS', `format=${blend.base}`],
       }),
     );
-    if (withAudio && audio !== 'copy') {
+    if (encodeAudio) {
       if (!sound) {
         inputs.push('-f', 'lavfi', '-t', duration, '-i', 'anullsrc=r=48000:cl=stereo');
         sound = `${index}:a:0`;
@@ -367,13 +461,12 @@ export function videoExportCommand(options: {
         `[${sound}]aresample=48000,aformat=sample_fmts=fltp:channel_layouts=stereo,asetpts=PTS-STARTPTS[a${k}]`,
       );
     }
-    concat.push(`[v${k}]`, ...(withAudio && audio !== 'copy' ? [`[a${k}]`] : []));
+    concat.push(`[v${k}]`, ...(encodeAudio ? [`[a${k}]`] : []));
   }
   const overlayIndex = index;
   // Overlay frames: Skia's premultiplied RGBA.
   inputs.push('-f', 'rawvideo', '-pix_fmt', 'rgba', '-s', `${width}x${height}`, '-r', rate, '-i', 'pipe:0');
 
-  const encodeAudio = withAudio && audio !== 'copy';
   filters.push(
     `${concat.join('')}concat=n=${segments.length}:v=1:a=${encodeAudio ? 1 : 0}[base]${encodeAudio ? '[aout]' : ''}`,
     // The widgets' RGB is converted with the output's matrix and range: left to the overlay filter
@@ -382,41 +475,192 @@ export function videoExportCommand(options: {
     `[base][widgets]overlay=0:0:format=${blend.format}:shortest=1,format=${pixelFormat}[vout]`,
   );
 
+  const args = outputArgs({
+    project,
+    encoder,
+    inputs,
+    filters,
+    frames,
+    audio,
+    encodeAudio,
+    bitstreamFilter: color.bitstreamFilter,
+    outputPath,
+  });
+  return { args, frames, width, height, frameRate, audio, overlayFormat: 'rgba', pipeline: 'cpu' };
+}
+
+/** Whether and how the export has sound: `copy` only works for a single uncut video piece. */
+function exportAudio(project: Project, segments: ExportSegment[]) {
+  const settings = project.export.encoder;
+  const single = segments.length === 1 && segments[0]?.kind === 'video' && segments[0].info.hasAudio;
+  const audio: EncoderSettings['audio'] = settings.audio === 'copy' && !single ? 'aac' : settings.audio;
+  return { audio, encodeAudio: audio !== 'none' && audio !== 'copy' };
+}
+
+/** The whole ffmpeg command around its inputs and filter graph (which ends in `[vout]`). */
+function outputArgs(options: {
+  project: Project;
+  encoder: VideoEncoder;
+  inputs: string[];
+  filters: string[];
+  frames: number;
+  audio: EncoderSettings['audio'];
+  encodeAudio: boolean;
+  bitstreamFilter: string;
+  outputPath: string;
+}): string[] {
+  const { project, encoder, audio } = options;
+  const { output } = project;
+  const settings = project.export.encoder;
+  const color = colorArgs(output.color, settings.codec);
   const maps = ['-map', '[vout]'];
   const audioArgs: string[] = [];
   if (audio === 'copy') {
     maps.push('-map', '0:a:0');
     audioArgs.push('-c:a', 'copy');
-  } else if (encodeAudio) {
+  } else if (options.encodeAudio) {
     maps.push('-map', '[aout]');
     audioArgs.push('-c:a', 'aac', '-b:a', `${settings.audioBitrateKbps}k`);
   }
-
-  const args = [
+  return [
     '-hide_banner',
     '-nostdin',
     '-y',
     '-loglevel',
     'error',
-    ...inputs,
+    ...options.inputs,
     '-filter_complex',
-    filters.join(';'),
+    options.filters.join(';'),
     ...maps,
     '-frames:v',
-    String(frames),
-    ...encoderArgs(encoder, { ...settings, audio }, frameRate, output.color.bitDepth),
+    String(options.frames),
+    ...encoderArgs(encoder, { ...settings, audio }, output.frameRate, output.color.bitDepth),
     ...color.tags,
     '-bsf:v',
-    color.bitstreamFilter,
+    options.bitstreamFilter,
     '-r',
-    rate,
+    fmt(output.frameRate),
     ...audioArgs,
     ...(audio === 'none' ? ['-an'] : []),
-    '-movflags',
-    '+faststart',
-    outputPath,
+    // Fast start rewrites the whole file once it is done: skipped for a slow disk.
+    ...(project.export.disk?.slow ? [] : ['-movflags', '+faststart']),
+    options.outputPath,
   ];
-  return { args, frames, width, height, frameRate, audio };
+}
+
+/**
+ * The CUDA pipeline: each piece decoded on the GPU (to memory, so ffmpeg still applies the file's
+ * rotation), uploaded, converted to the output range and scaled to the canvas on the GPU, the
+ * pieces joined, and the widgets (`yuva420p` from stdin, converted by the drawing threads)
+ * blended on top with `overlay_cuda`. That filter hands on frames of the GPU's allocated size,
+ * past the output size: the encoder keeps them and the bitstream filter crops the stream to the
+ * output size, so nothing is scaled (scaling them would squash the picture over green rows).
+ */
+function cudaExportCommand(options: {
+  project: Project;
+  media: ProjectMedia;
+  outputPath: string;
+  encoder: VideoEncoder;
+  dataRange?: ResolvedDataRange | null;
+  videoRanges?: Readonly<Record<string, 'tv' | 'pc'>>;
+}): ExportCommand {
+  const { project, media, outputPath, encoder } = options;
+  const { output } = project;
+  const { width, height, frameRate } = output;
+  const { start, end } = exportRange(project, media, options.dataRange);
+  const frames = exportFrameCount(start, end, frameRate);
+  const segments = exportSegments(project, media, start, end);
+  const color = colorArgs(output.color, project.export.encoder.codec);
+  const { audio, encodeAudio } = exportAudio(project, segments);
+  const rate = fmt(frameRate);
+  const scaling = project.export.scaling === 'fsr1' ? 'lanczos' : project.export.scaling;
+  // Ranges are set on every piece: colorspace_cuda takes frames without one for full range,
+  // where ffmpeg's scaler (the CPU pipeline) takes them for limited range.
+  const toCanvas = (range: string) =>
+    [
+      `setparams=range=${range}`,
+      'hwupload_cuda',
+      `colorspace_cuda=range=${color.range}`,
+      `scale_cuda=w=${width}:h=${height}:interp_algo=${CUDA_SCALING[scaling]}:format=yuv420p`,
+      'setpts=PTS-STARTPTS',
+    ].join(',');
+
+  const inputs: string[] = [];
+  const filters: string[] = [];
+  const concat: string[] = [];
+  let index = 0;
+  for (const [k, segment] of segments.entries()) {
+    const duration = fmt(segment.duration);
+    let sound: string | null = null;
+    if (segment.kind === 'video') {
+      inputs.push('-hwaccel', 'cuda', '-ss', fmt(segment.from), '-t', duration, '-i', segment.info.path);
+      // Frame rate first: a 120 fps camera exported at 60 fps uploads half the frames.
+      const range = options.videoRanges?.[segment.info.path] ?? rangeOf(segment.info.color);
+      filters.push(`[${index}:v:0]fps=${rate},${toCanvas(range)}[v${k}]`);
+      if (segment.info.hasAudio) sound = `${index}:a:0`;
+    } else {
+      inputs.push('-f', 'lavfi', '-t', duration, '-i', `color=c=black:s=${width}x${height}:r=${rate}`);
+      filters.push(`[${index}:v:0]${toCanvas('tv')}[v${k}]`);
+    }
+    index++;
+    if (encodeAudio) {
+      if (!sound) {
+        inputs.push('-f', 'lavfi', '-t', duration, '-i', 'anullsrc=r=48000:cl=stereo');
+        sound = `${index}:a:0`;
+        index++;
+      }
+      filters.push(
+        `[${sound}]aresample=48000,aformat=sample_fmts=fltp:channel_layouts=stereo,asetpts=PTS-STARTPTS[a${k}]`,
+      );
+    }
+    concat.push(`[v${k}]`, ...(encodeAudio ? [`[a${k}]`] : []));
+  }
+  const overlayIndex = index;
+  inputs.push(
+    '-f',
+    'rawvideo',
+    '-pix_fmt',
+    'yuva420p',
+    '-s',
+    `${width}x${height}`,
+    '-r',
+    rate,
+    '-i',
+    'pipe:0',
+  );
+  filters.push(
+    `${concat.join('')}concat=n=${segments.length}:v=1:a=${encodeAudio ? 1 : 0}[base]${encodeAudio ? '[aout]' : ''}`,
+    `[${overlayIndex}:v:0]hwupload_cuda[widgets]`,
+    '[base][widgets]overlay_cuda=0:0:shortest=1[vout]',
+  );
+  const args = outputArgs({
+    project,
+    encoder,
+    inputs,
+    filters,
+    frames,
+    audio,
+    encodeAudio,
+    bitstreamFilter: `${color.bitstreamFilter}${cudaCrop(width, height)}`,
+    outputPath,
+  });
+  return { args, frames, width, height, frameRate, audio, overlayFormat: 'yuva420p', pipeline: 'cuda' };
+}
+
+/** A video export drawn frame by frame (the web app): the frames and the pieces they come from. */
+export interface VideoExportPlan extends ImageSequencePlan {
+  segments: ExportSegment[];
+}
+
+/** Frames and pieces of a video export, for exporters without ffmpeg. */
+export function videoExportPlan(
+  project: Project,
+  media: ProjectMedia,
+  dataRange: ResolvedDataRange | null = null,
+): VideoExportPlan {
+  const plan = imageSequencePlan(project, media, dataRange);
+  const end = plan.start + plan.frames / plan.frameRate;
+  return { ...plan, segments: exportSegments(project, media, plan.start, end) };
 }
 
 /** Frames of a transparent PNG sequence: the output size and rate over the export range. */
@@ -485,5 +729,5 @@ export function imageSequenceCommand(options: {
     'image2',
     pattern,
   ];
-  return { args, frames, width, height, frameRate, audio: 'none' };
+  return { args, frames, width, height, frameRate, audio: 'none', overlayFormat: 'rgba', pipeline: 'cpu' };
 }

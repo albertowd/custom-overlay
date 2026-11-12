@@ -12,7 +12,8 @@ import {
   STEP_DEFINITIONS,
   YOUTUBE_FAMILIES,
 } from '@custom-overlay/core';
-import type { ReactNode } from 'react';
+import { type ReactNode, useEffect, useState } from 'react';
+import type { GraphicsCard } from '../../shared/api';
 import type { Translate } from '../../shared/i18n';
 import { api } from '../api';
 import { VideoFitFields } from '../components/CanvasSettings';
@@ -21,6 +22,7 @@ import { ExportRunner } from '../components/ExportRunner';
 import { OverlayCanvas } from '../components/OverlayEditor';
 import { Preview } from '../components/Preview';
 import { RangeEditor } from '../components/RangeEditor';
+import { SupportAlerts, useSupportIssues } from '../components/SupportAlerts';
 import { formatBytes, formatTime } from '../format';
 import { coreText, useT } from '../i18n';
 import { errorMessage, useStore, useTimeline, useValuesRefresh, useWorkflow } from '../store';
@@ -158,13 +160,94 @@ const CODECS = [
   ['av1', 'AV1'],
 ] as const satisfies readonly (readonly [EncoderSettings['codec'], string])[];
 
-const ACCELERATION = ['auto', 'software'] as const satisfies readonly EncoderSettings['acceleration'][];
+const GPU_BRANDS = ['nvidia', 'amd', 'intel'] as const satisfies readonly EncoderSettings['acceleration'][];
+
+/** The graphics cards of this computer, as the host lists them (none until known). */
+function useGraphicsCards(): GraphicsCard[] {
+  const [cards, setCards] = useState<GraphicsCard[]>([]);
+  useEffect(() => {
+    let current = true;
+    api()
+      .graphicsCards()
+      .then((found) => current && setCards(found))
+      .catch(() => undefined);
+    return () => {
+      current = false;
+    };
+  }, []);
+  return cards;
+}
+
+/**
+ * Where the video is encoded: the best card that works, one brand of card (the installed ones,
+ * named, and the saved choice), or the CPU.
+ */
+function accelerationOptions(
+  t: Translate,
+  cards: readonly GraphicsCard[],
+  current: EncoderSettings['acceleration'],
+): [EncoderSettings['acceleration'], string][] {
+  const brands = GPU_BRANDS.filter((brand) => brand === current || cards.some((c) => c.brand === brand));
+  return [
+    ['auto', t('export.encoding.accelerationOptions.auto')],
+    ...brands.map((brand): [EncoderSettings['acceleration'], string] => {
+      const names = cards.filter((c) => c.brand === brand).map((c) => c.name);
+      return [
+        brand,
+        names.length > 0 ? names.join(' / ') : t(`export.encoding.accelerationOptions.${brand}`),
+      ];
+    }),
+    ['software', t('export.encoding.accelerationOptions.software')],
+  ];
+}
 
 const AUDIO = ['aac', 'copy', 'none'] as const satisfies readonly EncoderSettings['audio'][];
 
 /** Options labelled by the messages `<prefix>.<value>`. */
 function translated<T extends string>(t: Translate, prefix: string, values: readonly T[]) {
   return values.map((v) => [v, t(`${prefix}.${v}`)] as const);
+}
+
+/** Gentler disk use for a slow disk holding the videos (desktop app and CLI only). */
+function DiskFields() {
+  const t = useT();
+  const settings = useStore((s) => s.project.export);
+  const setExport = useStore((s) => s.setExport);
+  const { disk } = settings;
+  const setDisk = (patch: Partial<typeof disk>) => setExport({ disk: { ...disk, ...patch } });
+  return (
+    <div className="disk-fields">
+      <label className="toggle">
+        <input type="checkbox" checked={disk.slow} onChange={(e) => setDisk({ slow: e.target.checked })} />
+        {t('export.disk.slow')}
+      </label>
+      <p className="muted small">{t('export.disk.slowHelp')}</p>
+      {settings.mode === 'video' && (
+        <>
+          <label className="toggle">
+            <input
+              type="checkbox"
+              checked={disk.stageInTemp}
+              onChange={(e) => setDisk({ stageInTemp: e.target.checked })}
+            />
+            {t('export.disk.stageInTemp')}
+          </label>
+          <p className="muted small">{t('export.disk.stageInTempHelp')}</p>
+        </>
+      )}
+      <div className="fields two">
+        <NumberField
+          label={t('export.disk.maxSpeed')}
+          value={disk.maxSpeed || null}
+          min={0}
+          step={0.25}
+          placeholder={t('export.disk.noLimit')}
+          onChange={(maxSpeed) => setDisk({ maxSpeed: maxSpeed ?? 0 })}
+        />
+      </div>
+      <p className="muted small">{t('export.disk.maxSpeedHelp')}</p>
+    </div>
+  );
 }
 
 function Section({ title, children, wide = false }: { title: string; children: ReactNode; wide?: boolean }) {
@@ -187,6 +270,8 @@ export function ExportStep() {
   const setOutput = useStore((s) => s.setOutput);
   const setEncoder = useStore((s) => s.setEncoder);
   const notify = useStore((s) => s.notify);
+  const cards = useGraphicsCards();
+  const support = useSupportIssues(project);
   const dataRange = useStore((s) => s.values?.dataRange ?? null);
   const timeline = useTimeline();
   const workflow = useWorkflow();
@@ -208,7 +293,7 @@ export function ExportStep() {
   const resolution = `${output.width}x${output.height}`;
   // Without a choice the export goes next to the videos (or the data).
   const defaultOutput = defaultOutputPath(project);
-  const { videoExport, sequenceAsZip } = api().capabilities;
+  const { videoExport, nativeExport, sequenceAsZip } = api().capabilities;
   // A video export made elsewhere (web app) chooses its output there.
   const choosesOutput = videoExport || settings.mode === 'image-sequence';
 
@@ -290,8 +375,11 @@ export function ExportStep() {
               </button>
             </div>
           )}
-          {choosesOutput && !settings.outputPath && defaultOutput && (
+          {choosesOutput && !settings.outputPath && defaultOutput && nativeExport && (
             <p className="muted small">{t('export.output.defaultHint')}</p>
+          )}
+          {!nativeExport && videoExport && settings.mode === 'video' && !settings.outputPath && (
+            <p className="muted small">{t('export.output.browserVideoHint')}</p>
           )}
           {choosesOutput && settings.outputPath && defaultOutput && (
             <button type="button" className="link" onClick={() => setExport({ outputPath: null })}>
@@ -418,10 +506,11 @@ export function ExportStep() {
               <SelectField
                 label={t('export.encoding.acceleration')}
                 value={encoder.acceleration}
-                options={translated(t, 'export.encoding.accelerationOptions', ACCELERATION)}
+                options={accelerationOptions(t, cards, encoder.acceleration)}
                 onChange={(acceleration) => setEncoder({ acceleration })}
               />
             </div>
+            {nativeExport && <p className="muted small">{t('export.encoding.accelerationHelp')}</p>}
             <p className="muted small">
               {preset ? coreText.presetDescription(t, preset) : t('export.encoding.customHelp')}
             </p>
@@ -437,17 +526,30 @@ export function ExportStep() {
               })}
             </p>
             <p className="muted small">{t('export.encoding.estimatedSizeHelp')}</p>
-            <SelectField
-              label={t('export.encoding.scaling')}
-              value={settings.scaling}
-              options={translated(t, 'export.encoding.scalers', SCALERS)}
-              onChange={(scaling) => setExport({ scaling })}
-            />
-            <p className="muted small">{t('export.encoding.scalingHelp')}</p>
+            {nativeExport ? (
+              <>
+                <SelectField
+                  label={t('export.encoding.scaling')}
+                  value={settings.scaling}
+                  options={translated(t, 'export.encoding.scalers', SCALERS)}
+                  onChange={(scaling) => setExport({ scaling })}
+                />
+                <p className="muted small">{t('export.encoding.scalingHelp')}</p>
+              </>
+            ) : (
+              <p className="muted small">{t('export.encoding.browserHelp')}</p>
+            )}
+          </Section>
+        )}
+
+        {nativeExport && (
+          <Section title={t('export.disk.title')}>
+            <DiskFields />
           </Section>
         )}
 
         <Section title={t('export.run.title')} wide>
+          <SupportAlerts issues={support} />
           <ExportRunner issues={exportIssues} />
         </Section>
       </div>

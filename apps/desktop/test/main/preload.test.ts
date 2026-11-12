@@ -57,6 +57,7 @@ const requests: [string, () => Promise<unknown>, string, unknown[]][] = [
   ['cancelExport', () => api.cancelExport(), IpcChannel.cancelExport, []],
   ['revealPath', () => api.revealPath('/o.mp4'), IpcChannel.revealPath, ['/o.mp4']],
   ['appInfo', () => api.appInfo(), IpcChannel.appInfo, []],
+  ['graphicsCards', () => api.graphicsCards(), IpcChannel.graphicsCards, []],
   ['checkForUpdate', () => api.checkForUpdate(), IpcChannel.checkForUpdate, []],
   ['openProjectUrl', () => api.openProjectUrl('https://x'), IpcChannel.openProjectUrl, ['https://x']],
   ['openTrack', () => api.openTrack(), IpcChannel.openTrack, []],
@@ -71,13 +72,23 @@ describe('preload', () => {
       ...requests.map(([method]) => method),
       'onExportProgress',
       'getPathForFile',
+      'supportIssues',
       'capabilities',
     ]);
     expect(Object.keys(api).sort()).toEqual([...covered].sort());
   });
 
+  it('has no browser limits: ffmpeg handles every format', async () => {
+    expect(await api.supportIssues()).toEqual([]);
+  });
+
   it('declares what the desktop app can do', () => {
-    expect(api.capabilities).toEqual({ videoExport: true, revealFiles: true, sequenceAsZip: false });
+    expect(api.capabilities).toEqual({
+      videoExport: true,
+      nativeExport: true,
+      revealFiles: true,
+      sequenceAsZip: false,
+    });
   });
 
   it.each(requests)('%s invokes its channel', async (_method, call, channel, args) => {

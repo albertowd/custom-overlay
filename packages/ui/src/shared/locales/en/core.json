@@ -37,7 +37,7 @@
     "noStartFinish": "Lap values come from the track lines, but there is no start/finish line yet",
     "noWidgets": "The template has no widgets yet",
     "videoExportWithoutVideo": "Exporting a video requires a source video; choose the image sequence mode",
-    "videoExportElsewhere": "The final video is exported by the desktop app or the CLI: save the project next to its videos and open it there",
+    "videoExportElsewhere": "This browser cannot encode video: use a recent Chrome or Edge, or the desktop app",
     "noOutput": "Choose an output location"
   },
   "widgets": {
@@ -298,7 +298,7 @@
     },
     "distance-bar": {
       "name": "Distance bar",
-      "description": "Progress bar of the distance covered, with tick marks every distance step or at each lap start.",
+      "description": "Progress bar of the distance covered, with tick marks every distance step.",
       "fields": {
         "valueId": {
           "label": "Distance value (m)"
@@ -315,28 +315,13 @@
           "label": "Total",
           "hint": "In the unit above; 0 = session total"
         },
-        "ticks": {
-          "label": "Major ticks",
-          "options": {
-            "distance": "Every tick step",
-            "laps": "At each lap start"
-          }
-        },
         "tickStep": {
           "label": "Tick step",
-          "hint": "0 = automatic; distance ticks only"
-        },
-        "lapTimeId": {
-          "label": "Lap time value (s)",
-          "hint": "Lap ticks only"
-        },
-        "lapNumberId": {
-          "label": "Lap number value",
-          "hint": "Lap ticks only"
+          "hint": "0 = automatic"
         },
         "minorTicks": {
           "label": "Minor ticks",
-          "hint": "Between major ticks (per lap with lap ticks)"
+          "hint": "Between major ticks"
         },
         "decimals": {
           "label": "Decimals"
@@ -358,6 +343,69 @@
         },
         "background": {
           "label": "Background panel"
+        }
+      }
+    },
+    "lap-bar": {
+      "name": "Lap bar",
+      "description": "Progress bar of the laps: the whole session with a tick at each lap start labelled with its number, or the current lap only.",
+      "fields": {
+        "view": {
+          "label": "Show",
+          "options": {
+            "session": "Whole session, a tick per lap",
+            "lap": "Current lap only"
+          }
+        },
+        "valueId": {
+          "label": "Distance value (m)"
+        },
+        "unit": {
+          "label": "Unit",
+          "options": {
+            "km": "Kilometers",
+            "m": "Meters",
+            "mi": "Miles"
+          }
+        },
+        "total": {
+          "label": "Total",
+          "hint": "In the unit above; 0 = session total"
+        },
+        "decimals": {
+          "label": "Decimals"
+        },
+        "color": {
+          "label": "Progress"
+        },
+        "trackColor": {
+          "label": "Track"
+        },
+        "textColor": {
+          "label": "Text"
+        },
+        "showLabels": {
+          "label": "Tick labels"
+        },
+        "showValue": {
+          "label": "Current distance"
+        },
+        "background": {
+          "label": "Background panel"
+        },
+        "lapTimeId": {
+          "label": "Lap time value (s)"
+        },
+        "lapNumberId": {
+          "label": "Lap number value"
+        },
+        "label": {
+          "label": "Label",
+          "hint": "Before the lap number"
+        },
+        "minorTicks": {
+          "label": "Minor ticks",
+          "hint": "Per lap"
         }
       }
     },
@@ -1061,6 +1109,45 @@
     "editing": {
       "label": "Editing friendly",
       "description": "Short 0.25 s GOP without B-frames for smooth scrubbing in video editors, H.264."
+    }
+  },
+  "fields": {
+    "backgroundColor": {
+      "label": "Background color"
+    },
+    "backgroundShape": {
+      "label": "Background shape",
+      "options": {
+        "rounded": "Rounded rectangle",
+        "rectangle": "Rectangle",
+        "pill": "Pill",
+        "ellipse": "Ellipse",
+        "circle": "Circle",
+        "slanted": "Slanted"
+      }
+    },
+    "backgroundRadius": {
+      "label": "Corner radius",
+      "hint": "% of the smaller side"
+    },
+    "backgroundOpacity": {
+      "label": "Background opacity"
+    },
+    "align": {
+      "label": "Align",
+      "options": {
+        "left": "Left",
+        "center": "Center",
+        "right": "Right"
+      }
+    },
+    "verticalAlign": {
+      "label": "Vertical align",
+      "options": {
+        "top": "Top",
+        "middle": "Middle",
+        "bottom": "Bottom"
+      }
     }
   }
 }

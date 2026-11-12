@@ -3,7 +3,7 @@ import { DEFAULT_PALETTE, resolveColor } from '../src/model/palette.js';
 import { createTemplate, type Template } from '../src/model/project.js';
 import { WidgetSchema } from '../src/model/widget.js';
 import { headings, projectPath } from '../src/widgets/builtin/gps-path.js';
-import { fitRect, niceCeil, niceStep, withAlpha } from '../src/widgets/draw.js';
+import { backgroundPath, fitRect, niceCeil, niceStep, withAlpha } from '../src/widgets/draw.js';
 import {
   formatClock,
   formatDuration,
@@ -30,7 +30,7 @@ import {
   showWhenHolds,
 } from '../src/widgets/render.js';
 import { createSampleSeries } from '../src/widgets/samples.js';
-import type { ValueSeries } from '../src/widgets/types.js';
+import { fieldShown, type ValueSeries } from '../src/widgets/types.js';
 import { recordingContext } from './helpers/canvas.js';
 
 const series = createSampleSeries(120, 30);
@@ -283,6 +283,95 @@ describe('rendering', () => {
     );
     expect(spy).toHaveBeenCalledTimes(2);
     spy.mockRestore();
+  });
+});
+
+describe('backgrounds and text alignment', () => {
+  const render = (widget: ReturnType<typeof createWidget>) => {
+    const rec = recordingContext();
+    expect(renderOverlay(rec.ctx, options(createTemplate({ widgets: [widget] })))).toEqual({});
+    return rec;
+  };
+
+  it('draws every background shape', () => {
+    const path = (shape: Parameters<typeof backgroundPath>[1]) => {
+      const rec = recordingContext();
+      backgroundPath(rec.ctx, shape, 200, 100, 10);
+      return rec.calls.map((c) => c.method);
+    };
+    expect(path('rectangle')).toEqual(['beginPath', 'rect']);
+    expect(path('circle')).toEqual(['beginPath', 'arc']);
+    expect(path('ellipse')).toEqual(['beginPath', 'ellipse']);
+    expect(path('slanted')).toEqual(['beginPath', 'moveTo', 'lineTo', 'lineTo', 'lineTo', 'closePath']);
+    expect(path('pill')).toContain('arcTo');
+    expect(path('rounded')).toContain('arcTo');
+  });
+
+  it('fills the background in its own color and opacity, or not at all', () => {
+    /** Fill style at each fill, and the path calls before the first one. */
+    const fills = (widget: ReturnType<typeof createWidget>) => {
+      const rec = recordingContext();
+      const styles: string[] = [];
+      const ctx = new Proxy(rec.ctx, {
+        get: (target, key) =>
+          key === 'fill' ? () => styles.push(String(target.fillStyle)) : Reflect.get(target, key),
+      });
+      renderOverlay(ctx, options(createTemplate({ widgets: [widget] })));
+      return { styles, calls: rec.calls.map((c) => c.method) };
+    };
+    const red = fills(
+      createWidget('lap-count', {
+        props: { backgroundColor: '#ff0000', backgroundOpacity: 0.5, backgroundShape: 'rectangle' },
+      }),
+    );
+    expect(red.styles[0]).toBe('#ff000080');
+    expect(red.calls.slice(0, 4)).toEqual(['save', 'translate', 'beginPath', 'rect']);
+    // Palette colors keep their own alpha, multiplied.
+    const palette = fills(createWidget('lap-count', { props: { backgroundOpacity: 0.5 } }));
+    expect(palette.styles[0]).toBe('#00000050');
+    expect(fills(createWidget('value-text', { props: { background: false } })).styles).toEqual([]);
+    expect(fills(createWidget('value-text', { props: { backgroundOpacity: 0 } })).styles).toEqual([]);
+    // Gauges keep a centred disc by default.
+    expect(fills(createWidget('speed-gauge')).calls.slice(2, 4)).toEqual(['beginPath', 'arc']);
+  });
+
+  it('aligns text lines to the top, middle or bottom of the box', () => {
+    const y = (verticalAlign: string) => {
+      const rec = render(createWidget('text', { props: { text: 'A', size: 0.5, verticalAlign } }));
+      return rec.calls.find((c) => c.method === 'fillText')?.args[2] as number;
+    };
+    // 64.8 px high box: a 32.4 px font, a margin of 4 % of the box (2.592 px) at the top or bottom.
+    expect(y('middle')).toBeCloseTo(32.4, 6);
+    expect(y('top')).toBeCloseTo(2.592 + 16.2, 6);
+    expect(y('bottom')).toBeCloseTo(64.8 - 2.592 - 16.2, 6);
+  });
+
+  it('shows fields only while what they depend on is set', () => {
+    const type = getWidgetType('value-text');
+    const fields = type?.fields ?? [];
+    const field = (key: string) => fields.find((f) => f.key === key) as (typeof fields)[number];
+    const props = (p: Record<string, unknown>) => ({ ...type?.schema.parse({}), ...p });
+    expect(fieldShown(field('backgroundColor'), fields, props({}))).toBe(true);
+    expect(fieldShown(field('backgroundColor'), fields, props({ background: false }))).toBe(false);
+    expect(fieldShown(field('backgroundRadius'), fields, props({ backgroundShape: 'pill' }))).toBe(false);
+    // Through the background switch it depends on too.
+    expect(fieldShown(field('backgroundRadius'), fields, props({ background: false }))).toBe(false);
+    expect(fieldShown(field('template'), fields, props({}))).toBe(true);
+  });
+
+  it('skips the members of a hidden group', () => {
+    const widgets = [
+      createWidget('text', { id: 'a', groupId: 'g' }),
+      createWidget('text', { id: 'b', groupId: 'g' }),
+      createWidget('text', { id: 'c' }),
+    ];
+    const group = { id: 'g', name: 'G', visible: false, x: 0, y: 0 };
+    const rec = recordingContext();
+    renderOverlay(rec.ctx, options(createTemplate({ widgets, groups: [group] })));
+    expect(rec.texts()).toEqual(['Text']);
+    const shown = recordingContext();
+    renderOverlay(shown.ctx, options(createTemplate({ widgets, groups: [{ ...group, visible: true }] })));
+    expect(shown.texts()).toHaveLength(3);
   });
 });
 
@@ -622,8 +711,8 @@ describe('lap widgets', () => {
     expect(renderRace(bare, 130).texts()).toEqual(['3']);
   });
 
-  it('puts the distance bar major ticks at the lap starts', () => {
-    const bar = createWidget('distance-bar', { props: { ticks: 'laps', showValue: false } });
+  it('puts the lap bar major ticks at the lap starts', () => {
+    const bar = createWidget('lap-bar', { props: { showValue: false } });
     const rec = renderRace(bar, 30);
     // Laps start at 0.1, 1.3, 2.46 and 3.68 km: a major and a minor tick each, then the end.
     expect(rec.count('stroke')).toBe(9);
@@ -631,6 +720,57 @@ describe('lap widgets', () => {
     expect(rec.texts()).toEqual(['1', '2', '3', '4.0']);
     expect(widgetInputs(bar)).toEqual(['distance.traveled', 'lap.time', 'lap.number']);
     expect(widgetInputs(createWidget('distance-bar'))).toEqual(['distance.traveled']);
+  });
+
+  it('shows the current lap only, the unfinished last lap as long as the one before', () => {
+    const bar = createWidget('lap-bar', { props: { view: 'lap' } });
+    // Lap 1 runs from 0.1 to 1.3 km; at 30 s the distance is 0.6 km.
+    const first = renderRace(bar, 30);
+    expect(first.texts()).toEqual(['0', '1.20', 'Lap 1', '0.50 / 1.20 km']);
+    expect(first.count('stroke')).toBe(3);
+    // Lap 4 starts at 3.68 km and has no end: 1.22 km like lap 3.
+    expect(renderRace(bar, 190).texts().slice(-2)).toEqual(['Lap 4', '0.12 / 1.22 km']);
+    const unlabelled = createWidget('lap-bar', { props: { view: 'lap', label: '', showLabels: false } });
+    expect(renderRace(unlabelled, 2).texts()).toEqual(['-', '0.04 / 0.10 km']);
+  });
+
+  it('turns distance bars saved with lap ticks into lap bars', () => {
+    const old = WidgetSchema.parse({
+      id: 'w',
+      type: 'distance-bar',
+      props: { ticks: 'laps', tickStep: 2, minorTicks: 3, unit: 'mi' },
+    });
+    expect(old.type).toBe('lap-bar');
+    expect(old.props).toEqual({ minorTicks: 3, unit: 'mi' });
+    const kept = WidgetSchema.parse({
+      id: 'w',
+      type: 'distance-bar',
+      props: { ticks: 'distance', tickStep: 2 },
+    });
+    expect(kept.type).toBe('distance-bar');
+    expect(kept.props.tickStep).toBe(2);
+  });
+
+  it('aligns the lap count and the lap timer', () => {
+    const fillTextX = (rec: ReturnType<typeof renderRace>) =>
+      rec.calls.filter((c) => c.method === 'fillText').map((c) => Math.round(c.args[1] as number));
+    const at = (align: string) =>
+      fillTextX(
+        renderRace(createWidget('lap-count', { props: { label: '', showTotal: false, align } }), 130),
+      );
+    // 1920 x 1080 frame: the padding is 6 % of the 108 px high box.
+    const [left] = at('left');
+    const [right] = at('right');
+    const [center] = at('center');
+    expect(left).toBe(6);
+    expect(center).toBeGreaterThan(left as number);
+    expect(right).toBeGreaterThan(center as number);
+    const timer = renderRace(
+      createWidget('lap-timer', { props: { showLapNumber: false, align: 'right' } }),
+      30,
+    );
+    // 345.6 px wide.
+    expect(timer.calls.find((c) => c.method === 'fillText')?.args[1]).toBeCloseTo(345.6 - 6.48, 6);
   });
 
   it('lists the laps done so far with the current one running', () => {

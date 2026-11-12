@@ -1,6 +1,7 @@
 import {
   detectSourceKind,
   goproChapterFiles,
+  outputBaseName,
   PROJECT_FILE_EXTENSION,
   type Project,
   parseProject,
@@ -30,6 +31,7 @@ import { exportImageSequence, folderTarget, type SequenceTarget, zipTarget } fro
 import {
   addFile,
   canPickFolder,
+  canPickSaveFile,
   companionOf,
   type FileType,
   fileAt,
@@ -37,9 +39,13 @@ import {
   openFiles,
   type PickerId,
   pickFolder,
+  pickVideoFile,
   saveFile,
+  writableFile,
   writableFolder,
 } from './files';
+import { supportIssues } from './support';
+import { canExportVideo, exportVideo } from './video-export';
 
 const REPOSITORY = 'albertowd/custom-overlay';
 const LANGUAGE_KEY = 'custom-overlay.language';
@@ -147,9 +153,27 @@ async function sequenceTarget(project: Project): Promise<SequenceTarget | null> 
   return folder ? folderTarget(folder) : null;
 }
 
+/**
+ * Where a video goes: the file chosen in the Export step, else one picked now, else the browser's
+ * storage, downloaded at the end (phones and browsers without a save picker). Undefined when the
+ * picker was cancelled.
+ */
+async function videoTarget(project: Project, name: string): Promise<FileSystemFileHandle | null | undefined> {
+  const chosen = project.export.outputPath && (await writableFile(project.export.outputPath));
+  if (chosen) return chosen;
+  if (!canPickSaveFile()) return null;
+  const picked = await pickVideoFile(name);
+  return picked ? ((await writableFile(picked)) ?? undefined) : undefined;
+}
+
 /** `AppApi` in a browser: files come from pickers and drops, the engine runs in a worker. */
 export const webApi: AppApi = {
-  capabilities: { videoExport: false, revealFiles: false, sequenceAsZip: !canPickFolder() },
+  capabilities: {
+    videoExport: canExportVideo(),
+    nativeExport: false,
+    revealFiles: false,
+    sequenceAsZip: !canPickFolder(),
+  },
   async getLanguage() {
     try {
       const saved = localStorage.getItem(LANGUAGE_KEY);
@@ -245,9 +269,9 @@ export const webApi: AppApi = {
     });
   },
 
-  async selectOutput(mode) {
-    // Videos are exported by the desktop app or the CLI, which choose their output.
-    if (mode === 'video') return null;
+  async selectOutput(mode, defaultPath) {
+    // Without a save picker the video is downloaded: nothing to choose.
+    if (mode === 'video') return pickVideoFile(defaultPath ? fileNameOf(defaultPath) : 'export.mp4');
     // Without a folder picker the frames are downloaded as a zip: the name only marks the choice.
     return canPickFolder() ? pickFolder('export') : 'frames';
   },
@@ -308,8 +332,22 @@ export const webApi: AppApi = {
   },
 
   async startExport(project) {
-    if (project.export.mode === 'video') throw new Error(t('core.issues.videoExportElsewhere'));
     if (running) throw new Error('An export is already running');
+    const onProgress = (progress: ExportProgress) => {
+      for (const listener of progressListeners) listener(progress);
+    };
+    if (project.export.mode === 'video') {
+      if (!canExportVideo()) throw new Error(t('core.issues.videoExportElsewhere'));
+      const name = `${outputBaseName(project)}.mp4`;
+      const file = await videoTarget(project, name);
+      if (file === undefined) throw new Error('Export cancelled');
+      running = new AbortController();
+      try {
+        return await exportVideo({ project, file, name, signal: running.signal, onProgress });
+      } finally {
+        running = null;
+      }
+    }
     const target = await sequenceTarget(project);
     if (!target) throw new Error('Export cancelled');
     running = new AbortController();
@@ -318,9 +356,7 @@ export const webApi: AppApi = {
         project,
         target,
         signal: running.signal,
-        onProgress: (progress) => {
-          for (const listener of progressListeners) listener(progress);
-        },
+        onProgress,
       });
     } finally {
       running = null;
@@ -352,6 +388,11 @@ export const webApi: AppApi = {
     };
   },
 
+  // The web app exports no video: no card to choose.
+  async graphicsCards() {
+    return [];
+  },
+
   async checkForUpdate() {
     // The service worker installs new versions of the web app.
     return null;
@@ -361,6 +402,10 @@ export const webApi: AppApi = {
     if (!url.startsWith(`https://github.com/${REPOSITORY}`))
       throw new Error('Only pages of the project can be opened');
     window.open(url, '_blank', 'noopener');
+  },
+
+  supportIssues(project) {
+    return supportIssues(project);
   },
 
   getPathForFile(file) {

@@ -56,5 +56,18 @@ export default defineConfig({
   // Relative URLs: the app can be served from any folder (e.g. GitHub Pages' /custom-overlay/).
   base: './',
   plugins: [react(), devInlineStyles(), serviceWorker()],
+  // Pre-bundled together on purpose: when the dev server discovers them on its own, it emits React
+  // twice (one copy for react-dom/client and zustand, another for react and the JSX runtime), and
+  // hooks then fail with "Invalid hook call", leaving the page blank.
+  optimizeDeps: {
+    include: [
+      'react',
+      'react-dom',
+      'react-dom/client',
+      'react/jsx-runtime',
+      'react/jsx-dev-runtime',
+      'zustand',
+    ],
+  },
   worker: { format: 'es' },
 });

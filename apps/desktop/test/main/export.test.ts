@@ -3,7 +3,7 @@ import type { ExportOptions, ExportResult } from '@custom-overlay/core/node';
 import type { WebContents } from 'electron';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { IpcChannel } from '../../src/shared/ipc';
-import { FakeWebContents } from './electron-mock';
+import { FakeWebContents, powerSaveBlocker } from './electron-mock';
 
 vi.mock('electron', () => import('./electron-mock'));
 vi.mock('../../src/main/export-worker?modulePath', () => ({ default: '/out/main/export-worker.js' }));
@@ -62,6 +62,10 @@ describe('startExport', () => {
     rememberVideo('/a.mp4', { path: '/a.mp4' } as never, null);
     const exporting = startExport(window, project);
     expect(exportRunning()).toBe(true);
+    // The computer stays awake while exporting.
+    expect(powerSaveBlocker.start).toHaveBeenCalledWith('prevent-app-suspension');
+    const blocker = powerSaveBlocker.start.mock.results.at(-1)?.value;
+    expect(powerSaveBlocker.stop).not.toHaveBeenCalledWith(blocker);
 
     const options = run.options();
     expect(options.project).toBe(project);
@@ -80,6 +84,7 @@ describe('startExport', () => {
     run.finish(RESULT);
     expect(await exporting).toBe(RESULT);
     expect(exportRunning()).toBe(false);
+    expect(powerSaveBlocker.stop).toHaveBeenCalledWith(blocker);
   });
 
   it('runs one export at a time', async () => {

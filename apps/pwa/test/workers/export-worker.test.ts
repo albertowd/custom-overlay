@@ -40,6 +40,11 @@ class FakeOffscreenCanvas {
     return type === '2d' && !FakeOffscreenCanvas.noContext ? this.ctx : null;
   }
 
+  /** A bitmap that tells which canvas and draw it came from. */
+  transferToImageBitmap() {
+    return { canvas: this, drawn: ++this.encoded, close: () => undefined };
+  }
+
   async convertToBlob(options: { type: string }) {
     expect(options.type).toBe('image/png');
     return new Blob([new Uint8Array([137, 80, 78, 71, ++this.encoded])]);
@@ -110,6 +115,21 @@ describe('export worker', () => {
     // The PNG's buffer is moved to the page, not copied.
     const last = scope.answers.at(-1);
     expect(last?.transfer).toEqual([(answer as Extract<ExportWorkerResponse, { type: 'frame' }>).png.buffer]);
+  });
+
+  it('answers bitmaps to draw over the video of a video export', async () => {
+    expect(await ask({ type: 'init', init: init(), format: 'bitmap' })).toEqual({ type: 'ready' });
+    const answer = await ask({ type: 'frame', frame: 7 });
+    expect(answer).toMatchObject({ type: 'bitmap', frame: 7, warnings: [] });
+    const { bitmap } = answer as Extract<ExportWorkerResponse, { type: 'bitmap' }>;
+    // From the frame canvas (the smaller ones are scratch canvases of the widgets).
+    const frameCanvas = FakeOffscreenCanvas.instances.filter((c) => c.width === 320).at(-1);
+    expect((bitmap as unknown as { canvas: unknown }).canvas).toBe(frameCanvas);
+    // Moved to the video worker, not copied.
+    expect(scope.answers.at(-1)?.transfer).toEqual([bitmap]);
+    // Set up again without a format: PNG files.
+    await ask({ type: 'init', init: init() });
+    expect((await ask({ type: 'frame', frame: 0 })).type).toBe('frame');
   });
 
   it('draws one frame at a time, in the order asked', async () => {

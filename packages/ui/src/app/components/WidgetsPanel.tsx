@@ -1,23 +1,33 @@
 import {
-  anchorPoint,
+  type AlignEdge,
+  fieldShown,
+  findGroup,
+  framePosition,
   getWidgetType,
+  groupMembers,
   isTimingValueId,
+  type Layer,
+  layers,
   placeAnchor,
   resizeAroundAnchor,
   resolveWidgetProps,
   type ShowWhen,
+  shownPosition,
   type Widget,
   type WidgetAnchor,
+  type WidgetGroup,
   widgetInputs,
   widgetTypes,
 } from '@custom-overlay/core';
-import { useState } from 'react';
+import { type MouseEvent, useState } from 'react';
 import { formatTime, formatValue } from '../format';
 import { coreText, useT } from '../i18n';
-import { useStore, useTimeline } from '../store';
+import { ALIGN_TARGETS, selectionIds, useStore, useTimeline } from '../store';
 import { snapshotValue } from '../values';
+import { Segmented } from './common';
 import { DataRangeEditor } from './DataRangeEditor';
 import { FieldInput, VALUE_IDS_LIST } from './FieldInput';
+import { Icon, type IconName } from './Icon';
 import { RangeEditor } from './RangeEditor';
 
 const CATEGORIES = ['data', 'map', 'text', 'asset'] as const;
@@ -231,18 +241,123 @@ function WidgetData({ widget }: { widget: Widget }) {
   );
 }
 
+const ALIGN_EDGES: readonly [AlignEdge, IconName][] = [
+  ['left', 'align-left'],
+  ['center', 'align-center'],
+  ['right', 'align-right'],
+  ['top', 'align-top'],
+  ['middle', 'align-middle'],
+  ['bottom', 'align-bottom'],
+];
+
+/** Align buttons for the selection, what they align to, and spreading (three widgets or more). */
+function AlignTools({ count }: { count: number }) {
+  const alignTo = useStore((s) => s.alignTo);
+  const setAlignTo = useStore((s) => s.setAlignTo);
+  const align = useStore((s) => s.alignSelection);
+  const distribute = useStore((s) => s.distributeSelection);
+  const t = useT();
+  return (
+    <div className="align-tools">
+      <div className="align-tools-head">
+        <span>{t('template.align.title')}</span>
+        <Segmented
+          label={t('template.align.to')}
+          value={alignTo}
+          options={ALIGN_TARGETS.map((target) => [target, t(`template.align.targets.${target}`)] as const)}
+          onChange={setAlignTo}
+          className="small"
+        />
+      </div>
+      <div className="icon-row">
+        {ALIGN_EDGES.map(([edge, icon]) => (
+          <button
+            type="button"
+            key={edge}
+            className="icon"
+            title={t(`template.align.edges.${edge}`)}
+            aria-label={t(`template.align.edges.${edge}`)}
+            onClick={() => align(edge)}
+          >
+            <Icon name={icon} />
+          </button>
+        ))}
+        <span className="icon-row-gap" />
+        {(['horizontal', 'vertical'] as const).map((axis) => (
+          <button
+            type="button"
+            key={axis}
+            className="icon"
+            disabled={count < 3}
+            title={t(`template.align.distribute.${axis}`)}
+            aria-label={t(`template.align.distribute.${axis}`)}
+            onClick={() => distribute(axis)}
+          >
+            <Icon name={`distribute-${axis}`} />
+          </button>
+        ))}
+      </div>
+      <small className="muted field-hint">{t(`template.align.hints.${alignTo}`)}</small>
+    </div>
+  );
+}
+
+/** The group a widget belongs to, and whether it moves with it. */
+function WidgetGroupFields({ widget }: { widget: Widget }) {
+  const groups = useStore((s) => s.project.template.groups);
+  const setGroup = useStore((s) => s.setWidgetGroup);
+  const update = useStore((s) => s.updateWidget);
+  const t = useT();
+  if (groups.length === 0) return null;
+  return (
+    <div className="fields two">
+      <label className="field">
+        {t('template.groups.group')}
+        <select value={widget.groupId ?? ''} onChange={(e) => setGroup(widget.id, e.target.value || null)}>
+          <option value="">{t('template.groups.none')}</option>
+          {groups.map((group) => (
+            <option key={group.id} value={group.id}>
+              {group.name}
+            </option>
+          ))}
+        </select>
+      </label>
+      {widget.groupId && (
+        <div className="field">
+          <span>{t('template.groups.position')}</span>
+          <Segmented
+            label={t('template.groups.position')}
+            value={widget.groupPosition}
+            options={[
+              ['relative', t('template.groups.relative')],
+              ['absolute', t('template.groups.absolute')],
+            ]}
+            onChange={(groupPosition) => update(widget.id, { groupPosition })}
+          />
+          <small className="muted field-hint">{t(`template.groups.${widget.groupPosition}Hint`)}</small>
+        </div>
+      )}
+    </div>
+  );
+}
+
 function Inspector({ widget }: { widget: Widget }) {
   const update = useStore((s) => s.updateWidget);
   const setProps = useStore((s) => s.setWidgetProps);
   const remove = useStore((s) => s.removeWidget);
   const duplicate = useStore((s) => s.duplicateWidget);
+  const template = useStore((s) => s.project.template);
   const t = useT();
   const type = getWidgetType(widget.type);
   if (!type) return <p className="error-text">{t('template.widgets.unknownType', { type: widget.type })}</p>;
   const props = resolveWidgetProps(widget, type);
   const patch = (p: Partial<Widget>) => update(widget.id, p);
   const readsTiming = widgetInputs({ ...widget, timing: null }).some(isTimingValueId);
-  const anchor = anchorPoint(widget);
+  // A relative group member shows where it sits from its group origin.
+  const anchor = shownPosition(template, widget);
+  const relative = widget.groupPosition === 'relative' && findGroup(template, widget.groupId) !== undefined;
+  const moveTo = (shown: { x: number; y: number }) =>
+    patch(placeAnchor(widget, framePosition(template, widget, shown)));
 
   return (
     <div className="inspector">
@@ -265,14 +380,14 @@ function Inspector({ widget }: { widget: Widget }) {
         <AnchorPicker value={widget.anchor} onChange={(anchor) => patch({ anchor })} />
         <div className="fields four">
           <PercentField
-            label={t('template.widgets.x')}
+            label={relative ? t('template.groups.relativeX') : t('template.widgets.x')}
             value={anchor.x}
-            onChange={(x) => patch(placeAnchor(widget, { ...anchor, x }))}
+            onChange={(x) => moveTo({ ...anchor, x })}
           />
           <PercentField
-            label={t('template.widgets.y')}
+            label={relative ? t('template.groups.relativeY') : t('template.widgets.y')}
             value={anchor.y}
-            onChange={(y) => patch(placeAnchor(widget, { ...anchor, y }))}
+            onChange={(y) => moveTo({ ...anchor, y })}
           />
           <PercentField
             label={t('template.widgets.width')}
@@ -286,6 +401,8 @@ function Inspector({ widget }: { widget: Widget }) {
           />
         </div>
       </div>
+      <WidgetGroupFields widget={widget} />
+      <AlignTools count={1} />
       <div className="fields two">
         <label className="field">
           {t('template.widgets.opacity')}
@@ -367,35 +484,141 @@ function Inspector({ widget }: { widget: Widget }) {
         </label>
       </div>
       <h3>{t('template.widgets.settings')}</h3>
-      {type.fields.map((field) => (
-        <FieldInput
-          key={field.key}
-          widgetType={widget.type}
-          field={field}
-          value={props[field.key]}
-          onChange={(value) => setProps(widget.id, { [field.key]: value })}
-        />
-      ))}
+      {type.fields
+        .filter((field) => fieldShown(field, type.fields, props))
+        .map((field) => (
+          <FieldInput
+            key={field.key}
+            widgetType={widget.type}
+            field={field}
+            value={props[field.key]}
+            onChange={(value) => setProps(widget.id, { [field.key]: value })}
+          />
+        ))}
       <TestValues widget={widget} />
     </div>
   );
 }
 
-/** The template's widgets, front first, with add / import and the sample data switch. */
+/** Ctrl / Cmd / Shift click adds to the selection (or takes out of it). */
+const adds = (event: MouseEvent) => event.ctrlKey || event.metaKey || event.shiftKey;
+
+/** The template's widgets as layers, front first: groups with their members, and the sample data switch. */
 export function WidgetList() {
-  const widgets = useStore((s) => s.project.template.widgets);
+  const template = useStore((s) => s.project.template);
   const selectedId = useStore((s) => s.selectedWidgetId);
+  const selectedIds = useStore((s) => s.selectedWidgetIds);
+  const selectedGroupId = useStore((s) => s.selectedGroupId);
   const snapshot = useStore((s) => s.values);
   const sampleData = useStore((s) => s.sampleData);
   const select = useStore((s) => s.selectWidget);
+  const selectGroup = useStore((s) => s.selectGroup);
   const update = useStore((s) => s.updateWidget);
+  const updateGroup = useStore((s) => s.updateGroup);
   const move = useStore((s) => s.moveWidget);
+  const moveGroup = useStore((s) => s.moveGroupLayer);
+  const groupSelection = useStore((s) => s.groupSelection);
   const setSampleData = useStore((s) => s.setSampleData);
+  const [collapsed, setCollapsed] = useState<ReadonlySet<string>>(new Set());
   const t = useT();
   const hasData = (snapshot?.grid.count ?? 0) > 0;
+  const { widgets } = template;
+  const known = selectedIds.filter((id) => widgets.some((w) => w.id === id));
+  const canGroup = selectedGroupId === null && known.length >= 2;
   const getWidgetTypeName = (type: string) => {
     const definition = getWidgetType(type);
     return definition ? coreText.widgetName(t, definition) : type;
+  };
+  const toggleCollapsed = (id: string) =>
+    setCollapsed((current) => {
+      const next = new Set(current);
+      if (!next.delete(id)) next.add(id);
+      return next;
+    });
+
+  const layerButtons = (visible: boolean, onToggle: () => void, onMove: (direction: 1 | -1) => void) => (
+    <>
+      <button
+        type="button"
+        className="icon small"
+        title={visible ? t('template.widgets.hide') : t('template.widgets.show')}
+        onClick={onToggle}
+      >
+        <Icon name={visible ? 'eye' : 'eye-off'} />
+      </button>
+      <button
+        type="button"
+        className="icon small"
+        title={t('template.widgets.bringForward')}
+        onClick={() => onMove(1)}
+      >
+        <Icon name="up" />
+      </button>
+      <button
+        type="button"
+        className="icon small"
+        title={t('template.widgets.sendBackward')}
+        onClick={() => onMove(-1)}
+      >
+        <Icon name="down" />
+      </button>
+    </>
+  );
+
+  const widgetRow = (widget: Widget, member: boolean) => {
+    const active = selectedGroupId === null && (widget.id === selectedId || known.includes(widget.id));
+    return (
+      <li key={widget.id} className={[active ? 'active' : '', member ? 'member' : ''].join(' ').trim()}>
+        <button
+          type="button"
+          className="widget-name"
+          onClick={(e) => select(widget.id, adds(e) ? 'toggle' : 'replace')}
+        >
+          {widget.name || widget.type}
+          <small className="muted">
+            {getWidgetTypeName(widget.type)}
+            {widget.visibleRange ? ` · ${t('template.widgets.ownRangeShort')}` : ''}
+            {widget.dataRange ? ` · ${t('template.widgets.ownDataShort')}` : ''}
+            {member && widget.groupPosition === 'absolute' ? ` · ${t('template.groups.absoluteShort')}` : ''}
+          </small>
+        </button>
+        {layerButtons(
+          widget.visible,
+          () => update(widget.id, { visible: !widget.visible }),
+          (direction) => move(widget.id, direction),
+        )}
+      </li>
+    );
+  };
+
+  const groupRow = (layer: Extract<Layer, { kind: 'group' }>) => {
+    const { group } = layer;
+    const open = !collapsed.has(group.id);
+    return [
+      <li key={group.id} className={`group-row ${selectedGroupId === group.id ? 'active' : ''}`.trim()}>
+        <button
+          type="button"
+          className={`icon small disclosure ${open ? 'open' : ''}`}
+          aria-expanded={open}
+          title={open ? t('template.groups.collapse') : t('template.groups.expand')}
+          onClick={() => toggleCollapsed(group.id)}
+        >
+          <Icon name="chevron" />
+        </button>
+        <button type="button" className="widget-name" onClick={() => selectGroup(group.id)}>
+          <span className="group-name">
+            <Icon name="group" size={14} /> {group.name}
+          </span>
+          <small className="muted">{t('template.groups.count', { count: layer.widgets.length })}</small>
+        </button>
+        {layerButtons(
+          group.visible,
+          () => updateGroup(group.id, { visible: !group.visible }),
+          (direction) => moveGroup(group.id, direction),
+        )}
+      </li>,
+      ...(open ? [...layer.widgets].reverse().map((widget) => widgetRow(widget, true)) : []),
+    ];
   };
 
   return (
@@ -410,56 +633,127 @@ export function WidgetList() {
           />
           {t('template.widgets.sampleData')}
         </label>
+        <span className="spacer" />
+        <button
+          type="button"
+          className="small"
+          disabled={!canGroup}
+          title={t('template.groups.groupHint')}
+          onClick={groupSelection}
+        >
+          <Icon name="group" size={14} /> {t('template.groups.groupAction')}
+        </button>
       </div>
       {widgets.length === 0 && <p className="muted small">{t('template.widgets.empty')}</p>}
       {widgets.length > 0 && (
         <ul className="widget-list">
-          {[...widgets].reverse().map((widget) => (
-            <li key={widget.id} className={widget.id === selectedId ? 'active' : ''}>
-              <button type="button" className="widget-name" onClick={() => select(widget.id)}>
-                {widget.name || widget.type}
-                <small className="muted">
-                  {getWidgetTypeName(widget.type)}
-                  {widget.visibleRange ? ` · ${t('template.widgets.ownRangeShort')}` : ''}
-                  {widget.dataRange ? ` · ${t('template.widgets.ownDataShort')}` : ''}
-                </small>
-              </button>
-              <button
-                type="button"
-                className="icon small"
-                title={widget.visible ? t('template.widgets.hide') : t('template.widgets.show')}
-                onClick={() => update(widget.id, { visible: !widget.visible })}
-              >
-                {widget.visible ? '👁' : '—'}
-              </button>
-              <button
-                type="button"
-                className="icon small"
-                title={t('template.widgets.bringForward')}
-                onClick={() => move(widget.id, 1)}
-              >
-                ▲
-              </button>
-              <button
-                type="button"
-                className="icon small"
-                title={t('template.widgets.sendBackward')}
-                onClick={() => move(widget.id, -1)}
-              >
-                ▼
-              </button>
-            </li>
-          ))}
+          {[...layers(template)]
+            .reverse()
+            .flatMap((layer) =>
+              layer.kind === 'widget' ? [widgetRow(layer.widget, false)] : groupRow(layer),
+            )}
         </ul>
       )}
+      {widgets.length > 1 && <p className="muted small">{t('template.groups.multiSelectHint')}</p>}
     </div>
   );
 }
 
-/** Settings of the selected widget. */
+/** Settings of the selected group. */
+function GroupInspector({ group }: { group: WidgetGroup }) {
+  const template = useStore((s) => s.project.template);
+  const members = groupMembers(template, group.id);
+  const updateGroup = useStore((s) => s.updateGroup);
+  const moveGroupBy = useStore((s) => s.moveGroupBy);
+  const ungroup = useStore((s) => s.ungroup);
+  const duplicate = useStore((s) => s.duplicateGroup);
+  const remove = useStore((s) => s.removeGroup);
+  const t = useT();
+  const absolute = members.filter((w) => w.groupPosition === 'absolute').length;
+  return (
+    <div className="inspector">
+      <div className="panel-title">
+        <h3>{t('template.groups.title')}</h3>
+        <div className="actions">
+          <button type="button" className="small" onClick={() => duplicate(group.id)}>
+            {t('common.duplicate')}
+          </button>
+          <button type="button" className="small" onClick={() => ungroup(group.id)}>
+            {t('template.groups.ungroup')}
+          </button>
+          <button type="button" className="small danger" onClick={() => remove(group.id)}>
+            {t('common.delete')}
+          </button>
+        </div>
+      </div>
+      <label className="field">
+        {t('common.name')}
+        <input
+          type="text"
+          value={group.name}
+          onChange={(e) => updateGroup(group.id, { name: e.target.value })}
+        />
+      </label>
+      <label className="toggle">
+        <input
+          type="checkbox"
+          checked={group.visible}
+          onChange={(e) => updateGroup(group.id, { visible: e.target.checked })}
+        />
+        {t('template.groups.visible')}
+      </label>
+      <div className="fields two">
+        <PercentField
+          label={t('template.groups.originX')}
+          value={group.x}
+          onChange={(x) => moveGroupBy(group.id, x - group.x, 0)}
+        />
+        <PercentField
+          label={t('template.groups.originY')}
+          value={group.y}
+          onChange={(y) => moveGroupBy(group.id, 0, y - group.y)}
+        />
+      </div>
+      <small className="muted field-hint">
+        {t('template.groups.originHint')}
+        {absolute > 0 ? ` ${t('template.groups.absoluteCount', { count: absolute })}` : ''}
+      </small>
+      <AlignTools count={members.length} />
+    </div>
+  );
+}
+
+/** Several widgets selected: group, align or delete them together. */
+function SelectionInspector({ count }: { count: number }) {
+  const groupSelection = useStore((s) => s.groupSelection);
+  const removeSelection = useStore((s) => s.removeSelection);
+  const t = useT();
+  return (
+    <div className="inspector">
+      <div className="panel-title">
+        <h3>{t('template.groups.selected', { count })}</h3>
+        <div className="actions">
+          <button type="button" className="small primary" onClick={groupSelection}>
+            {t('template.groups.groupAction')}
+          </button>
+          <button type="button" className="small danger" onClick={removeSelection}>
+            {t('common.delete')}
+          </button>
+        </div>
+      </div>
+      <AlignTools count={count} />
+    </div>
+  );
+}
+
+/** Settings of the selection: a group, several widgets or one widget. */
 export function WidgetInspector() {
-  const widgets = useStore((s) => s.project.template.widgets);
+  const project = useStore((s) => s.project);
   const selectedId = useStore((s) => s.selectedWidgetId);
+  const selectedWidgetIds = useStore((s) => s.selectedWidgetIds);
+  const selectedGroupId = useStore((s) => s.selectedGroupId);
+  const { widgets, groups } = project.template;
+  const selection = selectionIds({ project, selectedWidgetIds, selectedGroupId });
   const snapshot = useStore((s) => s.values);
   const add = useStore((s) => s.addWidget);
   const importWidgets = useStore((s) => s.importWidgets);
@@ -467,7 +761,8 @@ export function WidgetInspector() {
   // The picker belongs to the selection it was opened on: selecting another widget closes it.
   const [pickingFor, setPickingFor] = useState<string | null | undefined>(undefined);
   const picking = pickingFor !== undefined && pickingFor === (selectedId ?? null);
-  const selected = widgets.find((w) => w.id === selectedId);
+  const group = selectedGroupId ? groups.find((g) => g.id === selectedGroupId) : undefined;
+  const selected = group || selection.length > 1 ? undefined : widgets.find((w) => w.id === selectedId);
   const t = useT();
   return (
     <div className="widgets-panel">
@@ -507,8 +802,12 @@ export function WidgetInspector() {
           }}
         />
       )}
+      {!picking && group && <GroupInspector group={group} />}
+      {!picking && !group && selection.length > 1 && <SelectionInspector count={selection.length} />}
       {!picking && selected && <Inspector widget={selected} />}
-      {!picking && !selected && <p className="muted small">{t('template.widgets.selectHint')}</p>}
+      {!picking && !group && !selected && selection.length <= 1 && (
+        <p className="muted small">{t('template.widgets.selectHint')}</p>
+      )}
     </div>
   );
 }

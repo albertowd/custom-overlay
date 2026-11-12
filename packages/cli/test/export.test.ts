@@ -20,6 +20,7 @@ const result = (overrides: Partial<ExportResult> = {}): ExportResult => ({
   seconds: 65.25,
   encoder: 'libx264',
   workers: 2,
+  pipeline: 'cpu',
   warnings: [],
   ...overrides,
 });
@@ -78,8 +79,10 @@ describe('export', () => {
     expect(options.project.name).toBe('Track day');
     expect(options.project.export.range).toEqual({ start: null, end: null });
     expect(options.project.export.encoder.acceleration).not.toBe('software');
+    expect(options.project.export.disk).toEqual({ slow: false, maxSpeed: 0, stageInTemp: false });
     expect(options.ffmpegPath).toBeUndefined();
     expect(options.workers).toBeUndefined();
+    expect(options.pipeline).toBe('auto');
     expect(options.template?.widgets).toEqual([]);
     expect(Object.keys(options.media.videos)).toHaveLength(1);
 
@@ -88,7 +91,21 @@ describe('export', () => {
       '100.0%  frame 1200/1200  48.3 fps  0:00.000 left',
       'warning: speed: no data',
     ]);
-    expect(stdout.trim()).toBe('Exported 1200 frames to /out/Track day.mp4 in 1:05.250 (libx264)');
+    expect(stdout.trim()).toBe(
+      'Exported 1200 frames to /out/Track day.mp4 in 1:05.250 (libx264, 2 drawing threads)',
+    );
+  });
+
+  it('says when the widgets were blended on the GPU, and can keep them on the CPU', async () => {
+    setTty(false);
+    exportReporting([[1200, 0]], result({ encoder: 'h264_nvenc', pipeline: 'cuda', workers: 7 }));
+    const { stdout } = await run('export', project);
+    expect(stdout.trim()).toBe(
+      'Exported 1200 frames to /out/Track day.mp4 in 1:05.250 (h264_nvenc, widgets blended on the GPU, 7 drawing threads)',
+    );
+    exportReporting([[1200, 0]], result());
+    await run('export', project, '--cpu-blend');
+    expect((exportProject.mock.calls[1]?.[0] as ExportOptions | undefined)?.pipeline).toBe('cpu');
   });
 
   it('applies the command line overrides and redraws progress in a terminal', async () => {
@@ -105,6 +122,10 @@ describe('export', () => {
       '--end',
       '15',
       '--software',
+      '--slow-disk',
+      '--max-speed',
+      '1.5',
+      '--stage-in-temp',
       '--threads',
       '3',
       '--ffmpeg',
@@ -115,11 +136,41 @@ describe('export', () => {
     expect(options.project.export.outputPath).toBe(output);
     expect(options.project.export.range).toEqual({ start: 2.5, end: 15 });
     expect(options.project.export.encoder.acceleration).toBe('software');
+    expect(options.project.export.disk).toEqual({ slow: true, maxSpeed: 1.5, stageInTemp: true });
     expect(options.workers).toBe(3);
     expect(options.ffmpegPath).toBe('/opt/ffmpeg');
 
     expect(stderr).toBe(`\r${'0.1%  frame 1/1200  48.3 fps  '.padEnd(70)}\n\n`);
     expect(stdout.trim()).toBe(`Exported 1200 frames to ${output} in 1:05.250`);
+  });
+
+  it('tells when the disk slows the export down and when the video is moved', async () => {
+    setTty(false);
+    exportProject.mockImplementationOnce(async (options) => {
+      const progress = { frames: 1200, fps: 48.25, elapsedSeconds: 1, etaSeconds: 0 };
+      options.onProgress?.({ ...progress, frame: 600, throttled: true });
+      options.onProgress?.({ ...progress, frame: 1200, phase: 'move' });
+      return result();
+    });
+    const { stderr } = await run('export', project);
+    expect(stderr.split('\n')).toEqual([
+      '50.0%  frame 600/1200  48.3 fps  0:00.000 left  (slowed down for the disk)',
+      'moving the video from the temporary folder...',
+    ]);
+  });
+
+  it('encodes on the chosen brand of graphics card', async () => {
+    exportProject.mockResolvedValueOnce(result());
+    await run('export', project, '--gpu', 'intel');
+    expect(exportProject.mock.calls[0]?.[0].project.export.encoder.acceleration).toBe('intel');
+    await expect(run('export', project, '--gpu', 'voodoo')).rejects.toThrow(/voodoo/);
+  });
+
+  it('rejects a negative speed limit', async () => {
+    await expect(run('export', project, '--max-speed', '-1')).rejects.toThrow(
+      '--max-speed must be 0 or more',
+    );
+    expect(exportProject).not.toHaveBeenCalled();
   });
 
   it('rejects a range time that is not a time', async () => {

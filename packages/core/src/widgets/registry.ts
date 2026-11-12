@@ -8,6 +8,7 @@ import { elevation } from './builtin/elevation.js';
 import { gForce } from './builtin/gforce.js';
 import { gpsPath } from './builtin/gps-path.js';
 import { staticImage } from './builtin/image.js';
+import { lapBar } from './builtin/lap-bar.js';
 import { lapCount } from './builtin/lap-count.js';
 import { lapTable } from './builtin/lap-table.js';
 import { lapTimer } from './builtin/lap-timer.js';
@@ -25,6 +26,7 @@ export const BUILTIN_WIDGET_TYPES: readonly AnyWidgetType[] = [
   gpsPath,
   liveMap,
   distanceBar,
+  lapBar,
   elevation,
   lapTimer,
   lapCount,
@@ -113,6 +115,8 @@ export function createWidget(typeId: string, overrides: Partial<Widget> = {}, ca
     timing: null,
     colors: {},
     props: type.schema.parse({}) as Record<string, unknown>,
+    groupId: null,
+    groupPosition: 'relative',
     ...overrides,
   };
 }

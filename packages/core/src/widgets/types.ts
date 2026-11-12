@@ -44,26 +44,50 @@ export interface PrepareInput<Props> {
   values: ValueSeries;
 }
 
+/** A field shown only while another setting has one of these values (and that field is shown). */
+export interface FieldDependency {
+  key: string;
+  values: readonly unknown[];
+}
+
+interface FieldBase {
+  key: string;
+  label: string;
+  hint?: string;
+  dependsOn?: FieldDependency;
+}
+
 /** Editor field kinds, used to build the property panel. */
 export type FieldSpec =
-  | { key: string; label: string; kind: 'number'; min?: number; max?: number; step?: number; hint?: string }
+  | (FieldBase & { kind: 'number'; min?: number; max?: number; step?: number })
   /** A timeline position in seconds, typed as a timecode (`2:30`, `530` = 0.530 s). */
-  | { key: string; label: string; kind: 'time'; hint?: string }
-  | { key: string; label: string; kind: 'text' | 'textarea'; hint?: string }
-  | { key: string; label: string; kind: 'boolean'; hint?: string }
-  | {
-      key: string;
-      label: string;
-      kind: 'select';
-      options: readonly (readonly [string, string])[];
-      hint?: string;
-    }
+  | (FieldBase & { kind: 'time' })
+  | (FieldBase & { kind: 'text' | 'textarea' })
+  | (FieldBase & { kind: 'boolean' })
+  | (FieldBase & { kind: 'select'; options: readonly (readonly [string, string])[] })
   /** Palette key or hex color. */
-  | { key: string; label: string; kind: 'color'; hint?: string }
+  | (FieldBase & { kind: 'color' })
   /** A value id. */
-  | { key: string; label: string; kind: 'value'; hint?: string }
+  | (FieldBase & { kind: 'value' })
   /** An image as a data URL (PNG, JPEG, SVG...). */
-  | { key: string; label: string; kind: 'image'; hint?: string };
+  | (FieldBase & { kind: 'image' });
+
+/** Whether a field is shown with these props (its dependencies, and theirs, hold). */
+export function fieldShown(
+  field: FieldSpec,
+  fields: readonly FieldSpec[],
+  props: Readonly<Record<string, unknown>>,
+): boolean {
+  const seen = new Set<string>();
+  let current: FieldSpec | undefined = field;
+  while (current?.dependsOn && !seen.has(current.key)) {
+    seen.add(current.key);
+    const dependency: FieldDependency = current.dependsOn;
+    if (!dependency.values.includes(props[dependency.key])) return false;
+    current = fields.find((f) => f.key === dependency.key);
+  }
+  return true;
+}
 
 /**
  * A widget type. Props are validated with `schema` (defaults fill missing props), `render` draws

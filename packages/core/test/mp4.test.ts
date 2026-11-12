@@ -75,6 +75,27 @@ describe('video probing', () => {
     });
     expect(info.frameRate).toBeCloseTo(59.94, 2);
     expect(info.durationSeconds).toBeCloseTo(1.001, 3);
+    expect(info.rotation).toBe(0);
+  });
+
+  it('reads the rotation of a camera mounted upside down or sideways', async () => {
+    for (const rotation of [90, 180, 270] as const) {
+      const file = buildMp4([
+        {
+          id: 1,
+          handler: 'vide',
+          format: 'hvc1',
+          timescale: 60000,
+          sampleDelta: 1001,
+          samples: [new Uint8Array([1])],
+          width: 3840,
+          height: 2160,
+          rotation,
+        },
+      ]);
+      const info = await probeVideo(new MemoryReader(file), '/v.mp4');
+      expect(info.rotation).toBe(rotation);
+    }
   });
 
   it('extracts the GPMF track with gpmf-extract compatible timing', async () => {

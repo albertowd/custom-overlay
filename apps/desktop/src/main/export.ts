@@ -2,7 +2,7 @@ import { Worker } from 'node:worker_threads';
 import type { Project } from '@custom-overlay/core';
 import { type ExportResult, exportProject } from '@custom-overlay/core/node';
 import { projectMedia } from '@custom-overlay/ui/host';
-import type { WebContents } from 'electron';
+import { powerSaveBlocker, type WebContents } from 'electron';
 import { IpcChannel } from '../shared/ipc';
 import workerPath from './export-worker?modulePath';
 import { t } from './settings';
@@ -15,6 +15,8 @@ export async function startExport(sender: WebContents, project: Project): Promis
   if (running) throw new Error(t('main.errors.exportRunning'));
   const controller = new AbortController();
   running = controller;
+  // A long export must not stop because the computer goes to sleep.
+  const blocker = powerSaveBlocker.start('prevent-app-suspension');
   try {
     return await exportProject({
       project,
@@ -26,6 +28,7 @@ export async function startExport(sender: WebContents, project: Project): Promis
       },
     });
   } finally {
+    powerSaveBlocker.stop(blocker);
     running = null;
   }
 }

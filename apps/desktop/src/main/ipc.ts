@@ -35,6 +35,7 @@ import { isLanguage } from '@custom-overlay/ui/i18n';
 import { BrowserWindow, dialog, type IpcMainInvokeEvent, ipcMain, shell } from 'electron';
 import { IpcChannel } from '../shared/ipc';
 import { cancelExport, startExport } from './export';
+import { graphicsCards } from './gpus';
 import { mediaUrlFor } from './media-protocol';
 import { type FolderKind, getLanguage, rememberFolder, setLanguage, startFolder, t } from './settings';
 import { remoteTrackCatalog } from './tracks';
@@ -205,6 +206,7 @@ export function registerIpcHandlers(): void {
   ipcMain.handle(IpcChannel.cancelExport, () => cancelExport());
   ipcMain.handle(IpcChannel.revealPath, (_event, path: string) => shell.showItemInFolder(path));
   ipcMain.handle(IpcChannel.appInfo, () => appInfo());
+  ipcMain.handle(IpcChannel.graphicsCards, () => graphicsCards());
   ipcMain.handle(IpcChannel.checkForUpdate, () => checkForUpdate());
   ipcMain.handle(IpcChannel.openProjectUrl, async (_event, url: string) => {
     if (!isProjectUrl(url)) throw new Error('Only pages of the project can be opened');

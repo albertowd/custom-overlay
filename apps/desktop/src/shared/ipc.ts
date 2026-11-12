@@ -24,6 +24,7 @@ export const IpcChannel = {
   exportProgress: 'export:progress',
   revealPath: 'shell:reveal',
   appInfo: 'app:info',
+  graphicsCards: 'app:graphicsCards',
   checkForUpdate: 'app:check-update',
   openProjectUrl: 'shell:open-project-url',
   openTrack: 'track:open',

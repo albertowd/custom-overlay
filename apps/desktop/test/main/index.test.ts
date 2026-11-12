@@ -5,6 +5,7 @@ import { app, appListener, BrowserWindow, dialog, shell } from './electron-mock'
 vi.mock('electron', () => import('./electron-mock'));
 vi.mock('../../src/main/export', () => ({ cancelExport: vi.fn(), exportRunning: vi.fn(() => false) }));
 vi.mock('../../src/main/ipc', () => ({ registerIpcHandlers: vi.fn() }));
+vi.mock('../../src/main/instance', () => ({ useOwnInstanceData: vi.fn() }));
 vi.mock('../../src/main/media-protocol', () => ({
   handleMediaProtocol: vi.fn(),
   registerMediaScheme: vi.fn(),
@@ -15,6 +16,7 @@ const exportModule = await import('../../src/main/export');
 const ipc = await import('../../src/main/ipc');
 const media = await import('../../src/main/media-protocol');
 const settings = await import('../../src/main/settings');
+const instance = await import('../../src/main/instance');
 
 /** Start the app (a fresh main module) and wait until its window is created. */
 async function start(): Promise<BrowserWindow> {
@@ -41,6 +43,8 @@ afterEach(() => {
 describe('main process', () => {
   it('prepares the app before it is ready, then registers handlers and opens the window', async () => {
     const window = await start();
+    // Its own Chromium data folder, so several copies can run at once.
+    expect(instance.useOwnInstanceData).toHaveBeenCalled();
     expect(media.registerMediaScheme).toHaveBeenCalled();
     expect(settings.applyChromiumLanguage).toHaveBeenCalled();
     expect(media.handleMediaProtocol).toHaveBeenCalled();

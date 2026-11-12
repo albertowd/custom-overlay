@@ -2,14 +2,14 @@ import { type Palette, STEP_DEFINITIONS } from '@custom-overlay/core';
 import { useEffect, useState } from 'react';
 import { api } from '../api';
 import { CanvasSettings } from '../components/CanvasSettings';
-import { StepHeader } from '../components/common';
+import { Segmented, StepHeader } from '../components/common';
 import { OverlayEditor } from '../components/OverlayEditor';
 import { Preview } from '../components/Preview';
 import { RangeEditor } from '../components/RangeEditor';
 import { ValuesPanel } from '../components/ValuesPanel';
 import { WidgetInspector, WidgetList } from '../components/WidgetsPanel';
 import { coreText, useT } from '../i18n';
-import { errorMessage, useStore, useTimeline, useValuesRefresh } from '../store';
+import { errorMessage, SNAP_TARGETS, useStore, useTimeline, useValuesRefresh } from '../store';
 
 const PALETTE_KEYS: readonly (keyof Palette)[] = [
   'primary',
@@ -73,8 +73,10 @@ function ColorField({
 function EditorToolbar() {
   const t = useT();
   const snap = useStore((s) => s.snap);
+  const snapTo = useStore((s) => s.snapTo);
   const showGuides = useStore((s) => s.showGuides);
   const setSnap = useStore((s) => s.setSnap);
+  const setSnapTo = useStore((s) => s.setSnapTo);
   const setShowGuides = useStore((s) => s.setShowGuides);
   return (
     <div className="row editor-toolbar">
@@ -82,13 +84,61 @@ function EditorToolbar() {
         <input type="checkbox" checked={snap} onChange={(e) => setSnap(e.target.checked)} />
         {t('template.editor.snap')}
       </label>
+      {snap && (
+        <Segmented
+          label={t('template.editor.snapTo')}
+          value={snapTo}
+          options={SNAP_TARGETS.map(
+            (target) => [target, t(`template.editor.snapTargets.${target}`)] as const,
+          )}
+          onChange={setSnapTo}
+          className="small"
+        />
+      )}
       <label className="toggle">
         <input type="checkbox" checked={showGuides} onChange={(e) => setShowGuides(e.target.checked)} />
         {t('template.editor.showGuides')}
       </label>
-      <span className="muted small">{t('template.editor.hint')}</span>
+      <span className="muted small editor-hint">{t('template.editor.hint')}</span>
     </div>
   );
+}
+
+function isTyping(target: EventTarget | null): boolean {
+  return (
+    target instanceof HTMLElement &&
+    (['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName) || target.isContentEditable)
+  );
+}
+
+/**
+ * Editor keys: Delete removes the selection, Ctrl / Cmd + G groups it, Ctrl / Cmd + Shift + G
+ * ungroups the selected group, Escape clears the selection.
+ */
+function useEditorKeys(): void {
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent) => {
+      if (isTyping(event.target)) return;
+      const state = useStore.getState();
+      const command = event.ctrlKey || event.metaKey;
+      if (event.key === 'Delete' || event.key === 'Backspace') {
+        if (state.selectedGroupId) state.removeGroup(state.selectedGroupId);
+        else if (state.selectedWidgetIds.length > 0) state.removeSelection();
+        else return;
+      } else if (command && event.key.toLowerCase() === 'g') {
+        if (event.shiftKey && state.selectedGroupId) state.ungroup(state.selectedGroupId);
+        else if (!event.shiftKey) state.groupSelection();
+      } else if (event.key === 'Escape') {
+        state.selectWidget(null);
+        return;
+      } else {
+        return;
+      }
+      event.preventDefault();
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
 }
 
 /** Percentages typed as `33, 66.5`; invalid entries are ignored. */
@@ -276,6 +326,7 @@ export function TemplateStep() {
   }, [selectedId]);
   const step = STEP_DEFINITIONS.template;
   useValuesRefresh();
+  useEditorKeys();
 
   const load = async () => {
     try {
@@ -296,7 +347,7 @@ export function TemplateStep() {
   };
 
   return (
-    <div className="step">
+    <div className="step step-wide">
       <StepHeader
         title={coreText.stepTitle(t, step)}
         description={coreText.stepDescription(t, step)}
@@ -315,6 +366,10 @@ export function TemplateStep() {
         <div className="stack editor-stage">
           <Preview overlay={<OverlayEditor />} />
           <EditorToolbar />
+          <section className="panel layers-panel">
+            <h3>{t('template.widgetsTitle')}</h3>
+            <WidgetList />
+          </section>
           <section className="panel">
             <div className="panel-title">
               <h3>{t('template.canvas.title')}</h3>
@@ -335,24 +390,15 @@ export function TemplateStep() {
               onChange={(visibleRange) => setTemplate({ ...template, visibleRange })}
             />
           </section>
-          <section className="panel">
-            <h3>{t('template.widgetsTitle')}</h3>
-            <WidgetList />
-          </section>
         </div>
-        <aside className="panel">
-          <div className="tabs compact">
-            {TABS.map((id) => (
-              <button
-                type="button"
-                key={id}
-                className={tab === id ? 'active' : ''}
-                onClick={() => setTab(id)}
-              >
-                {t(`template.tabs.${id}`)}
-              </button>
-            ))}
-          </div>
+        <aside className="panel inspector-panel">
+          <Segmented<Tab>
+            label={t('template.tabs.label')}
+            value={tab}
+            options={TABS.map((id) => [id, t(`template.tabs.${id}`)] as const)}
+            onChange={setTab}
+            className="tabs-segmented"
+          />
           {tab === 'widget' && <WidgetInspector />}
           {tab === 'values' && <ValuesPanel />}
           {tab === 'style' && <StylePanel />}

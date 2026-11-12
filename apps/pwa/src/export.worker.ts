@@ -1,5 +1,5 @@
 import { createFrameDrawer, type DrawFrame, type RenderPlatform } from '@custom-overlay/core';
-import type { ExportWorkerRequest, ExportWorkerResponse } from './export-protocol';
+import type { ExportWorkerRequest, ExportWorkerResponse, FrameFormat } from './export-protocol';
 
 function context(canvas: OffscreenCanvas): CanvasRenderingContext2D {
   const ctx = canvas.getContext('2d');
@@ -21,6 +21,7 @@ const offscreen: RenderPlatform = {
 /** The frame canvas and its context, set up by 'init'. */
 let target: { canvas: OffscreenCanvas; ctx: CanvasRenderingContext2D } | null = null;
 let draw: DrawFrame | null = null;
+let format: FrameFormat = 'png';
 /** Frames are drawn one at a time on the worker's canvas. */
 let queue: Promise<void> = Promise.resolve();
 
@@ -33,11 +34,18 @@ async function handle(request: ExportWorkerRequest): Promise<void> {
     const canvas = new OffscreenCanvas(request.init.width, request.init.height);
     target = { canvas, ctx: context(canvas) };
     draw = await createFrameDrawer(request.init, offscreen);
+    format = request.format ?? 'png';
     reply({ type: 'ready' });
     return;
   }
   if (!target || !draw) throw new Error('The export worker is not set up');
   const warnings = draw(target.ctx, request.frame);
+  if (format === 'bitmap') {
+    // Handed over without a copy; the canvas starts blank again.
+    const bitmap = target.canvas.transferToImageBitmap();
+    reply({ type: 'bitmap', frame: request.frame, bitmap, warnings }, [bitmap]);
+    return;
+  }
   // PNG keeps straight alpha: the browser converts the canvas' premultiplied pixels.
   const blob = await target.canvas.convertToBlob({ type: 'image/png' });
   const png = new Uint8Array(await blob.arrayBuffer());

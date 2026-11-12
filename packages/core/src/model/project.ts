@@ -4,7 +4,13 @@ import { DataRangeSchema } from './data-range.js';
 import { PaletteSchema } from './palette.js';
 import { type TrackFile, TrackFileSchema, TrackSchema } from './track.js';
 import { type ValueCollection, ValueCollectionSchema, ValueScriptSchema } from './values.js';
-import { VisibleRangeSchema, type WidgetFile, WidgetFileSchema, WidgetSchema } from './widget.js';
+import {
+  VisibleRangeSchema,
+  type WidgetFile,
+  WidgetFileSchema,
+  WidgetGroupSchema,
+  WidgetSchema,
+} from './widget.js';
 
 export const PROJECT_FILE_EXTENSION = '.overlay.json';
 export const TEMPLATE_FILE_EXTENSION = '.template.json';
@@ -91,8 +97,11 @@ export const EncoderSettingsSchema = z.object({
   bFrames: z.number().int().min(0).default(2),
   audio: z.enum(['copy', 'aac', 'none']).default('aac'),
   audioBitrateKbps: z.number().int().positive().default(384),
-  /** `auto` decodes and encodes on the GPU when it works, `software` always uses the CPU. */
-  acceleration: z.enum(['auto', 'software']).default('auto'),
+  /**
+   * `auto` decodes and encodes on the first graphics card that works, `nvidia` / `amd` / `intel`
+   * encode on that brand's card (the CPU when it cannot), `software` always uses the CPU.
+   */
+  acceleration: z.enum(['auto', 'nvidia', 'amd', 'intel', 'software']).default('auto'),
 });
 
 /**
@@ -107,6 +116,22 @@ export const RangeSchema = z.object({
   end: z.number().nullable().default(null),
 });
 
+/**
+ * Gentler disk use while exporting, for a slow disk (a hard drive) that also holds the videos:
+ * heavy writes there stall the reads of the videos and can make the encoding fail.
+ */
+export const DiskSettingsSchema = z.object({
+  /**
+   * Flush the output to the disk regularly (no large write cache flushed at once) and slow the
+   * encoding down while the disk of the videos answers slowly.
+   */
+  slow: z.boolean().default(false),
+  /** Highest encoding speed in × real time (1 = as fast as the video plays); 0 = no limit. */
+  maxSpeed: z.number().min(0).default(0),
+  /** Write the video to the system's temporary folder first, then move it to its place. */
+  stageInTemp: z.boolean().default(false),
+});
+
 export const ExportSettingsSchema = z.object({
   mode: z.enum(['video', 'image-sequence']).default('video'),
   outputPath: z.string().nullable().default(null),
@@ -115,6 +140,7 @@ export const ExportSettingsSchema = z.object({
   /** Last used encoder settings, kept with the project. */
   encoder: EncoderSettingsSchema.prefault({}),
   scaling: ScalingSchema.default('lanczos'),
+  disk: DiskSettingsSchema.prefault({}),
 });
 
 /** Snap lines of the editor, as fractions of the frame: divisions, a safe margin and extra lines. */
@@ -142,6 +168,8 @@ export const TemplateSchema = z.object({
   /** Value scripts the widgets need, shipped with the template. */
   values: z.array(ValueScriptSchema).default([]),
   widgets: z.array(WidgetSchema).default([]),
+  /** Groups of widgets (each widget names its group). */
+  groups: z.array(WidgetGroupSchema).default([]),
   /** When the widgets are drawn (timeline seconds); each widget may set its own range. */
   visibleRange: VisibleRangeSchema.prefault({}),
   /** Snap lines shown while editing (never rendered). */
@@ -178,6 +206,7 @@ export type OutputSettings = z.infer<typeof OutputSettingsSchema>;
 export type VideoCodec = z.infer<typeof VideoCodecSchema>;
 export type EncoderSettings = z.infer<typeof EncoderSettingsSchema>;
 export type Scaling = z.infer<typeof ScalingSchema>;
+export type DiskSettings = z.infer<typeof DiskSettingsSchema>;
 export type ExportSettings = z.infer<typeof ExportSettingsSchema>;
 export type Guides = z.infer<typeof GuidesSchema>;
 export type Template = z.infer<typeof TemplateSchema>;

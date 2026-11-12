@@ -15,6 +15,7 @@
     "none": "Nenhuma saída selecionada",
     "choose": "Escolher…",
     "defaultHint": "Não escolhido: vai para a pasta dos vídeos (ou dos dados), com o nome do projeto, sem substituir uma exportação anterior.",
+    "browserVideoHint": "Não escolhido: o navegador pergunta onde salvar ao iniciar a exportação, ou baixa o vídeo ao terminar.",
     "zipHint": "O navegador não consegue gravar em uma pasta: os quadros são baixados em um único arquivo zip.",
     "useDefault": "Usar o local padrão"
   },
@@ -50,8 +51,12 @@
     "acceleration": "Decodificar / codificar com",
     "accelerationOptions": {
       "auto": "GPU quando disponível",
+      "nvidia": "Placa de vídeo NVIDIA",
+      "amd": "Placa de vídeo AMD",
+      "intel": "Gráficos Intel",
       "software": "Somente CPU"
     },
+    "accelerationHelp": "Escolha uma placa de vídeo para codificar o vídeo nela; a CPU assume quando ela não consegue codificar este formato.",
     "scaling": "Redimensionamento (quando o tamanho de saída difere de um vídeo)",
     "scalers": {
       "bilinear": "Bilinear (rápido)",
@@ -60,6 +65,7 @@
       "fsr1": "Estilo FSR 1 (Lanczos + nitidez AMD CAS)"
     },
     "scalingHelp": "DLSS e XeSS não estão disponíveis: são upscalers temporais que precisam de vetores de movimento e profundidade de um motor de jogo, que vídeos gravados não têm. A opção estilo FSR 1 amplia com Lanczos e aplica nitidez com o CAS da AMD, as duas etapas do FSR 1.",
+    "browserHelp": "Codificado por este navegador com o hardware do dispositivo: 8 bits SDR, com o áudio recodificado. O filtro de escala, 10 bits e HDR precisam do aplicativo para desktop.",
     "notes": {
       "sdrConverted": "O YouTube converte uploads SDR para Rec.709 limitado de 8 bits: uma saída Rec.709 limitada fica igual antes e depois do upload.",
       "h264TenBit": "H.264 de 10 bits só é codificado na CPU (os codificadores H.264 de GPU são de 8 bits) e o YouTube o converte para 8 bits de qualquer forma: escolha uma saída de 8 bits ou a predefinição HEVC.",
@@ -82,17 +88,38 @@
     "preparing": "Preparando: carregando valores, escolhendo o codificador…",
     "progress": "{percent}% · quadro {frame} / {frames}",
     "speed": "{fps} fps · {elapsed} decorrido · {left} restante",
+    "threads": {
+      "one": "{count} thread desenhando",
+      "other": "{count} threads desenhando"
+    },
     "done": {
       "one": "{count} quadro exportado",
       "other": "{count} quadros exportados"
     },
     "doneTime": "em {time}.",
     "doneTimeEncoder": "em {time} com {encoder}.",
+    "doneGpu": "Os widgets foram combinados na placa de vídeo.",
     "showInFolder": "Mostrar na pasta",
     "dismiss": "Fechar",
     "failed": "A exportação falhou.",
     "cancelled": "Exportação cancelada; o arquivo incompleto foi removido.",
     "cancelledSequence": "Exportação cancelada; os quadros já gravados foram mantidos.",
-    "cancelledZip": "Exportação cancelada; nada foi baixado."
+    "cancelledZip": "Exportação cancelada; nada foi baixado.",
+    "moving": "Movendo o vídeo da pasta temporária…",
+    "throttled": "Desacelerado: o disco dos vídeos está ocupado.",
+    "waitingOn": {
+      "drawing": "Limitado pelo desenho dos widgets.",
+      "encoder": "Limitado pelo ffmpeg: decodificação, codificação ou o disco."
+    }
+  },
+  "disk": {
+    "title": "Disco",
+    "slow": "Disco lento (HD)",
+    "slowHelp": "Para um HD que também guarda os vídeos: o vídeo é gravado no disco regularmente em vez de em grandes rajadas, e a exportação desacelera enquanto o disco responde devagar, para que a leitura dos vídeos nunca trave.",
+    "stageInTemp": "Gravar primeiro na pasta temporária",
+    "stageInTempHelp": "O vídeo é gravado na pasta temporária do sistema (geralmente em outro disco) e movido para o lugar ao terminar, assim o disco dos vídeos só lê durante a codificação. Precisa de espaço para o vídeo inteiro.",
+    "maxSpeed": "Velocidade máxima (× tempo real)",
+    "noLimit": "Sem limite",
+    "maxSpeedHelp": "Limita a velocidade da codificação e com ela as leituras e gravações: 1 codifica tão rápido quanto o vídeo toca. Vazio para sem limite."
   }
 }

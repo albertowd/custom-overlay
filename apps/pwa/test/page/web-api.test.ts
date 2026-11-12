@@ -13,6 +13,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import catalogFile from '../../../../packages/core/src/tracks/catalog.json';
 import { runInEngine } from '../../src/engine';
 import { exportImageSequence } from '../../src/export';
+import { canExportVideo, exportVideo } from '../../src/video-export';
 import { abortError, type FakeFileHandle, fileHandle, folderHandle, mockFileInput } from './helpers';
 
 vi.mock('../../src/engine', () => ({ runInEngine: vi.fn() }));
@@ -20,6 +21,7 @@ vi.mock('../../src/export', async (importOriginal) => ({
   ...(await importOriginal<typeof import('../../src/export')>()),
   exportImageSequence: vi.fn(),
 }));
+vi.mock('../../src/video-export', () => ({ canExportVideo: vi.fn(() => false), exportVideo: vi.fn() }));
 
 let api: AppApi;
 
@@ -60,20 +62,29 @@ afterEach(() => {
 });
 
 describe('host', () => {
-  it('leaves videos to the desktop app and downloads sequences without a folder picker', async () => {
-    expect(api.capabilities).toEqual({ videoExport: false, revealFiles: false, sequenceAsZip: true });
+  it('exports videos where WebCodecs exist, and downloads sequences without a folder picker', async () => {
+    expect(api.capabilities).toEqual({
+      videoExport: false,
+      nativeExport: false,
+      revealFiles: false,
+      sequenceAsZip: true,
+    });
     window.showDirectoryPicker = async () => folderHandle('frames');
-    expect((await freshApi()).capabilities.sequenceAsZip).toBe(false);
+    vi.mocked(canExportVideo).mockReturnValueOnce(true);
+    const fresh = await freshApi();
+    expect(fresh.capabilities.sequenceAsZip).toBe(false);
+    expect(fresh.capabilities.videoExport).toBe(true);
   });
 
   it('describes the app and never offers installers', async () => {
     expect(await api.appInfo()).toEqual({
       name: 'Custom Overlay',
-      version: '0.1.0',
+      version: '0.2.0',
       author: 'Alberto',
       homepage: 'https://github.com/albertowd/custom-overlay',
     });
     expect(await api.checkForUpdate()).toBeNull();
+    expect(await api.graphicsCards()).toEqual([]);
     expect(await api.getStartupProject()).toBeNull();
     await expect(api.revealPath('frames')).resolves.toBeUndefined();
   });
@@ -356,16 +367,57 @@ describe('export', () => {
     const project = createProject({ name: 'Race' });
     return { ...project, export: { ...project.export, mode: 'image-sequence', outputPath } };
   };
-  const result = { outputPath: 'x', frames: 3, seconds: 1, encoder: null, workers: 1, warnings: [] };
+  const result = {
+    outputPath: 'x',
+    frames: 3,
+    seconds: 1,
+    encoder: null,
+    workers: 1,
+    pipeline: 'cpu' as const,
+    warnings: [],
+  };
 
   beforeEach(() => {
     vi.mocked(exportImageSequence).mockResolvedValue(result);
   });
 
-  it('leaves the final video to the desktop app', async () => {
+  it('leaves the final video to the desktop app in browsers without WebCodecs', async () => {
     expect(await api.selectOutput('video')).toBeNull();
-    await expect(api.startExport(createProject())).rejects.toThrow('exported by the desktop app or the CLI');
+    await expect(api.startExport(createProject())).rejects.toThrow('This browser cannot encode video');
     expect(exportImageSequence).not.toHaveBeenCalled();
+    expect(exportVideo).not.toHaveBeenCalled();
+  });
+
+  it('downloads the final video where there is no save picker', async () => {
+    vi.mocked(canExportVideo).mockReturnValue(true);
+    vi.mocked(exportVideo).mockResolvedValue({ ...result, outputPath: 'Race.mp4' });
+    expect(await api.startExport(createProject({ name: 'Race' }))).toMatchObject({ outputPath: 'Race.mp4' });
+    expect(vi.mocked(exportVideo).mock.calls[0]?.[0]).toMatchObject({ file: null, name: 'Race.mp4' });
+  });
+
+  it('writes the final video to the file chosen in the Export step, or asks for it', async () => {
+    vi.mocked(canExportVideo).mockReturnValue(true);
+    vi.mocked(exportVideo).mockResolvedValue(result);
+    const chosen = fileHandle(new File([], 'Chosen.mp4'));
+    window.showSaveFilePicker = vi.fn(async () => chosen) as never;
+    await freshApi();
+    expect(await api.selectOutput('video', '/videos/Race.mp4')).toBe('Chosen.mp4');
+    expect(window.showSaveFilePicker).toHaveBeenCalledWith(
+      expect.objectContaining({ suggestedName: 'Race.mp4' }),
+    );
+    const project = createProject({ name: 'Race' });
+    await api.startExport({ ...project, export: { ...project.export, outputPath: 'Chosen.mp4' } });
+    expect(vi.mocked(exportVideo).mock.calls[0]?.[0].file).toBe(chosen);
+    expect(window.showSaveFilePicker).toHaveBeenCalledTimes(1);
+
+    // Not chosen yet: asked when the export starts; refusing stops it.
+    await api.startExport(project);
+    expect(window.showSaveFilePicker).toHaveBeenCalledTimes(2);
+    window.showSaveFilePicker = vi.fn(async () => {
+      throw abortError();
+    }) as never;
+    await expect(api.startExport(project)).rejects.toThrow('Export cancelled');
+    expect(await api.selectOutput('video')).toBeNull();
   });
 
   it('downloads a zip in browsers without a folder picker', async () => {

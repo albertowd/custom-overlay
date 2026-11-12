@@ -17,9 +17,9 @@ the final video or a transparent image sequence with only the widgets.
   GPS time and speed matching. You only review.
 - **Lap timing from GPS.** Known tracks are detected from the GPS path; draw your own
   start/finish and sector lines anywhere else.
-- **Sixteen widgets**, your own value scripts, reusable templates.
+- **Seventeen widgets**, grouped and aligned freely, your own value scripts, reusable templates.
 - **Fast export** on the GPU, with YouTube, TikTok and Instagram presets, up to 8K and HDR.
-- Windows, macOS and Linux, plus a web app. In English, Português (Brasil), Español, Italiano
+- Windows, macOS and Linux, plus a web app that also works on phones and tablets. In English, Português (Brasil), Español, Italiano
   and 日本語.
 
 ## Download
@@ -42,10 +42,33 @@ that version.
 
 ### Web app
 
-The web app runs in the browser and can be installed as an app (PWA). It edits projects like the
-desktop app, with files picked or dropped into the page, and exports the transparent PNG sequence:
-into a folder in Chrome and Edge, as a zip download in other browsers. The final video is exported
-by the desktop app: save the project next to its videos and open it there.
+The web app runs in the browser, on computers, phones and tablets, and can be installed as an app
+(PWA). It edits projects like the desktop app, with files picked or dropped into the page.
+
+- **Final video**: encoded by the browser on the device's own hardware, written to a file you
+  pick (Chrome and Edge on a computer) or downloaded when done (phones, other browsers).
+- **Transparent PNG sequence**: into a folder in Chrome and Edge, as a zip download in other
+  browsers.
+
+#### Browser limits
+
+The web app tells when one of these applies, when it opens and in the Videos and Export steps.
+
+- **Browsers.** The final video needs a recent Chrome or Edge, on a computer or on Android.
+  Firefox cannot decode HEVC (H.265), the format of most 4K GoPro videos, and Safari's support is
+  incomplete: use Chrome or Edge, or the desktop app. Editing and the PNG sequence work everywhere.
+- **HTTPS.** Browsers only export videos from a page opened over `https://` (or `localhost`).
+- **Codecs and hardware.** What can be decoded and encoded depends on the browser and the device's
+  graphics hardware: a codec or resolution it cannot encode falls back to H.264, or needs a smaller
+  resolution; a video it cannot decode cannot be exported there.
+- **Colour.** 8-bit SDR (Rec.709) only, tagged full range; the 10-bit and HDR settings need the
+  desktop app.
+- **Sound.** Always re-encoded (no copy), as AAC, or as Opus where the browser has no AAC encoder
+  (some video editors do not read Opus). A sound the browser cannot decode is exported silent.
+- **Scaling and disk.** The scaling filters (Lanczos, FSR…), the slow disk options and the choice
+  of graphics card are desktop only.
+- **Room.** Without a save picker (phones), the video is kept in the browser's storage while it is
+  written and then downloaded: the device needs room for it.
 
 ## How it works
 
@@ -101,8 +124,18 @@ Optional: time laps and sectors from the GPS path.
 
 ### 5. Template
 
-Place widgets over the video and see them live as you play or scrub it. Widgets are placed by an
-anchor (corner, edge or centre) and snap to guides.
+Place widgets over the video and see them live as you play or scrub it. The video grows with the
+window. Widgets are placed by an anchor (corner, edge or centre) and snap to the guides, to the
+widgets of their group, or both.
+
+- **Groups**: select several widgets (Ctrl or Shift click, on the video or in the list) and group
+  them (Ctrl+G) to move, hide and reorder them together. Each member is _relative_ (moves with the
+  group, its X / Y measured from the group origin) or _absolute_ (stays put in the frame).
+- **Align**: align the selection or a group's widgets left, centre, right, top, middle or bottom,
+  to their group (or the frame) or to the nearest guide lines, and spread three or more evenly.
+- **Backgrounds and text**: widgets with a background choose its colour, opacity and shape
+  (rounded, rectangle, pill, ellipse, circle, slanted); text widgets align their text left,
+  centre or right, and top, middle or bottom.
 
 - **Widget** tab: the selected widget's settings, its own time range, test values.
 - **Values** tab: every value available to widgets, plus your own scripts.
@@ -131,15 +164,16 @@ Choose what to export:
 
 Set the range with the player (drag the handles, type the times, or press I / O at the playhead),
 then the resolution, frame rate and colour, the encoder preset, and the scaling. The export runs
-with live progress, and you can keep working meanwhile.
+with live progress, telling whether drawing the widgets or ffmpeg (decoding, encoding, the disk)
+holds it back, and you can keep working meanwhile.
 
 ![Setting the export range and output, then starting the export](docs/media/7-export.webp)
 
 ## Widgets
 
-Sixteen built-in widgets: speed gauge, G-force circle, GPS path, live map (follow or whole track,
-heading-up, marker image), distance bar (ticks by distance or by lap), elevation with profile, lap
-timer, lap count, lap times table, date and time, timespan (countdown / elapsed), value text,
+Seventeen built-in widgets: speed gauge, G-force circle, GPS path, live map (follow or whole track,
+heading-up, marker image), distance bar, lap bar (a tick per lap, or the current lap only),
+elevation with profile, lap timer, lap count, lap times table, date and time, timespan (countdown / elapsed), value text,
 static text, image, dynamic image (rotated / moved / scaled by values), and shapes for
 backgrounds.
 
@@ -175,6 +209,17 @@ collections. See the [values guide](packages/core/src/values/README.md).
 - **Scaling.** Bilinear, bicubic, Lanczos, or "FSR 1 style" (Lanczos then sharpening) when the
   output size differs from the video.
 - **Audio.** AAC, or copied untouched when the range is one uncut piece of one video.
+- **Slow disk.** When the videos are on a hard drive that also receives the export, heavy writes
+  can stall the reads of the videos and make the encoding fail. _Slow disk (hard drive)_ writes the
+  video to the disk regularly instead of in large bursts and slows the export down while the disk
+  answers slowly; _Write to the temporary folder first_ encodes to the system's temporary folder
+  (usually another disk) and moves the video at the end; _Max speed_ caps the encoding speed.
+- **Graphics card.** _Decode / encode on_ picks the card that encodes the video (NVIDIA, AMD or
+  Intel, listed by name), the best one that works, or the CPU.
+- **Several copies.** The app can run more than once at a time, e.g. one copy exporting while
+  another edits. Each copy keeps its own caches; a new one starts from a copy of the last used.
+- **Priority.** While exporting, the app and ffmpeg run above normal priority, so Windows keeps
+  them on the performance cores of hybrid CPUs, and the computer does not go to sleep.
 
 The last used export settings are saved in the project.
 
@@ -207,6 +252,7 @@ custom-overlay values list day.overlay.json --at 125.5       # every value at a 
 custom-overlay values import day.overlay.json race.values.json
 custom-overlay values export day.overlay.json race.values.json
 custom-overlay export day.overlay.json [-o race.mp4] [--start 1:30 --end 4:00] [--software]
+custom-overlay export day.overlay.json --slow-disk [--stage-in-temp] [--max-speed 1] [--gpu nvidia]
 ```
 
 Most commands accept `--json`.
@@ -221,6 +267,9 @@ Translation fixes are welcome: see [CONTRIBUTING.md](CONTRIBUTING.md#translation
 
 - **Black video or decode error with H.265 (HEVC) footage**: the app decodes HEVC only with
   hardware support. Telemetry loading and sync still work, and so does the export.
+- **Slow export with little CPU and GPU use**: the export step tells what holds it back. With
+  ffmpeg, and the videos and the export on the same hard drive, try the slow disk options or write
+  the export to another disk.
 - **"Windows protected your PC" / "app can't be opened"**: the builds are not code-signed yet, see
   [Download](#download).
 

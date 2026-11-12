@@ -37,7 +37,7 @@
     "noStartFinish": "I valori dei giri arrivano dalle linee del tracciato, ma manca ancora la linea di partenza/arrivo",
     "noWidgets": "Il modello non ha ancora widget",
     "videoExportWithoutVideo": "Per esportare un video serve un video sorgente; scegli la modalità sequenza di immagini",
-    "videoExportElsewhere": "Il video finale si esporta con l'app desktop o con la CLI: salva il progetto accanto ai suoi video e aprilo lì",
+    "videoExportElsewhere": "Questo browser non può codificare video: usa un Chrome o Edge recente, oppure l'app desktop",
     "noOutput": "Scegli una destinazione d'uscita"
   },
   "widgets": {
@@ -298,7 +298,7 @@
     },
     "distance-bar": {
       "name": "Barra della distanza",
-      "description": "Barra di avanzamento della distanza percorsa, con tacche a ogni passo di distanza o all’inizio di ogni giro.",
+      "description": "Barra di avanzamento della distanza percorsa, con tacche a ogni passo di distanza.",
       "fields": {
         "valueId": {
           "label": "Valore della distanza (m)"
@@ -315,28 +315,13 @@
           "label": "Totale",
           "hint": "Nell'unità sopra; 0 = totale della sessione"
         },
-        "ticks": {
-          "label": "Tacche principali",
-          "options": {
-            "distance": "A ogni passo",
-            "laps": "All’inizio di ogni giro"
-          }
-        },
         "tickStep": {
           "label": "Passo delle tacche",
-          "hint": "0 = automatico; solo tacche per distanza"
-        },
-        "lapTimeId": {
-          "label": "Valore del tempo sul giro (s)",
-          "hint": "Solo tacche per giro"
-        },
-        "lapNumberId": {
-          "label": "Valore del numero del giro",
-          "hint": "Solo tacche per giro"
+          "hint": "0 = automatico"
         },
         "minorTicks": {
           "label": "Tacche secondarie",
-          "hint": "Tra le tacche principali (per giro con tacche per giro)"
+          "hint": "Tra le tacche maggiori"
         },
         "decimals": {
           "label": "Decimali"
@@ -358,6 +343,69 @@
         },
         "background": {
           "label": "Pannello di sfondo"
+        }
+      }
+    },
+    "lap-bar": {
+      "name": "Barra dei giri",
+      "description": "Barra di avanzamento dei giri: l'intera sessione con una tacca all'inizio di ogni giro con il suo numero, oppure solo il giro attuale.",
+      "fields": {
+        "view": {
+          "label": "Mostra",
+          "options": {
+            "session": "L'intera sessione, una tacca per giro",
+            "lap": "Solo il giro attuale"
+          }
+        },
+        "valueId": {
+          "label": "Valore della distanza (m)"
+        },
+        "unit": {
+          "label": "Unità",
+          "options": {
+            "km": "Chilometri",
+            "m": "Metri",
+            "mi": "Miglia"
+          }
+        },
+        "total": {
+          "label": "Totale",
+          "hint": "Nell'unità sopra; 0 = totale della sessione"
+        },
+        "decimals": {
+          "label": "Decimali"
+        },
+        "color": {
+          "label": "Avanzamento"
+        },
+        "trackColor": {
+          "label": "Sfondo della barra"
+        },
+        "textColor": {
+          "label": "Testo"
+        },
+        "showLabels": {
+          "label": "Etichette delle tacche"
+        },
+        "showValue": {
+          "label": "Distanza attuale"
+        },
+        "background": {
+          "label": "Pannello di sfondo"
+        },
+        "lapTimeId": {
+          "label": "Valore del tempo sul giro (s)"
+        },
+        "lapNumberId": {
+          "label": "Valore del numero del giro"
+        },
+        "label": {
+          "label": "Etichetta",
+          "hint": "Prima del numero del giro"
+        },
+        "minorTicks": {
+          "label": "Tacche minori",
+          "hint": "Per giro"
         }
       }
     },
@@ -1061,6 +1109,45 @@
     "editing": {
       "label": "Per il montaggio",
       "description": "GOP corto di 0,25 s senza fotogrammi B per scorrere fluidamente negli editor video, H.264."
+    }
+  },
+  "fields": {
+    "backgroundColor": {
+      "label": "Colore di sfondo"
+    },
+    "backgroundShape": {
+      "label": "Forma dello sfondo",
+      "options": {
+        "rounded": "Rettangolo arrotondato",
+        "rectangle": "Rettangolo",
+        "pill": "Pillola",
+        "ellipse": "Ellisse",
+        "circle": "Cerchio",
+        "slanted": "Inclinato"
+      }
+    },
+    "backgroundRadius": {
+      "label": "Raggio degli angoli",
+      "hint": "% del lato minore"
+    },
+    "backgroundOpacity": {
+      "label": "Opacità dello sfondo"
+    },
+    "align": {
+      "label": "Allineamento",
+      "options": {
+        "left": "Sinistra",
+        "center": "Centro",
+        "right": "Destra"
+      }
+    },
+    "verticalAlign": {
+      "label": "Allineamento verticale",
+      "options": {
+        "top": "In alto",
+        "middle": "Centro",
+        "bottom": "In basso"
+      }
     }
   }
 }

@@ -1,7 +1,12 @@
 // First: before gopro-telemetry loads.
 import './set-immediate';
 
-import { imageSequencePlan, ProjectValues, type RandomAccessReader } from '@custom-overlay/core';
+import {
+  imageSequencePlan,
+  ProjectValues,
+  type RandomAccessReader,
+  videoExportPlan,
+} from '@custom-overlay/core';
 import { type FindSubtitles, loadSourceFrom, loadVideoFrom } from '@custom-overlay/core/loaders';
 import { evaluateProjectValues, projectMedia, rememberSource, rememberVideo } from '@custom-overlay/ui/host';
 import type { EngineOperation, EngineOperations, EngineRequest, EngineResponse } from './engine-protocol';
@@ -59,6 +64,11 @@ const handlers: Handlers = {
     // Open range bounds follow the data range of the Track step, like the export step shows.
     const dataRange = new ProjectValues(project, media).resolve(project.dataRange).range;
     return { plan: imageSequencePlan(project, media, dataRange), media };
+  },
+  videoExport({ project }) {
+    const media = projectMedia(project);
+    const dataRange = new ProjectValues(project, media).resolve(project.dataRange).range;
+    return { plan: videoExportPlan(project, media, dataRange), media };
   },
 };
 

@@ -1,32 +1,47 @@
 import {
+  type AlignEdge,
+  type AlignReference,
   AUTO_SYNC_MIN_CONFIDENCE,
   addSource,
   addVideo,
+  alignWidgets,
   applyPreset,
   applySyncResult,
   autoSyncItem,
   autoSyncProject,
   bestTrackMatch,
   boundsCentre,
+  boundsOf,
   type CatalogTrack,
+  cleanGroups as cleanGroupsOf,
   computeTimeline,
   createId,
   createProject,
   createWidget,
   type DataRange,
   detectTracks,
+  distributeWidgets,
+  duplicateGroup,
   type EncoderSettings,
   type ExportSettings,
   embeddedSourceId,
   evaluateWorkflow,
+  findGroup,
   type GeoPoint,
   type Guides,
   gpsBounds,
+  groupBounds,
+  groupMembers,
+  groupWidgets,
+  guideLines,
   mergeTrackCatalogs,
+  moveGroup,
+  moveLayer,
   type OutputSettings,
   type Palette,
   type Project,
   type ProjectMedia,
+  removeGroup,
   removeSource,
   removeVideo,
   type SourceKind,
@@ -41,16 +56,20 @@ import {
   setPalette,
   setSourceEnabled,
   setVideoEnabled,
+  setWidgetGroup,
   type TelemetrySeries,
   type Template,
   type Timeline,
   TRACK_CATALOG,
   type Track,
   type TrackMatch,
+  ungroupWidgets,
+  updateGroup,
   type ValueScript,
   ValueScriptSchema,
   type VideoInfo,
   type Widget,
+  type WidgetGroup,
   widgetFrame,
   widgetInputs,
   withCatalogLines,
@@ -95,7 +114,16 @@ interface AppState {
   valuesError: string | null;
   /** Values are being evaluated (after a change of media, sync, track, scripts...). */
   valuesBusy: boolean;
+  /** The widget whose settings are shown (one of the selected ones). */
   selectedWidgetId: string | null;
+  /** Every selected widget, the shown one included (a group's members while it is selected). */
+  selectedWidgetIds: string[];
+  /** The selected group, its settings shown instead of a widget's. */
+  selectedGroupId: string | null;
+  /** What dragged widgets snap to. */
+  snapTo: SnapTarget;
+  /** What the align buttons align to. */
+  alignTo: AlignTarget;
   /** Values typed in the editor to test widgets (not saved). */
   testValues: Record<string, number>;
   /** Preview widgets with the synthetic sample session instead of the project data. */
@@ -175,9 +203,35 @@ interface AppActions {
   setWidgetProps(id: string, patch: Record<string, unknown>): void;
   removeWidget(id: string): void;
   duplicateWidget(id: string): void;
-  /** Move a widget one step to the front (1) or the back (-1). */
+  /** Move a widget one step to the front (1) or the back (-1), inside its group. */
   moveWidget(id: string, direction: 1 | -1): void;
-  selectWidget(id: string | null): void;
+  /** Select a widget alone (`replace`), or add it to the selection / take it out (`toggle`). */
+  selectWidget(id: string | null, mode?: 'replace' | 'toggle'): void;
+  /** Select a group: its settings, and all its members for dragging. */
+  selectGroup(id: string | null): void;
+  /** Move widgets (and a group's origin) to new positions, at once. */
+  placeWidgets(positions: readonly { id: string; x: number; y: number }[], origin?: GroupOrigin): void;
+  /** Group the selected widgets, then select the group. */
+  groupSelection(): void;
+  ungroup(groupId: string): void;
+  /** Put a widget in a group, or take it out with null. */
+  setWidgetGroup(widgetId: string, groupId: string | null): void;
+  updateGroup(groupId: string, patch: Partial<Pick<WidgetGroup, 'name' | 'visible'>>): void;
+  /** Move a group (origin and relative members) by an offset. */
+  moveGroupBy(groupId: string, dx: number, dy: number): void;
+  /** Move a group one layer to the front (1) or the back (-1). */
+  moveGroupLayer(groupId: string, direction: 1 | -1): void;
+  duplicateGroup(groupId: string): void;
+  /** Delete a group with its members. */
+  removeGroup(groupId: string): void;
+  /** Delete the selected widgets. */
+  removeSelection(): void;
+  /** Align the selected widgets (or the selected group's members) to `alignTo`. */
+  alignSelection(edge: AlignEdge): void;
+  /** Spread the selected widgets (three or more) with equal gaps. */
+  distributeSelection(axis: 'horizontal' | 'vertical'): void;
+  setSnapTo(target: SnapTarget): void;
+  setAlignTo(target: AlignTarget): void;
   setTestValue(id: string, value: number | null): void;
   setSampleData(enabled: boolean): void;
   setSnap(enabled: boolean): void;
@@ -214,6 +268,10 @@ const initialState = (): AppState => ({
   valuesError: null,
   valuesBusy: false,
   selectedWidgetId: null,
+  selectedWidgetIds: [],
+  selectedGroupId: null,
+  snapTo: readChoice('snapTo', SNAP_TARGETS, 'both'),
+  alignTo: readChoice('alignTo', ALIGN_TARGETS, 'group'),
   testValues: {},
   sampleData: false,
   snap: readPreference('snap', true),
@@ -243,12 +301,64 @@ function readPreference(key: string, fallback: boolean): boolean {
   }
 }
 
-function writePreference(key: string, value: boolean): void {
+function writePreference(key: string, value: boolean | string): void {
   try {
-    localStorage.setItem(`custom-overlay.editor.${key}`, value ? '1' : '0');
+    localStorage.setItem(
+      `custom-overlay.editor.${key}`,
+      typeof value === 'string' ? value : value ? '1' : '0',
+    );
   } catch {
     // Storage unavailable: the choice lasts for this session.
   }
+}
+
+function readChoice<T extends string>(key: string, choices: readonly T[], fallback: T): T {
+  try {
+    const value = localStorage.getItem(`custom-overlay.editor.${key}`);
+    return choices.find((c) => c === value) ?? fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+/** Snap a dragged widget to the guide lines, to the widgets of its group, or to both. */
+export const SNAP_TARGETS = ['guides', 'group', 'both'] as const;
+export type SnapTarget = (typeof SNAP_TARGETS)[number];
+/**
+ * Align to the group: the box around the selected group, the selection, the widget's group, or
+ * the frame for a widget on its own. Or to the nearest guide lines.
+ */
+export const ALIGN_TARGETS = ['group', 'guides'] as const;
+export type AlignTarget = (typeof ALIGN_TARGETS)[number];
+
+export interface GroupOrigin {
+  id: string;
+  x: number;
+  y: number;
+}
+
+/** Ids of the widgets the selection acts on: the selected group's members, or the selected ones. */
+export function selectionIds(
+  state: Pick<AppState, 'project' | 'selectedWidgetIds' | 'selectedGroupId'>,
+): string[] {
+  const { template } = state.project;
+  if (state.selectedGroupId) return groupMembers(template, state.selectedGroupId).map((w) => w.id);
+  const known = new Set(template.widgets.map((w) => w.id));
+  return state.selectedWidgetIds.filter((id) => known.has(id));
+}
+
+/** What the selection aligns to (see `AlignTarget`). */
+function alignReference(state: AppState): AlignReference {
+  const { template } = state.project;
+  if (state.alignTo === 'guides') return { kind: 'lines', ...guideLines(template.guides) };
+  const frame = { x: 0, y: 0, width: 1, height: 1 };
+  if (state.selectedGroupId)
+    return { kind: 'box', box: groupBounds(template, state.selectedGroupId) ?? frame };
+  const ids = selectionIds(state);
+  const selected = template.widgets.filter((w) => ids.includes(w.id));
+  if (selected.length > 1) return { kind: 'box', box: boundsOf(selected) ?? frame };
+  const group = selected[0]?.groupId ?? null;
+  return { kind: 'box', box: (group && groupBounds(template, group)) || frame };
 }
 
 /** GPS paths of the enabled sources (embedded telemetry included) that are loaded. */
@@ -274,6 +384,9 @@ export const useStore = create<Store>()((set, get) => {
 
   const updateWidgets = (fn: (widgets: Widget[]) => Widget[]) =>
     updateProject((p) => ({ ...p, template: { ...p.template, widgets: fn(p.template.widgets) } }));
+
+  const updateTemplate = (fn: (template: Template) => Template) =>
+    updateProject((p) => ({ ...p, template: fn(p.template) }));
 
   const setLoading = (id: string, value: boolean) => set((s) => ({ loading: { ...s.loading, [id]: value } }));
 
@@ -675,7 +788,7 @@ export const useStore = create<Store>()((set, get) => {
     addWidget(type) {
       const widget = createWidget(type, {}, widgetFrame(get().project.output));
       updateWidgets((widgets) => [...widgets, widget]);
-      set({ selectedWidgetId: widget.id });
+      get().selectWidget(widget.id);
     },
 
     updateWidget(id, patch) {
@@ -689,12 +802,19 @@ export const useStore = create<Store>()((set, get) => {
     },
 
     removeWidget(id) {
-      updateWidgets((widgets) => widgets.filter((w) => w.id !== id));
-      if (get().selectedWidgetId === id) set({ selectedWidgetId: null });
+      updateTemplate((template) =>
+        cleanGroupsOf({ ...template, widgets: template.widgets.filter((w) => w.id !== id) }),
+      );
+      set((s) => ({
+        selectedWidgetId: s.selectedWidgetId === id ? null : s.selectedWidgetId,
+        selectedWidgetIds: s.selectedWidgetIds.filter((selected) => selected !== id),
+      }));
     },
 
     duplicateWidget(id) {
-      const source = get().project.template.widgets.find((w) => w.id === id);
+      const { widgets } = get().project.template;
+      const index = widgets.findIndex((w) => w.id === id);
+      const source = widgets[index];
       if (!source) return;
       const copy: Widget = {
         ...structuredClone(source),
@@ -702,23 +822,139 @@ export const useStore = create<Store>()((set, get) => {
         x: source.x + 0.02,
         y: source.y + 0.02,
       };
-      updateWidgets((widgets) => [...widgets, copy]);
-      set({ selectedWidgetId: copy.id });
+      // A copy of a group member stays in the group, just in front of it.
+      updateWidgets((current) =>
+        source.groupId
+          ? [...current.slice(0, index + 1), copy, ...current.slice(index + 1)]
+          : [...current, copy],
+      );
+      get().selectWidget(copy.id);
     },
 
     moveWidget(id, direction) {
-      updateWidgets((widgets) => {
-        const index = widgets.findIndex((w) => w.id === id);
-        const target = index + direction;
-        if (index < 0 || target < 0 || target >= widgets.length) return widgets;
-        const next = [...widgets];
-        [next[index], next[target]] = [next[target] as Widget, next[index] as Widget];
-        return next;
+      updateTemplate((template) => moveLayer(template, { widgetId: id }, direction));
+    },
+
+    selectWidget(id, mode = 'replace') {
+      if (id === null) {
+        set({ selectedWidgetId: null, selectedWidgetIds: [], selectedGroupId: null });
+        return;
+      }
+      if (mode === 'replace') {
+        set({ selectedWidgetId: id, selectedWidgetIds: [id], selectedGroupId: null });
+        return;
+      }
+      const current = selectionIds(get());
+      const ids = current.includes(id) ? current.filter((s) => s !== id) : [...current, id];
+      set({
+        selectedWidgetId: ids.includes(id) ? id : (ids[ids.length - 1] ?? null),
+        selectedWidgetIds: ids,
+        selectedGroupId: null,
       });
     },
 
-    selectWidget(id) {
-      set({ selectedWidgetId: id });
+    selectGroup(id) {
+      const group = findGroup(get().project.template, id);
+      set({
+        selectedGroupId: group ? group.id : null,
+        selectedWidgetId: null,
+        selectedWidgetIds: group ? groupMembers(get().project.template, group.id).map((w) => w.id) : [],
+      });
+    },
+
+    placeWidgets(positions, origin) {
+      const byId = new Map(positions.map((p) => [p.id, p]));
+      updateTemplate((template) => ({
+        ...template,
+        widgets: template.widgets.map((w) => {
+          const at = byId.get(w.id);
+          return at ? { ...w, x: at.x, y: at.y } : w;
+        }),
+        groups: origin
+          ? template.groups.map((g) => (g.id === origin.id ? { ...g, x: origin.x, y: origin.y } : g))
+          : template.groups,
+      }));
+    },
+
+    groupSelection() {
+      const ids = selectionIds(get());
+      const { template, groupId } = groupWidgets(
+        get().project.template,
+        ids,
+        t('template.groups.defaultName', { number: get().project.template.groups.length + 1 }),
+      );
+      if (!groupId) return;
+      updateTemplate(() => template);
+      get().selectGroup(groupId);
+    },
+
+    ungroup(groupId) {
+      const members = groupMembers(get().project.template, groupId).map((w) => w.id);
+      updateTemplate((template) => ungroupWidgets(template, groupId));
+      set({
+        selectedGroupId: null,
+        selectedWidgetIds: members,
+        selectedWidgetId: members[members.length - 1] ?? null,
+      });
+    },
+
+    setWidgetGroup(widgetId, groupId) {
+      updateTemplate((template) => setWidgetGroup(template, widgetId, groupId));
+    },
+
+    updateGroup(groupId, patch) {
+      updateTemplate((template) => updateGroup(template, groupId, patch));
+    },
+
+    moveGroupBy(groupId, dx, dy) {
+      updateTemplate((template) => moveGroup(template, groupId, dx, dy));
+    },
+
+    moveGroupLayer(groupId, direction) {
+      updateTemplate((template) => moveLayer(template, { groupId }, direction));
+    },
+
+    duplicateGroup(groupId) {
+      const copy = duplicateGroup(get().project.template, groupId);
+      if (!copy.groupId) return;
+      updateTemplate(() => copy.template);
+      get().selectGroup(copy.groupId);
+    },
+
+    removeGroup(groupId) {
+      updateTemplate((template) => removeGroup(template, groupId));
+      get().selectWidget(null);
+    },
+
+    removeSelection() {
+      const ids = new Set(selectionIds(get()));
+      updateTemplate((template) =>
+        cleanGroupsOf({ ...template, widgets: template.widgets.filter((w) => !ids.has(w.id)) }),
+      );
+      get().selectWidget(null);
+    },
+
+    alignSelection(edge) {
+      const state = get();
+      const ids = selectionIds(state);
+      if (ids.length === 0) return;
+      const reference = alignReference(state);
+      updateTemplate((template) => alignWidgets(template, ids, edge, reference));
+    },
+
+    distributeSelection(axis) {
+      const ids = selectionIds(get());
+      updateTemplate((template) => distributeWidgets(template, ids, axis));
+    },
+
+    setSnapTo(target) {
+      writePreference('snapTo', target);
+      set({ snapTo: target });
+    },
+
+    setAlignTo(target) {
+      writePreference('alignTo', target);
+      set({ alignTo: target });
     },
 
     setTestValue(id, value) {
@@ -752,10 +988,11 @@ export const useStore = create<Store>()((set, get) => {
       try {
         const widgets = await api().openWidgets();
         if (widgets.length === 0) return;
-        // New ids so imported widgets never collide with existing ones.
-        const fresh = widgets.map((w) => ({ ...w, id: createId('w') }));
+        // New ids so imported widgets never collide with existing ones; their groups stay behind.
+        const fresh = widgets.map((w) => ({ ...w, id: createId('w'), groupId: null }));
         updateWidgets((current) => [...current, ...fresh]);
-        set({ selectedWidgetId: fresh[fresh.length - 1]?.id ?? null });
+        const last = fresh[fresh.length - 1];
+        if (last) get().selectWidget(last.id);
       } catch (error) {
         get().notify('error', t('app.notices.importWidgetsFailed', { error: errorMessage(error) }));
       }
@@ -869,6 +1106,7 @@ export function useWorkflow(): StepStatus[] {
         project,
         failedIds: Object.keys(errors),
         videoExport: api().capabilities.videoExport,
+        asksOutput: !api().capabilities.nativeExport,
       }),
     [project, errors],
   );

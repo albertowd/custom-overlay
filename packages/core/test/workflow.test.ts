@@ -63,6 +63,13 @@ describe('workflow', () => {
     expect(stateOf(project, 'export')?.issues.map((i) => i.code)).toEqual(['noOutput']);
   });
 
+  it('needs no output location where the host asks for it when the export starts', () => {
+    const { project } = withVideo(createProject(), 'GX010001.MP4');
+    const asking = evaluateWorkflow({ project, asksOutput: true }).find((s) => s.id === 'export');
+    expect(asking?.state).toBe('complete');
+    expect(asking?.issues).toEqual([]);
+  });
+
   it('accepts a single video with embedded telemetry', () => {
     const { project } = withVideo(createProject(), '/v.mp4');
     expect(stateOf(project, 'sources')?.state).toBe('complete');

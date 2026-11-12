@@ -7,7 +7,8 @@
   "tabs": {
     "widget": "Widget",
     "values": "Values",
-    "style": "Style"
+    "style": "Style",
+    "label": "Panel"
   },
   "visible": {
     "title": "Widgets visible",
@@ -16,7 +17,13 @@
   "editor": {
     "snap": "Snap to guides",
     "showGuides": "Show guides",
-    "hint": "Hold Alt while dragging to flip snapping. Guides are set in the Style tab."
+    "hint": "Hold Alt while dragging to flip snapping; Ctrl or Shift click to select several widgets. Guides are set in the Style tab.",
+    "snapTo": "Snap to",
+    "snapTargets": {
+      "guides": "Guides",
+      "group": "Group",
+      "both": "Both"
+    }
   },
   "canvas": {
     "title": "Canvas",
@@ -181,5 +188,66 @@
     "likeProject": "Like the project ({range})",
     "ownData": "Own data range",
     "ownDataShort": "own data range"
+  },
+  "groups": {
+    "title": "Group",
+    "defaultName": "Group {number}",
+    "group": "Group",
+    "none": "None",
+    "position": "Position",
+    "relative": "Relative",
+    "absolute": "Absolute",
+    "absoluteShort": "absolute",
+    "relativeHint": "Moves with the group; X and Y are measured from the group origin.",
+    "absoluteHint": "Stays where it is when the group moves; X and Y are in the frame.",
+    "relativeX": "X from group %",
+    "relativeY": "Y from group %",
+    "collapse": "Collapse group",
+    "expand": "Expand group",
+    "count": {
+      "one": "{count} widget",
+      "other": "{count} widgets"
+    },
+    "groupAction": "Group",
+    "groupHint": "Group the selected widgets (Ctrl+G)",
+    "multiSelectHint": "Ctrl or Shift click to select several widgets, then group or align them.",
+    "ungroup": "Ungroup",
+    "visible": "Visible",
+    "originX": "Origin X %",
+    "originY": "Origin Y %",
+    "originHint": "Moving the origin moves the group's relative widgets.",
+    "absoluteCount": {
+      "one": "{count} absolute widget stays put.",
+      "other": "{count} absolute widgets stay put."
+    },
+    "selected": {
+      "one": "{count} widget selected",
+      "other": "{count} widgets selected"
+    },
+    "dragHint": "{name}: drag to move the group"
+  },
+  "align": {
+    "title": "Align",
+    "to": "Align to",
+    "targets": {
+      "group": "Group",
+      "guides": "Guides"
+    },
+    "edges": {
+      "left": "Align left edges",
+      "center": "Align horizontal centers",
+      "right": "Align right edges",
+      "top": "Align top edges",
+      "middle": "Align vertical centers",
+      "bottom": "Align bottom edges"
+    },
+    "distribute": {
+      "horizontal": "Distribute horizontally",
+      "vertical": "Distribute vertically"
+    },
+    "hints": {
+      "group": "To the box around the group or the selection; a widget on its own aligns to the frame.",
+      "guides": "To the nearest guide line: frame edges, divisions, safe margin, extra lines."
+    }
   }
 }

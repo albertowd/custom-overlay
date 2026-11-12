@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { drawPanel, fitRect, roundRectPath } from '../draw.js';
+import { backgroundFields, backgroundProps, drawBackground, fitRect, roundRectPath } from '../draw.js';
 import { defineWidget } from '../types.js';
 
 export const staticImage = defineWidget({
@@ -13,7 +13,7 @@ export const staticImage = defineWidget({
     src: z.string().default(''),
     fit: z.enum(['contain', 'cover', 'stretch']).default('contain'),
     cornerRadius: z.number().min(0).max(50).default(0),
-    background: z.boolean().default(false),
+    ...backgroundProps({ enabled: false }),
   }),
   fields: [
     { key: 'src', label: 'Image', kind: 'image' },
@@ -35,12 +35,12 @@ export const staticImage = defineWidget({
       max: 50,
       hint: '% of the smaller side',
     },
-    { key: 'background', label: 'Background panel', kind: 'boolean' },
+    ...backgroundFields(),
   ],
   inputs: () => [],
   render(ctx, frame) {
     const { props } = frame;
-    if (props.background) drawPanel(ctx, frame);
+    drawBackground(ctx, frame, props);
     const image = props.src ? frame.image(props.src) : undefined;
     if (!image) {
       if (frame.editing) {

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { drawDisc, fitText, withAlpha } from '../draw.js';
+import { backgroundFields, backgroundProps, drawBackground, drawDisc, fitText, withAlpha } from '../draw.js';
 import { formatNumber } from '../format.js';
 import { defineWidget } from '../types.js';
 
@@ -44,7 +44,7 @@ export const gForce = defineWidget({
     valuePosition: z.enum(['bottom', 'top']).default('bottom'),
     showRings: z.boolean().default(true),
     showAxes: z.boolean().default(true),
-    background: z.boolean().default(true),
+    ...backgroundProps({ shape: 'circle' }),
   }),
   fields: [
     { key: 'lateralId', label: 'Lateral G', kind: 'value' },
@@ -69,7 +69,7 @@ export const gForce = defineWidget({
     },
     { key: 'showRings', label: 'Rings', kind: 'boolean', hint: 'The circles at each ring step' },
     { key: 'showAxes', label: 'Cross lines', kind: 'boolean', hint: 'The lateral and longitudinal axes' },
-    { key: 'background', label: 'Background disc', kind: 'boolean' },
+    ...backgroundFields('Background disc'),
   ],
   inputs: (props) => [valueId(props.lateralId), valueId(props.longitudinalId)],
   prepare: ({ props, values }) => ({
@@ -93,7 +93,7 @@ export const gForce = defineWidget({
       return [cx + ((sx * lat * k) / props.range) * radius, cy + ((sy * lon * k) / props.range) * radius];
     };
 
-    if (props.background) drawDisc(ctx, cx, cy, size * 0.5, frame.palette.background);
+    drawBackground(ctx, frame, props);
 
     // Rings and axes
     const grid = frame.color(props.gridColor);

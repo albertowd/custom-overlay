@@ -91,5 +91,20 @@
       "title": "Updating the values…",
       "detail": "Recalculating laps, distances and widget data with the new settings."
     }
+  },
+  "support": {
+    "title": "Limits of this browser",
+    "dismiss": "Close",
+    "insecureContext": "This page is not opened over HTTPS, so the browser blocks the video export and the files it needs. Open the app from its https:// address (or from localhost on this computer).",
+    "noWebCodecs": "This browser cannot encode video, so the final video cannot be exported here: use a recent Chrome or Edge (on a computer or Android), or the desktop app. Editing and the image sequence still work.",
+    "noPrivateStorage": "This browser cannot store the video while it is being exported: update it, or use Chrome or Edge.",
+    "noSavePicker": "This browser cannot save into a file you choose: the video is downloaded when the export ends. Keep room for it on the device.",
+    "cannotDecode": "This browser cannot decode '{label}' ({codec}), so it cannot be exported here. Firefox has no HEVC (H.265), the format of most 4K GoPro videos: use Chrome or Edge, or the desktop app.",
+    "cannotDecodeAudio": "This browser cannot decode the sound of '{label}' ({codec}): that part is exported silent.",
+    "cannotEncodeVideo": "This browser cannot encode {codec} at {size} on this device: the video is encoded as H.264 instead.",
+    "cannotEncodeAny": "This browser cannot encode video at {size} on this device: choose a smaller resolution, or use the desktop app.",
+    "cannotEncodeAac": "This browser cannot encode AAC sound: it is encoded as Opus, which some video editors cannot read.",
+    "cannotEncodeAudio": "This browser cannot encode sound: the video is exported without it.",
+    "eightBitOnly": "Browsers export 8-bit SDR (Rec.709): the 10-bit and HDR settings need the desktop app."
   }
 }

@@ -1,5 +1,14 @@
 import { z } from 'zod';
-import { drawDisc, drawPanel, fitText, maxOf, minOf, withAlpha } from '../draw.js';
+import {
+  backgroundFields,
+  backgroundProps,
+  drawBackground,
+  drawDisc,
+  fitText,
+  maxOf,
+  minOf,
+  withAlpha,
+} from '../draw.js';
 import { formatNumber } from '../format.js';
 import { defineWidget } from '../types.js';
 
@@ -21,7 +30,7 @@ export const elevation = defineWidget({
     color: z.string().default('secondary'),
     markerColor: z.string().default('primary'),
     textColor: z.string().default('text'),
-    background: z.boolean().default(true),
+    ...backgroundProps(),
   }),
   fields: [
     { key: 'valueId', label: 'Altitude value (m)', kind: 'value' },
@@ -40,7 +49,7 @@ export const elevation = defineWidget({
     { key: 'color', label: 'Profile color', kind: 'color' },
     { key: 'markerColor', label: 'Marker', kind: 'color' },
     { key: 'textColor', label: 'Text', kind: 'color' },
-    { key: 'background', label: 'Background panel', kind: 'boolean' },
+    ...backgroundFields(),
   ],
   inputs: (props) => [props.valueId],
   prepare: ({ props, values }) => {
@@ -60,7 +69,7 @@ export const elevation = defineWidget({
   },
   render(ctx, frame) {
     const { props, prepared } = frame;
-    if (props.background) drawPanel(ctx, frame);
+    drawBackground(ctx, frame, props);
     const scale = props.unit === 'ft' ? FEET : 1;
     const pad = Math.min(frame.width, frame.height) * 0.1;
     const textHeight = props.showProfile ? frame.height * 0.42 : frame.height;

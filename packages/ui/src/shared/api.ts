@@ -57,6 +57,45 @@ export interface RemoteTrackCatalog {
   fetchedAt: string;
 }
 
+/** A graphics card that can encode video. */
+export interface GraphicsCard {
+  /** As the system names it, e.g. "NVIDIA GeForce RTX 3070". */
+  name: string;
+  brand: 'nvidia' | 'amd' | 'intel';
+}
+
+/** What a browser cannot do with this project (the web app; none on the desktop). */
+export type SupportIssueCode =
+  /** Not served over HTTPS (or localhost): video export and browser storage are blocked. */
+  | 'insecureContext'
+  /** No WebCodecs: no video export here. */
+  | 'noWebCodecs'
+  /** No origin private file system: nowhere to write the video. */
+  | 'noPrivateStorage'
+  /** No save picker: the video is downloaded at the end. */
+  | 'noSavePicker'
+  /** A video (`label`, `codec`) this browser cannot decode. */
+  | 'cannotDecode'
+  /** A video's sound (`label`, `codec`) this browser cannot decode: exported silent. */
+  | 'cannotDecodeAudio'
+  /** The chosen codec (`codec`, `size`) cannot be encoded here: H.264 instead. */
+  | 'cannotEncodeVideo'
+  /** No codec at all at this size (`size`). */
+  | 'cannotEncodeAny'
+  /** No AAC encoder: Opus instead. */
+  | 'cannotEncodeAac'
+  /** No audio encoder: exported silent. */
+  | 'cannotEncodeAudio'
+  /** 10-bit or HDR output: browsers encode 8-bit SDR. */
+  | 'eightBitOnly';
+
+export interface SupportIssue {
+  code: SupportIssueCode;
+  /** `error`: the video cannot be exported here; `warning`: it can, differently; `info`. */
+  severity: 'error' | 'warning' | 'info';
+  params?: Record<string, string>;
+}
+
 /** About this build of the app. */
 export interface AppInfo {
   name: string;
@@ -83,8 +122,10 @@ export interface UpdateInfo {
 
 /** What a host can do beyond the common API. */
 export interface HostCapabilities {
-  /** Renders final videos (ffmpeg); the web app leaves them to the desktop app or the CLI. */
+  /** Renders final videos: ffmpeg on the desktop, WebCodecs in browsers that have it. */
   videoExport: boolean;
+  /** Export tuning of the desktop exporter (disk options, scaling filters, graphics card choice). */
+  nativeExport: boolean;
   /** Shows files in the system file manager. */
   revealFiles: boolean;
   /** Image sequences are downloaded as a zip: the browser cannot write into a folder. */
@@ -141,10 +182,17 @@ export interface AppApi {
   /** Show a file or folder in the system file manager. */
   revealPath(path: string): Promise<void>;
   appInfo(): Promise<AppInfo>;
+  /** Graphics cards that can encode the video export (none where the video is not exported). */
+  graphicsCards(): Promise<GraphicsCard[]>;
   /** The latest GitHub release when it is newer than this app (null offline or up to date). */
   checkForUpdate(): Promise<UpdateInfo | null>;
   /** Open a page of the project on GitHub (release, download) in the browser. */
   openProjectUrl(url: string): Promise<void>;
   /** Path that stands for a dropped File: absolute on the desktop, the file name on the web. */
   getPathForFile(file: File): string;
+  /**
+   * What this browser and device cannot do: about the browser itself without a project, plus its
+   * videos and output settings with one. Always empty on the desktop.
+   */
+  supportIssues(project?: Project): Promise<SupportIssue[]>;
 }

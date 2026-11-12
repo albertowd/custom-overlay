@@ -91,5 +91,20 @@
       "title": "Actualizando los valores…",
       "detail": "Recalculando vueltas, distancias y datos de los widgets con la nueva configuración."
     }
+  },
+  "support": {
+    "title": "Límites de este navegador",
+    "dismiss": "Cerrar",
+    "insecureContext": "Esta página no está abierta por HTTPS, así que el navegador bloquea la exportación de vídeo y los archivos que necesita. Abre la aplicación desde su dirección https:// (o desde localhost en este ordenador).",
+    "noWebCodecs": "Este navegador no puede codificar vídeo, así que el vídeo final no se puede exportar aquí: usa un Chrome o Edge reciente (en ordenador o Android), o la aplicación de escritorio. La edición y la secuencia de imágenes siguen funcionando.",
+    "noPrivateStorage": "Este navegador no puede guardar el vídeo mientras se exporta: actualízalo, o usa Chrome o Edge.",
+    "noSavePicker": "Este navegador no puede guardar en un archivo que elijas: el vídeo se descarga al terminar la exportación. Deja espacio para él en el dispositivo.",
+    "cannotDecode": "Este navegador no puede decodificar '{label}' ({codec}), así que no se puede exportar aquí. Firefox no tiene HEVC (H.265), el formato de la mayoría de los vídeos 4K de GoPro: usa Chrome o Edge, o la aplicación de escritorio.",
+    "cannotDecodeAudio": "Este navegador no puede decodificar el sonido de '{label}' ({codec}): esa parte se exporta sin sonido.",
+    "cannotEncodeVideo": "Este navegador no puede codificar {codec} a {size} en este dispositivo: el vídeo se codifica en H.264.",
+    "cannotEncodeAny": "Este navegador no puede codificar vídeo a {size} en este dispositivo: elige una resolución menor, o usa la aplicación de escritorio.",
+    "cannotEncodeAac": "Este navegador no puede codificar sonido AAC: se codifica en Opus, que algunos editores de vídeo no leen.",
+    "cannotEncodeAudio": "Este navegador no puede codificar sonido: el vídeo se exporta sin él.",
+    "eightBitOnly": "Los navegadores exportan 8 bits SDR (Rec.709): los ajustes de 10 bits y HDR necesitan la aplicación de escritorio."
   }
 }

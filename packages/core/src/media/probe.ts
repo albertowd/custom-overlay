@@ -1,7 +1,14 @@
 import type { RandomAccessReader } from '../io/reader.js';
 import type { ColorSettings } from '../model/project.js';
 import { decodeText, findKlv, klvString } from './gpmf-klv.js';
-import { findVideoTrack, type Mp4Info, type Mp4Track, parseMp4, readTrackSamples } from './mp4.js';
+import {
+  findVideoTrack,
+  type Mp4Info,
+  type Mp4Rotation,
+  type Mp4Track,
+  parseMp4,
+  readTrackSamples,
+} from './mp4.js';
 
 export interface VideoInfo {
   path: string;
@@ -21,6 +28,11 @@ export interface VideoInfo {
   hasAudio: boolean;
   /** Colour space / range / bit depth, Rec.709 limited 8-bit when the file does not say. */
   color: ColorSettings;
+  /**
+   * Rotation the file asks players to apply (ffmpeg applies it when decoding): 180 for a camera
+   * mounted upside down. Missing in media probed by older versions.
+   */
+  rotation?: Mp4Rotation;
   camera: { model: string | null; firmware: string | null };
   /**
    * Camera clock readings, distinct, most reliable first. GoPro cameras store local time as if it
@@ -142,6 +154,7 @@ export function videoInfoFromMp4(info: Mp4Info, path: string, sizeBytes: number)
     hasGpmf: findGpmfTrack(info) !== undefined,
     hasAudio: info.tracks.some((t) => t.handlerType === 'soun'),
     color: colorSettingsOf(video),
+    rotation: video.rotation,
     camera: readCamera(info),
     clock: readClock(info),
   };

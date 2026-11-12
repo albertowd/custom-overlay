@@ -1,5 +1,14 @@
 import { z } from 'zod';
-import { drawDisc, fitText, maxOf, niceCeil, niceStep } from '../draw.js';
+import {
+  backgroundFields,
+  backgroundProps,
+  drawBackground,
+  drawDisc,
+  fitText,
+  maxOf,
+  niceCeil,
+  niceStep,
+} from '../draw.js';
 import { formatNumber } from '../format.js';
 import { defineWidget } from '../types.js';
 
@@ -41,7 +50,7 @@ export const speedGauge = defineWidget({
     /** Vertical position of the digital readout, % of the radius below the center (negative: above). */
     digitalY: z.number().min(-90).max(90).default(56),
     showLabels: z.boolean().default(true),
-    background: z.boolean().default(true),
+    ...backgroundProps({ shape: 'circle' }),
   }),
   fields: [
     { key: 'valueId', label: 'Value', kind: 'value' },
@@ -103,7 +112,7 @@ export const speedGauge = defineWidget({
       hint: '% of the radius below the center (negative: above)',
     },
     { key: 'showLabels', label: 'Tick labels', kind: 'boolean' },
-    { key: 'background', label: 'Background disc', kind: 'boolean' },
+    ...backgroundFields('Background disc'),
   ],
   inputs: (props) => [props.valueId],
   prepare: ({ props, values }) => {
@@ -124,7 +133,7 @@ export const speedGauge = defineWidget({
     const angleOf = (v: number) =>
       start + ((Math.min(Math.max(v, min), max) - min) / (max - min)) * props.sweep * DEG;
 
-    if (props.background) drawDisc(ctx, cx, cy, size * 0.5, frame.palette.background);
+    drawBackground(ctx, frame, props);
 
     // Track and value arcs
     ctx.lineCap = 'round';

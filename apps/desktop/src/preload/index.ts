@@ -3,7 +3,7 @@ import { contextBridge, ipcRenderer, webUtils } from 'electron';
 import { IpcChannel } from '../shared/ipc';
 
 const api: AppApi = {
-  capabilities: { videoExport: true, revealFiles: true, sequenceAsZip: false },
+  capabilities: { videoExport: true, nativeExport: true, revealFiles: true, sequenceAsZip: false },
   getLanguage: () => ipcRenderer.invoke(IpcChannel.getLanguage),
   setLanguage: (language) => ipcRenderer.invoke(IpcChannel.setLanguage, language),
   selectVideos: () => ipcRenderer.invoke(IpcChannel.selectVideos),
@@ -33,12 +33,15 @@ const api: AppApi = {
   },
   revealPath: (path) => ipcRenderer.invoke(IpcChannel.revealPath, path),
   appInfo: () => ipcRenderer.invoke(IpcChannel.appInfo),
+  graphicsCards: () => ipcRenderer.invoke(IpcChannel.graphicsCards),
   checkForUpdate: () => ipcRenderer.invoke(IpcChannel.checkForUpdate),
   openProjectUrl: (url) => ipcRenderer.invoke(IpcChannel.openProjectUrl, url),
   openTrack: () => ipcRenderer.invoke(IpcChannel.openTrack),
   saveTrack: (track) => ipcRenderer.invoke(IpcChannel.saveTrack, track),
   trackCatalog: () => ipcRenderer.invoke(IpcChannel.trackCatalog),
   getPathForFile: (file) => webUtils.getPathForFile(file),
+  // ffmpeg decodes and encodes everything the app offers.
+  supportIssues: async () => [],
 };
 
 contextBridge.exposeInMainWorld('api', api);

@@ -158,6 +158,32 @@ export async function saveFile(options: SaveOptions): Promise<string | null> {
   return handle.name;
 }
 
+/** Whether this browser can write a file the user picks (Chromium on computers). */
+export const canPickSaveFile = () => typeof window.showSaveFilePicker === 'function';
+
+/** Ask where to save an exported video; returns its name (the path that stands for it), null when cancelled. */
+export async function pickVideoFile(suggestedName: string): Promise<string | null> {
+  if (!window.showSaveFilePicker) return null;
+  try {
+    const handle = await window.showSaveFilePicker({
+      id: 'export',
+      suggestedName,
+      types: [{ description: 'MP4', accept: { 'video/mp4': ['.mp4'] } }],
+    });
+    handles.set(handle.name, handle);
+    return handle.name;
+  } catch (error) {
+    if (isAbort(error)) return null;
+    throw error;
+  }
+}
+
+/** The file a path stands for, with write access; null when it was not picked in this tab. */
+export async function writableFile(path: string): Promise<FileSystemFileHandle | null> {
+  const handle = handles.get(fileNameOf(path));
+  return handle && (await canWrite(handle)) ? handle : null;
+}
+
 /** Folders picked for exports in this tab, by name: the path that stands for them. */
 const folders = new Map<string, FileSystemDirectoryHandle>();
 

@@ -165,8 +165,9 @@ export function renderOverlay(ctx: CanvasRenderingContext2D, options: RenderOver
 function renderWidgets(ctx: CanvasRenderingContext2D, options: RenderOverlayOptions): RenderReport {
   const report: RenderReport = {};
   const utcOffsetMinutes = options.utcOffsetMinutes ?? localUtcOffsetMinutes();
+  const hiddenGroups = new Set((options.template.groups ?? []).filter((g) => !g.visible).map((g) => g.id));
   for (const widget of options.template.widgets) {
-    if (!widget.visible) continue;
+    if (!widget.visible || (widget.groupId !== null && hiddenGroups.has(widget.groupId))) continue;
     if (
       !options.ignoreShowWhen &&
       !inVisibleRange(widgetVisibleRange(widget, options.template), options.frame.time)

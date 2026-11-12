@@ -6,6 +6,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { fitFilters } from '../src/export/canvas.js';
 import {
   colorArgs,
+  cudaPipelineBlocker,
   defaultExportRange,
   encoderArgs,
   encoderCandidates,
@@ -15,11 +16,14 @@ import {
   exportSegments,
   imageSequenceCommand,
   imageSequencePlan,
+  parseDecodedRange,
   sequenceFrameName,
   videoExportCommand,
+  videoExportPlan,
 } from '../src/export/plan.js';
+import type { VideoInfo } from '../src/media/probe.js';
 import { createProject, createTemplate, type Project } from '../src/model/project.js';
-import { exportProject, resolveFfmpegPath } from '../src/node/export.js';
+import { cudaPipelineWorks, exportProject, resolveFfmpegPath } from '../src/node/export.js';
 import { addVideo } from '../src/project-ops.js';
 import { createWidget } from '../src/widgets/registry.js';
 import type { ProjectMedia } from '../src/workflow/timeline.js';
@@ -123,6 +127,13 @@ describe('export plan', () => {
     expect(encoderCandidates('h264', 'software', 8).map((e) => e.name)).toEqual(['libx264']);
     // GPU H.264 encoders are 8-bit only.
     expect(encoderCandidates('h264', 'auto', 10).map((e) => e.name)).toEqual(['libx264']);
+    expect(encoderCandidates('h264', 'intel', 10).map((e) => e.name)).toEqual(['libx264']);
+  });
+
+  it('encodes on the chosen brand of graphics card, else on the CPU', () => {
+    expect(encoderCandidates('hevc', 'nvidia', 8).map((e) => e.name)).toEqual(['hevc_nvenc', 'libx265']);
+    expect(encoderCandidates('h264', 'amd', 8).map((e) => e.name)).toEqual(['h264_amf', 'libx264']);
+    expect(encoderCandidates('av1', 'intel', 10).map((e) => e.name)).toEqual(['av1_qsv', 'libaom-av1']);
   });
 
   it('turns encoder settings into ffmpeg arguments', () => {
@@ -196,6 +207,120 @@ describe('export plan', () => {
     expect(args).toContain('-f rawvideo -pix_fmt rgba -s 1280x720 -r 30 -i pipe:0');
     expect(args).toContain('-map [aout]');
     expect(command.args[command.args.length - 1]).toBe('/out.mp4');
+    expect(args).toContain('-movflags +faststart');
+  });
+
+  it('skips the fast start rewrite for a slow disk', () => {
+    const { project, media } = twoVideos({ range: { start: 30, end: 130 } });
+    const slow = { ...project, export: { ...project.export, disk: { ...project.export.disk, slow: true } } };
+    const command = videoExportCommand({
+      project: slow,
+      media,
+      outputPath: '/out.mp4',
+      encoder: { name: 'libx264', family: 'x264', hardware: false },
+      hardwareDecode: null,
+    });
+    expect(command.args).not.toContain('+faststart');
+  });
+
+  /** `twoVideos` exported as 8-bit Rec.709 (what the CUDA filters blend) on NVIDIA's encoder. */
+  function cudaReady(overrides: Partial<Project['export']> = {}) {
+    const { project, media } = twoVideos({ range: { start: 30, end: 130 }, ...overrides });
+    const output = { ...project.output, color: { space: 'rec709', range: 'limited', bitDepth: 8 } } as const;
+    const encoder = { name: 'h264_nvenc', family: 'nvenc', hardware: true } as const;
+    return { project: { ...project, output }, media, encoder };
+  }
+
+  it('blends on an NVIDIA GPU only what its filters can do', () => {
+    const ready = cudaReady();
+    expect(cudaPipelineBlocker(ready)).toBeNull();
+    const x264 = { name: 'libx264', family: 'x264', hardware: false } as const;
+    expect(cudaPipelineBlocker({ ...ready, encoder: x264 })).toMatch(/NVIDIA/);
+    const tenBit = {
+      ...ready.project.output,
+      color: { ...ready.project.output.color, bitDepth: 10 as const },
+    };
+    expect(cudaPipelineBlocker({ ...ready, project: { ...ready.project, output: tenBit } })).toMatch(/8-bit/);
+    expect(cudaPipelineBlocker(cudaReady({ scaling: 'fsr1' }))).toMatch(/FSR/);
+    const withFit = (fit: Partial<Project['output']['fit']>) => ({
+      ...ready,
+      project: {
+        ...ready.project,
+        output: { ...ready.project.output, fit: { ...ready.project.output.fit, ...fit } },
+      },
+    });
+    expect(cudaPipelineBlocker(withFit({ mode: 'blur' }))).toMatch(/placement/);
+    expect(cudaPipelineBlocker(withFit({ zoom: 1.2 }))).toMatch(/placement/);
+    /** `ready` with every video's info changed. */
+    const withVideos = (change: Partial<VideoInfo>) => {
+      const videos: Record<string, VideoInfo> = {};
+      for (const [id, info] of Object.entries(ready.media.videos)) {
+        if (info) videos[id] = { ...info, ...change };
+      }
+      return { ...ready, media: { ...ready.media, videos } };
+    };
+    // A 4:3 video with bars on a 16:9 canvas: the GPU cannot pad; stretched it can.
+    const fourThree = withVideos({ width: 1440, height: 1080 });
+    expect(cudaPipelineBlocker(fourThree)).toMatch(/does not fill/);
+    expect(cudaPipelineBlocker({ ...fourThree, project: withFit({ mode: 'stretch' }).project })).toBeNull();
+    // Turned sideways by the file, the 16:9 video is 9:16; upside down it still fills the canvas.
+    expect(cudaPipelineBlocker(withVideos({ rotation: 90 }))).toMatch(/does not fill/);
+    expect(cudaPipelineBlocker(withVideos({ rotation: 180 }))).toBeNull();
+  });
+
+  it('reads the range ffmpeg decodes a video in from its description', () => {
+    const gopro =
+      '  Stream #0:0[0x1](eng): Video: hevc (Main) (hvc1 / 0x31637668), yuvj420p(pc, bt709), 3840x2160 [SAR 1:1 DAR 16:9], 74427 kb/s, 119.88 fps';
+    expect(parseDecodedRange(`Input #0, mov\n${gopro}\n  Stream #0:1: Audio: aac`)).toBe('pc');
+    const tagged =
+      '  Stream #0:0: Video: hevc (Main 10) (hvc1 / 0x31637668), yuv420p10le(pc, bt2020nc/bt2020/arib-std-b67), 3840x2160';
+    expect(parseDecodedRange(tagged)).toBe('pc');
+    const limited =
+      '  Stream #0:0: Video: h264 (High) (avc1 / 0x31637661), yuv420p(tv, bt709, progressive), 1920x1080';
+    expect(parseDecodedRange(limited)).toBe('tv');
+    // Untagged: limited, like ffmpeg's scaler.
+    const untagged =
+      '  Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 64x64';
+    expect(parseDecodedRange(untagged)).toBe('tv');
+    expect(parseDecodedRange('  Stream #0:0: Audio: aac, 48000 Hz')).toBeNull();
+  });
+
+  it('builds the ffmpeg command of the CUDA pipeline', () => {
+    const { project, media, encoder } = cudaReady();
+    const command = videoExportCommand({
+      project,
+      media,
+      outputPath: '/out.mp4',
+      encoder,
+      hardwareDecode: 'd3d11va',
+      pipeline: 'cuda',
+    });
+    const args = command.args.join(' ');
+    expect(command).toMatchObject({ pipeline: 'cuda', overlayFormat: 'yuva420p', frames: 3000 });
+    expect(args).toContain('-hwaccel cuda -ss 30 -t 30 -i /a.mp4');
+    expect(args).not.toContain('d3d11va');
+    // The fixture video is full range: tagged, so colorspace_cuda converts it.
+    expect(args).toContain(
+      '[0:v:0]fps=30,setparams=range=pc,hwupload_cuda,colorspace_cuda=range=tv,scale_cuda=w=1280:h=720:interp_algo=lanczos:format=yuv420p,setpts=PTS-STARTPTS[v0]',
+    );
+    // Gaps are limited range black.
+    expect(args).toMatch(/color=c=black:s=1280x720:r=30 .*\[\d+:v:0\]setparams=range=tv,hwupload_cuda/);
+    expect(args).toContain('-f rawvideo -pix_fmt yuva420p -s 1280x720 -r 30 -i pipe:0');
+    expect(args).toContain('hwupload_cuda[widgets];[base][widgets]overlay_cuda=0:0:shortest=1[vout]');
+    // 720 rows are allocated as 736 on the GPU: the stream is cropped back, never scaled.
+    expect(args).toContain('video_full_range_flag=0:crop_bottom=16');
+    expect(args).not.toContain('crop_right');
+    // What ffmpeg says it decodes wins over the MP4 boxes (GoPro says full range in the stream).
+    const told = videoExportCommand({
+      project,
+      media,
+      outputPath: '/out.mp4',
+      encoder,
+      hardwareDecode: null,
+      pipeline: 'cuda',
+      videoRanges: { '/a.mp4': 'tv' },
+    });
+    expect(told.args.join(' ')).toContain('[0:v:0]fps=30,setparams=range=tv,hwupload_cuda');
   });
 
   it('copies the audio only from a single uncut video', () => {
@@ -216,6 +341,17 @@ describe('export plan', () => {
     const none = videoExportCommand({ ...silent, outputPath: '/o.mp4', encoder, hardwareDecode: null });
     expect(none.args).toContain('-an');
     expect(none.args.join(' ')).toContain('concat=n=1:v=1:a=0[base];');
+  });
+
+  it('plans the frames and pieces of a video drawn without ffmpeg', () => {
+    const { project, media } = twoVideos({ range: { start: 30, end: 130 } });
+    const plan = videoExportPlan(project, media);
+    expect(plan).toMatchObject({ start: 30, frames: 3000, frameRate: 30 });
+    expect(plan.segments.map((s) => [s.kind, s.duration])).toEqual([
+      ['video', 30],
+      ['gap', 40],
+      ['video', 30],
+    ]);
   });
 
   it('builds the ffmpeg command of a PNG sequence', () => {
@@ -305,6 +441,28 @@ describe('export with ffmpeg', () => {
     });
     await expect(run).rejects.toThrow(/cancelled/);
     await expect(stat(cancelled)).rejects.toThrow();
+  }, 60_000);
+
+  it('encodes for a slow disk: through the temporary folder, at most at the speed limit', async () => {
+    const out = join(dir, 'slow.mp4');
+    const { project, media } = dataOnly('video', out);
+    const slow = {
+      ...project,
+      export: { ...project.export, disk: { slow: true, maxSpeed: 4, stageInTemp: true } },
+    };
+    const phases = new Set<string | undefined>();
+    const started = Date.now();
+    const result = await exportProject({
+      project: slow,
+      media,
+      workers: 0,
+      onProgress: (p) => phases.add(p.phase),
+    });
+    // 20 frames at 10 fps, 4x: half a second at least.
+    expect(Date.now() - started).toBeGreaterThanOrEqual(450);
+    expect(result).toMatchObject({ outputPath: out, frames: 20 });
+    expect((await stat(out)).size).toBeGreaterThan(1000);
+    expect([...phases]).toEqual(['render', 'move']);
   }, 60_000);
 
   it('places a video on a canvas of another shape', async () => {
@@ -441,6 +599,42 @@ describe('export with ffmpeg', () => {
       }
     }
   });
+
+  it('blends on an NVIDIA GPU at the exact output size, without green rows', async (ctx) => {
+    if (!(await cudaPipelineWorks(resolveFfmpegPath()))) ctx.skip();
+    const out = join(dir, 'cuda.mp4');
+    const { project, media } = dataOnly('video', out);
+    const nvidia = {
+      ...project,
+      export: { ...project.export, encoder: { ...project.export.encoder, acceleration: 'nvidia' as const } },
+    };
+    const result = await exportProject({ project: nvidia, media, workers: 0 });
+    expect(result).toMatchObject({ frames: 20, encoder: 'h264_nvenc', pipeline: 'cuda', workers: 0 });
+    // 180 rows are 192 on the GPU: cropped in the stream, so decoders show 180 and no padding.
+    const yuv = execFileSync(
+      resolveFfmpegPath(),
+      [
+        '-hide_banner',
+        '-loglevel',
+        'error',
+        '-i',
+        out,
+        '-frames:v',
+        '1',
+        '-f',
+        'rawvideo',
+        '-pix_fmt',
+        'yuv420p',
+        '-',
+      ],
+      { maxBuffer: 1 << 24 },
+    );
+    expect(yuv.byteLength).toBe(320 * 180 * 1.5);
+    // Uninitialised GPU rows decode as green: U and V near 0 (gaps are black, U = V = 128).
+    const chroma = yuv.subarray(320 * 180);
+    const green = [...chroma].filter((v) => v < 64).length;
+    expect(green).toBe(0);
+  }, 60_000);
 
   it('refuses an empty range', async () => {
     const { project, media } = dataOnly('video', join(dir, 'empty.mp4'));

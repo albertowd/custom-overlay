@@ -6,8 +6,8 @@
   },
   "description": "Custom Overlay desktop application",
   "devDependencies": {
-    "@custom-overlay/core": "^0.1.0",
-    "@custom-overlay/ui": "^0.1.0",
+    "@custom-overlay/core": "^0.2.0",
+    "@custom-overlay/ui": "^0.2.0",
     "@vitejs/plugin-react": "^6.1.2",
     "electron": "45.0.0",
     "electron-builder": "^26.18.0",
@@ -31,5 +31,5 @@
     "test:coverage": "vitest run --coverage && node ../../scripts/normalize-lcov.mjs coverage/lcov.info",
     "test:watch": "vitest"
   },
-  "version": "0.1.0"
+  "version": "0.2.0"
 }

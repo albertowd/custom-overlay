@@ -1,10 +1,14 @@
 import {
   anchorFactors,
   anchorPoint,
+  boundsOf,
   createPreparedCache,
   createSampleSeries,
   dragResize,
+  findGroup,
   getWidgetType,
+  groupBounds,
+  groupMembers,
   guideLines,
   type RenderReport,
   renderOverlay,
@@ -21,7 +25,7 @@ import {
 } from '@custom-overlay/core';
 import { type PointerEvent as ReactPointerEvent, useEffect, useMemo, useRef, useState } from 'react';
 import { useT } from '../i18n';
-import { useStore, useTimeline } from '../store';
+import { type GroupOrigin, useStore, useTimeline } from '../store';
 import { snapshotSeries, widgetSeries } from '../values';
 
 const SAMPLE_SECONDS = 120;
@@ -219,15 +223,22 @@ interface ActiveLines {
   h: number | null;
 }
 
-/** The template's snap lines over the stage; the lines a drag snaps to are highlighted. */
+/**
+ * The template's snap lines over the stage; the lines a drag snaps to are highlighted (also
+ * the edges of other widgets, which are no guides).
+ */
 function GuideLines({ active }: { active: ActiveLines }) {
   const guides = useStore((s) => s.project.template.guides);
   const show = useStore((s) => s.showGuides);
   const lines = useMemo(() => guideLines(guides), [guides]);
   if (!show && active.v === null && active.h === null) return null;
   // The frame edges are lines too, but already visible.
-  const inner = (values: number[], current: number | null) =>
-    values.filter((v) => v > 0 && v < 1 && (show || v === current));
+  const inner = (values: number[], current: number | null) => {
+    const shown = values.filter((v) => v > 0 && v < 1 && (show || v === current));
+    return current !== null && current > 0 && current < 1 && !shown.includes(current)
+      ? [...shown, current]
+      : shown;
+  };
   return (
     <div className="guide-lines">
       {inner(lines.vertical, active.v).map((v) => (
@@ -248,27 +259,127 @@ function GuideLines({ active }: { active: ActiveLines }) {
   );
 }
 
-/** Selection and drag / resize handles over the widgets, snapping to the guides. */
+/** Edges and centres of widgets, the lines widgets snap to in group snapping. */
+function widgetLines(widgets: readonly Widget[]): { vertical: number[]; horizontal: number[] } {
+  return {
+    vertical: widgets.flatMap((w) => [w.x, w.x + w.width / 2, w.x + w.width]),
+    horizontal: widgets.flatMap((w) => [w.y, w.y + w.height / 2, w.y + w.height]),
+  };
+}
+
+interface DragState {
+  mode: DragMode;
+  /** Pointer position at the start. */
+  x: number;
+  y: number;
+  /** Widgets moved (the resized one for a resize), as they were at the start. */
+  widgets: Widget[];
+  /** Group whose origin moves along (dragging a group). */
+  origin: GroupOrigin | null;
+  /** Lines to snap to, fixed for the drag. */
+  lines: { vertical: number[]; horizontal: number[] };
+}
+
+/** Selection and drag / resize handles over the widgets, snapping to the guides or the group. */
 function WidgetHandles({ errors }: { errors: RenderReport }) {
-  const widgets = useStore((s) => s.project.template.widgets);
-  const guides = useStore((s) => s.project.template.guides);
+  const template = useStore((s) => s.project.template);
   const output = useStore((s) => s.project.output);
   const selectedId = useStore((s) => s.selectedWidgetId);
+  const selectedIds = useStore((s) => s.selectedWidgetIds);
+  const selectedGroupId = useStore((s) => s.selectedGroupId);
   const t = useT();
   const snap = useStore((s) => s.snap);
+  const snapTo = useStore((s) => s.snapTo);
   const select = useStore((s) => s.selectWidget);
+  const selectGroup = useStore((s) => s.selectGroup);
   const update = useStore((s) => s.updateWidget);
+  const place = useStore((s) => s.placeWidgets);
   const layerRef = useRef<HTMLDivElement>(null);
-  const drag = useRef<{ id: string; mode: DragMode; x: number; y: number; start: Widget } | null>(null);
+  const drag = useRef<DragState | null>(null);
   const [active, setActive] = useState<ActiveLines>({ v: null, h: null });
-  const lines = useMemo(() => guideLines(guides), [guides]);
+  const { widgets, guides } = template;
+  const guide = useMemo(() => guideLines(guides), [guides]);
+  const selection = new Set(
+    selectedGroupId ? groupMembers(template, selectedGroupId).map((w) => w.id) : selectedIds,
+  );
+  // A single selected widget gets the resize handle.
+  const single = !selectedGroupId && selection.size === 1 ? selectedId : null;
+  // The group outline: the selected group, or the group of the selected widget.
+  const outlined = findGroup(
+    template,
+    selectedGroupId ?? widgets.find((w) => w.id === single)?.groupId ?? null,
+  );
+  const outline = outlined ? groupBounds(template, outlined.id) : null;
 
-  const begin = (event: ReactPointerEvent, widget: Widget, mode: DragMode) => {
+  /**
+   * What a drag snaps to: the guides and / or other widgets. Members of one group snap to the
+   * rest of their group; a whole group, or widgets on their own, to every other widget.
+   */
+  const snapLines = (moving: readonly Widget[], draggedGroup: string | null) => {
+    const ids = new Set(moving.map((w) => w.id));
+    const first = moving[0]?.groupId ?? null;
+    const shared = draggedGroup === null && moving.every((w) => w.groupId === first) ? first : null;
+    const peers = widgets.filter(
+      (w) =>
+        !ids.has(w.id) &&
+        (draggedGroup !== null ? w.groupId !== draggedGroup : shared === null || w.groupId === shared),
+    );
+    const lines = { vertical: [] as number[], horizontal: [] as number[] };
+    if (snapTo !== 'group') {
+      lines.vertical.push(...guide.vertical);
+      lines.horizontal.push(...guide.horizontal);
+    }
+    if (snapTo !== 'guides') {
+      const near = widgetLines(peers);
+      lines.vertical.push(...near.vertical);
+      lines.horizontal.push(...near.horizontal);
+    }
+    return lines;
+  };
+
+  const startDrag = (
+    event: ReactPointerEvent,
+    state: Omit<DragState, 'x' | 'y' | 'lines'>,
+    group: string | null,
+  ) => {
     event.stopPropagation();
     event.preventDefault();
-    select(widget.id);
     (event.target as HTMLElement).setPointerCapture(event.pointerId);
-    drag.current = { id: widget.id, mode, x: event.clientX, y: event.clientY, start: widget };
+    drag.current = { ...state, x: event.clientX, y: event.clientY, lines: snapLines(state.widgets, group) };
+  };
+
+  const beginWidget = (event: ReactPointerEvent, widget: Widget, mode: DragMode) => {
+    if (mode === 'move' && (event.ctrlKey || event.metaKey || event.shiftKey)) {
+      // Adding to the selection (or taking out of it), no drag.
+      event.stopPropagation();
+      select(widget.id, 'toggle');
+      return;
+    }
+    if (mode === 'move' && selection.has(widget.id) && selection.size > 1) {
+      // Drags the whole selection; a selected group's origin moves with its relative members.
+      const group = selectedGroupId ? findGroup(template, selectedGroupId) : undefined;
+      const moving = widgets.filter((w) => selection.has(w.id) && (!group || w.groupPosition === 'relative'));
+      startDrag(
+        event,
+        { mode, widgets: moving, origin: group ? { id: group.id, x: group.x, y: group.y } : null },
+        group?.id ?? null,
+      );
+      return;
+    }
+    if (!(selection.has(widget.id) && selection.size === 1)) select(widget.id);
+    startDrag(event, { mode, widgets: [widget], origin: null }, null);
+  };
+
+  const beginGroup = (event: ReactPointerEvent, groupId: string) => {
+    const group = findGroup(template, groupId);
+    if (!group) return;
+    selectGroup(groupId);
+    const moving = groupMembers(template, groupId).filter((w) => w.groupPosition === 'relative');
+    startDrag(
+      event,
+      { mode: 'move', widgets: moving, origin: { id: group.id, x: group.x, y: group.y } },
+      group.id,
+    );
   };
 
   const move = (event: ReactPointerEvent) => {
@@ -285,25 +396,35 @@ function WidgetHandles({ errors }: { errors: RenderReport }) {
     const snapping = snap !== event.altKey;
     const tx = SNAP_PX / layer.width;
     const ty = SNAP_PX / layer.height;
-    const { start } = state;
+    const { lines } = state;
     const hit: ActiveLines = { v: null, h: null };
 
     if (state.mode === 'move') {
-      let x = start.x + dx;
-      let y = start.y + dy;
-      if (snapping) {
-        const sx = snapOffset([x, x + start.width / 2, x + start.width], lines.vertical, tx);
-        const sy = snapOffset([y, y + start.height / 2, y + start.height], lines.horizontal, ty);
-        x += sx.offset;
-        y += sy.offset;
+      const box = boundsOf(state.widgets);
+      if (!box && !state.origin) return;
+      let ox = dx;
+      let oy = dy;
+      if (snapping && box) {
+        const x = box.x + dx;
+        const y = box.y + dy;
+        const sx = snapOffset([x, x + box.width / 2, x + box.width], lines.vertical, tx);
+        const sy = snapOffset([y, y + box.height / 2, y + box.height], lines.horizontal, ty);
+        ox += sx.offset;
+        oy += sy.offset;
         hit.v = sx.line;
         hit.h = sy.line;
       }
       setActive(hit);
-      update(state.id, { x: round(x), y: round(y) });
+      place(
+        state.widgets.map((w) => ({ id: w.id, x: round(w.x + ox), y: round(w.y + oy) })),
+        state.origin
+          ? { id: state.origin.id, x: round(state.origin.x + ox), y: round(state.origin.y + oy) }
+          : undefined,
+      );
       return;
     }
 
+    const start = state.widgets[0] as Widget;
     let { width, height } = dragResize(start, dx, dy);
     const ratio = getWidgetType(start.type)?.aspectRatio;
     if (snapping) {
@@ -326,7 +447,7 @@ function WidgetHandles({ errors }: { errors: RenderReport }) {
     height = ratio ? (width * frame.width) / (ratio * frame.height) : Math.max(0.01, height);
     setActive(hit);
     const next = resizeAroundAnchor(start, width, height);
-    update(state.id, {
+    update(start.id, {
       x: round(next.x),
       y: round(next.y),
       width: round(next.width),
@@ -349,8 +470,35 @@ function WidgetHandles({ errors }: { errors: RenderReport }) {
       onPointerCancel={end}
     >
       <GuideLines active={active} />
+      {outlined && outline && (
+        <div
+          className={`group-box ${selectedGroupId === outlined.id ? 'selected' : ''} ${outlined.visible ? '' : 'hidden'}`}
+          style={{
+            left: `${outline.x * 100}%`,
+            top: `${outline.y * 100}%`,
+            width: `${outline.width * 100}%`,
+            height: `${outline.height * 100}%`,
+          }}
+        >
+          <button
+            type="button"
+            className="group-tab"
+            title={t('template.groups.dragHint', { name: outlined.name })}
+            onPointerDown={(e) => beginGroup(e, outlined.id)}
+          >
+            {outlined.name}
+          </button>
+        </div>
+      )}
+      {outlined && selectedGroupId === outlined.id && (
+        <div
+          className="group-origin"
+          style={{ left: `${outlined.x * 100}%`, top: `${outlined.y * 100}%` }}
+          title={t('template.groups.originHint')}
+        />
+      )}
       {widgets.map((widget) => {
-        const selected = widget.id === selectedId;
+        const selected = selection.has(widget.id);
         const { fx, fy } = anchorFactors(widget.anchor);
         const { hx, hy } = resizeCorner(widget.anchor);
         return (
@@ -364,9 +512,9 @@ function WidgetHandles({ errors }: { errors: RenderReport }) {
               height: `${widget.height * 100}%`,
             }}
             title={errors[widget.id] ? `${widget.name}: ${errors[widget.id]}` : widget.name}
-            onPointerDown={(e) => begin(e, widget, 'move')}
+            onPointerDown={(e) => beginWidget(e, widget, 'move')}
           >
-            {selected && (
+            {widget.id === single && (
               <>
                 <div
                   className="widget-anchor"
@@ -378,13 +526,13 @@ function WidgetHandles({ errors }: { errors: RenderReport }) {
                 <div
                   className="widget-resize"
                   style={{
-                    left: `calc(${hx * 100}% - 6px)`,
-                    top: `calc(${hy * 100}% - 6px)`,
+                    left: `calc(${hx * 100}% - var(--handle-size) / 2)`,
+                    top: `calc(${hy * 100}% - var(--handle-size) / 2)`,
                     right: 'auto',
                     bottom: 'auto',
                     cursor: hx === hy ? 'nwse-resize' : 'nesw-resize',
                   }}
-                  onPointerDown={(e) => begin(e, widget, 'resize')}
+                  onPointerDown={(e) => beginWidget(e, widget, 'resize')}
                 />
               </>
             )}

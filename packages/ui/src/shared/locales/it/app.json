@@ -91,5 +91,20 @@
       "title": "Aggiornamento dei valori…",
       "detail": "Ricalcolo di giri, distanze e dati dei widget con le nuove impostazioni."
     }
+  },
+  "support": {
+    "title": "Limiti di questo browser",
+    "dismiss": "Chiudi",
+    "insecureContext": "Questa pagina non è aperta tramite HTTPS, quindi il browser blocca l'esportazione video e i file che le servono. Apri l'app dal suo indirizzo https:// (o da localhost su questo computer).",
+    "noWebCodecs": "Questo browser non può codificare video, quindi il video finale non si può esportare qui: usa un Chrome o Edge recente (su computer o Android), oppure l'app desktop. La modifica e la sequenza di immagini funzionano comunque.",
+    "noPrivateStorage": "Questo browser non può salvare il video mentre viene esportato: aggiornalo, oppure usa Chrome o Edge.",
+    "noSavePicker": "Questo browser non può salvare in un file scelto da te: il video viene scaricato alla fine dell'esportazione. Lascia spazio sul dispositivo.",
+    "cannotDecode": "Questo browser non può decodificare '{label}' ({codec}), quindi non si può esportare qui. Firefox non ha HEVC (H.265), il formato della maggior parte dei video 4K GoPro: usa Chrome o Edge, oppure l'app desktop.",
+    "cannotDecodeAudio": "Questo browser non può decodificare l'audio di '{label}' ({codec}): quella parte viene esportata senza audio.",
+    "cannotEncodeVideo": "Questo browser non può codificare {codec} a {size} su questo dispositivo: il video viene codificato in H.264.",
+    "cannotEncodeAny": "Questo browser non può codificare video a {size} su questo dispositivo: scegli una risoluzione più bassa, oppure usa l'app desktop.",
+    "cannotEncodeAac": "Questo browser non può codificare audio AAC: viene codificato in Opus, che alcuni editor video non leggono.",
+    "cannotEncodeAudio": "Questo browser non può codificare audio: il video viene esportato senza.",
+    "eightBitOnly": "I browser esportano a 8 bit SDR (Rec.709): le impostazioni a 10 bit e HDR richiedono l'app desktop."
   }
 }

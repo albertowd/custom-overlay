@@ -13,7 +13,11 @@ function create() {
   const app = {
     isPackaged: false,
     getPath: vi.fn((name: string) => paths[name] ?? `/system/${name}`),
+    setPath: vi.fn((name: string, path: string): void => {
+      paths[name] = path;
+    }),
     getVersion: vi.fn(() => '1.2.0'),
+    getGPUInfo: vi.fn(async (_kind: string): Promise<unknown> => ({ gpuDevice: [] })),
     getPreferredSystemLanguages: vi.fn((): string[] => ['en-US']),
     commandLine: { appendSwitch: vi.fn((..._args: unknown[]): void => undefined) },
     whenReady: vi.fn(() => Promise.resolve()),
@@ -115,8 +119,15 @@ function create() {
 
   const webUtils = { getPathForFile: vi.fn((file: { name: string }) => `/picked/${file.name}`) };
 
+  let blockers = 0;
+  const powerSaveBlocker = {
+    start: vi.fn((_type: string) => ++blockers),
+    stop: vi.fn((_id: number): void => undefined),
+  };
+
   return {
     paths,
+    powerSaveBlocker,
     app,
     appListener,
     handlers,
@@ -138,6 +149,7 @@ const mock = holder.electronMock;
 
 export const {
   paths,
+  powerSaveBlocker,
   app,
   appListener,
   handlers,

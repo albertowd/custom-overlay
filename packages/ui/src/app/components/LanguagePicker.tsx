@@ -82,7 +82,7 @@ export function LanguagePicker() {
         onClick={() => setOpen(!open)}
       >
         <Flag language={current.code} />
-        {current.name}
+        <span className="language-name">{current.name}</span>
       </button>
       {open && (
         <ul className="language-menu" aria-label={t('common.language')}>

@@ -69,15 +69,31 @@ export const coreText = {
     tr(`core.widgets.${widget.type}.name`, {}, widget.name),
   widgetDescription: (tr: Translate, widget: { type: string; description: string }) =>
     tr(`core.widgets.${widget.type}.description`, {}, widget.description),
+  /**
+   * Field texts are translated per widget type, else as fields shared by many widgets
+   * (`core.fields.<key>`: background, alignment...), else kept from the core.
+   */
   fieldLabel: (tr: Translate, type: string, field: { key: string; label: string }) =>
-    tr(`core.widgets.${type}.fields.${field.key}.label`, {}, field.label),
+    tr(
+      `core.widgets.${type}.fields.${field.key}.label`,
+      {},
+      tr(`core.fields.${field.key}.label`, {}, field.label),
+    ),
   fieldHint: (tr: Translate, type: string, field: { key: string; hint?: string }) =>
     field.hint === undefined
       ? undefined
-      : tr(`core.widgets.${type}.fields.${field.key}.hint`, {}, field.hint),
+      : tr(
+          `core.widgets.${type}.fields.${field.key}.hint`,
+          {},
+          tr(`core.fields.${field.key}.hint`, {}, field.hint),
+        ),
   /** Label of a `select` field option (`[value, label]` in the widget definition). */
   fieldOption: (tr: Translate, type: string, fieldKey: string, [value, label]: readonly [string, string]) =>
-    tr(`core.widgets.${type}.fields.${fieldKey}.options.${value}`, {}, label),
+    tr(
+      `core.widgets.${type}.fields.${fieldKey}.options.${value}`,
+      {},
+      tr(`core.fields.${fieldKey}.options.${value}`, {}, label),
+    ),
   /**
    * YouTube presets are translated by codec family, social ones by format; the resolution and
    * frame rate stay as is.

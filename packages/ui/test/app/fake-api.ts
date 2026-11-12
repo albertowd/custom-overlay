@@ -13,7 +13,7 @@ export type FakeApi = Mocked<AppApi>;
 
 export function createFakeApi(overrides: Partial<AppApi> = {}): FakeApi {
   const api: AppApi = {
-    capabilities: { videoExport: true, revealFiles: true, sequenceAsZip: false },
+    capabilities: { videoExport: true, nativeExport: true, revealFiles: true, sequenceAsZip: false },
     getLanguage: async () => 'en',
     setLanguage: async () => undefined,
     selectVideos: async () => [],
@@ -48,6 +48,7 @@ export function createFakeApi(overrides: Partial<AppApi> = {}): FakeApi {
     cancelExport: async () => undefined,
     onExportProgress: () => () => undefined,
     revealPath: async () => undefined,
+    graphicsCards: async () => [],
     appInfo: async () => ({
       name: 'Custom Overlay',
       version: '0.1.0',
@@ -57,6 +58,7 @@ export function createFakeApi(overrides: Partial<AppApi> = {}): FakeApi {
     checkForUpdate: async () => null,
     openProjectUrl: async () => undefined,
     getPathForFile: (file) => `/dropped/${file.name}`,
+    supportIssues: async () => [],
     ...overrides,
   };
   return Object.fromEntries(

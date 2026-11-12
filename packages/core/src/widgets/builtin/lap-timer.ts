@@ -1,5 +1,12 @@
 import { z } from 'zod';
-import { drawPanel, drawTextBox } from '../draw.js';
+import {
+  backgroundFields,
+  backgroundProps,
+  drawBackground,
+  drawTextBox,
+  textAlignFields,
+  textAlignProp,
+} from '../draw.js';
 import { formatDuration } from '../format.js';
 import { bestLapTime, formatDelta, type Lap, lapIndexAt, lapsFromSeries } from '../laps.js';
 import { defineWidget } from '../types.js';
@@ -22,7 +29,8 @@ export const lapTimer = defineWidget({
     beforeFirstLap: z.enum(['dashes', 'hide']).default('dashes'),
     color: z.string().default('text'),
     bestColor: z.string().default('accent'),
-    background: z.boolean().default(true),
+    ...textAlignProp,
+    ...backgroundProps(),
   }),
   fields: [
     { key: 'lapTimeId', label: 'Lap time value (s)', kind: 'value' },
@@ -58,7 +66,8 @@ export const lapTimer = defineWidget({
     },
     { key: 'color', label: 'Time', kind: 'color' },
     { key: 'bestColor', label: 'New best lap', kind: 'color' },
-    { key: 'background', label: 'Background panel', kind: 'boolean' },
+    ...textAlignFields(),
+    ...backgroundFields(),
   ],
   inputs: (props) => [props.lapTimeId, props.lapNumberId],
   prepare: ({ props, values }): Lap[] => lapsFromSeries(values, props.lapTimeId, props.lapNumberId),
@@ -89,7 +98,7 @@ export const lapTimer = defineWidget({
     }
     if (!Number.isFinite(time) && props.beforeFirstLap === 'hide') return;
 
-    if (props.background) drawPanel(ctx, frame);
+    drawBackground(ctx, frame, props);
     const text = formatDuration(time, props.decimals, '-:--');
     const color = frame.color(holding && isBest ? props.bestColor : props.color);
     const gapText = formatDelta(gap, props.decimals);
@@ -97,7 +106,7 @@ export const lapTimer = defineWidget({
     const number = lap?.number ?? lapNumber;
     const label = props.showLapNumber && Number.isFinite(number) ? `Lap ${number}` : '';
     if (!label && !gapText) {
-      drawTextBox(ctx, frame, text, { color, size: 0.7, weight: 700, align: 'center' });
+      drawTextBox(ctx, frame, text, { color, size: 0.7, weight: 700, align: props.align });
       return;
     }
     ctx.save();
@@ -107,7 +116,8 @@ export const lapTimer = defineWidget({
         color: frame.color('textMuted'),
         size: 0.75,
         weight: 600,
-        align: gapText ? 'left' : 'center',
+        // With a gap too, the label goes left and the gap right.
+        align: gapText ? 'left' : props.align,
         uppercase: true,
       });
     }
@@ -116,7 +126,7 @@ export const lapTimer = defineWidget({
         color: frame.color(gap < 0 ? 'positive' : gap > 0 ? 'negative' : 'textMuted'),
         size: 0.75,
         weight: 700,
-        align: label ? 'right' : 'center',
+        align: label ? 'right' : props.align,
       });
     }
     ctx.translate(0, frame.height * 0.32);
@@ -124,7 +134,7 @@ export const lapTimer = defineWidget({
       color,
       size: 0.8,
       weight: 700,
-      align: 'center',
+      align: props.align,
     });
     ctx.restore();
   },

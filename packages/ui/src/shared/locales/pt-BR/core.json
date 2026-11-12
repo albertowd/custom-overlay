@@ -37,7 +37,7 @@
     "noStartFinish": "Os valores de volta vêm das linhas da pista, mas ainda não há linha de largada/chegada",
     "noWidgets": "O modelo ainda não tem widgets",
     "videoExportWithoutVideo": "Exportar um vídeo exige um vídeo de origem; escolha o modo de sequência de imagens",
-    "videoExportElsewhere": "O vídeo final é exportado pelo aplicativo desktop ou pela CLI: salve o projeto junto aos vídeos e abra-o lá",
+    "videoExportElsewhere": "Este navegador não consegue codificar vídeo: use um Chrome ou Edge recente, ou o aplicativo para desktop",
     "noOutput": "Escolha um local de saída"
   },
   "widgets": {
@@ -298,7 +298,7 @@
     },
     "distance-bar": {
       "name": "Barra de distância",
-      "description": "Barra de progresso da distância percorrida, com marcações a cada intervalo de distância ou no início de cada volta.",
+      "description": "Barra de progresso da distância percorrida, com marcas a cada passo de distância.",
       "fields": {
         "valueId": {
           "label": "Valor de distância (m)"
@@ -315,28 +315,13 @@
           "label": "Total",
           "hint": "Na unidade acima; 0 = total da sessão"
         },
-        "ticks": {
-          "label": "Marcações principais",
-          "options": {
-            "distance": "A cada intervalo",
-            "laps": "No início de cada volta"
-          }
-        },
         "tickStep": {
           "label": "Intervalo das marcações",
-          "hint": "0 = automático; só marcações por distância"
-        },
-        "lapTimeId": {
-          "label": "Valor do tempo de volta (s)",
-          "hint": "Só marcações por volta"
-        },
-        "lapNumberId": {
-          "label": "Valor do número da volta",
-          "hint": "Só marcações por volta"
+          "hint": "0 = automático"
         },
         "minorTicks": {
           "label": "Marcações secundárias",
-          "hint": "Entre as marcações principais (por volta com marcações por volta)"
+          "hint": "Entre as marcas maiores"
         },
         "decimals": {
           "label": "Casas decimais"
@@ -358,6 +343,69 @@
         },
         "background": {
           "label": "Painel de fundo"
+        }
+      }
+    },
+    "lap-bar": {
+      "name": "Barra de voltas",
+      "description": "Barra de progresso das voltas: a sessão inteira com uma marca no início de cada volta com o seu número, ou só a volta atual.",
+      "fields": {
+        "view": {
+          "label": "Mostrar",
+          "options": {
+            "session": "Sessão inteira, uma marca por volta",
+            "lap": "Só a volta atual"
+          }
+        },
+        "valueId": {
+          "label": "Valor de distância (m)"
+        },
+        "unit": {
+          "label": "Unidade",
+          "options": {
+            "km": "Quilômetros",
+            "m": "Metros",
+            "mi": "Milhas"
+          }
+        },
+        "total": {
+          "label": "Total",
+          "hint": "Na unidade acima; 0 = total da sessão"
+        },
+        "decimals": {
+          "label": "Casas decimais"
+        },
+        "color": {
+          "label": "Progresso"
+        },
+        "trackColor": {
+          "label": "Fundo da barra"
+        },
+        "textColor": {
+          "label": "Texto"
+        },
+        "showLabels": {
+          "label": "Rótulos das marcações"
+        },
+        "showValue": {
+          "label": "Distância atual"
+        },
+        "background": {
+          "label": "Painel de fundo"
+        },
+        "lapTimeId": {
+          "label": "Valor do tempo de volta (s)"
+        },
+        "lapNumberId": {
+          "label": "Valor do número da volta"
+        },
+        "label": {
+          "label": "Rótulo",
+          "hint": "Antes do número da volta"
+        },
+        "minorTicks": {
+          "label": "Marcas menores",
+          "hint": "Por volta"
         }
       }
     },
@@ -1061,6 +1109,45 @@
     "editing": {
       "label": "Para edição",
       "description": "GOP curto de 0,25 s sem quadros B para navegar com fluidez em editores de vídeo, H.264."
+    }
+  },
+  "fields": {
+    "backgroundColor": {
+      "label": "Cor do fundo"
+    },
+    "backgroundShape": {
+      "label": "Formato do fundo",
+      "options": {
+        "rounded": "Retângulo arredondado",
+        "rectangle": "Retângulo",
+        "pill": "Pílula",
+        "ellipse": "Elipse",
+        "circle": "Círculo",
+        "slanted": "Inclinado"
+      }
+    },
+    "backgroundRadius": {
+      "label": "Raio dos cantos",
+      "hint": "% do lado menor"
+    },
+    "backgroundOpacity": {
+      "label": "Opacidade do fundo"
+    },
+    "align": {
+      "label": "Alinhamento",
+      "options": {
+        "left": "Esquerda",
+        "center": "Centro",
+        "right": "Direita"
+      }
+    },
+    "verticalAlign": {
+      "label": "Alinhamento vertical",
+      "options": {
+        "top": "Topo",
+        "middle": "Meio",
+        "bottom": "Base"
+      }
     }
   }
 }

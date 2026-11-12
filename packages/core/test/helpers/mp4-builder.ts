@@ -45,6 +45,24 @@ export interface TrackSpec {
   height?: number;
   /** Child boxes of the visual sample entry (colr, hvcC...). */
   entryBoxes?: Uint8Array[];
+  /** Display rotation written in the track matrix (players turn the picture by it). */
+  rotation?: 0 | 90 | 180 | 270;
+}
+
+/** Track header fields after the duration: reserved, layer..volume, then the 3 × 3 matrix. */
+function tkhdMiddle(rotation: number): Uint8Array {
+  const out = new Uint8Array(52);
+  const view = new DataView(out.buffer);
+  const radians = (rotation * Math.PI) / 180;
+  const cos = Math.round(Math.cos(radians));
+  const sin = Math.round(Math.sin(radians));
+  // a b u / c d v / x y w: a, b, c, d, x, y in 16.16, u, v, w in 2.30.
+  view.setInt32(16, cos * 65536);
+  view.setInt32(20, sin * 65536);
+  view.setInt32(28, -sin * 65536);
+  view.setInt32(32, cos * 65536);
+  view.setInt32(48, 1 << 30);
+  return out;
 }
 
 function sampleEntry(spec: TrackSpec): Uint8Array {
@@ -67,7 +85,7 @@ function trak(spec: TrackSpec, chunkOffset: number): Uint8Array {
   const tkhd = box(
     'tkhd',
     u32(0, 0, 0, spec.id, 0, duration),
-    new Uint8Array(52),
+    tkhdMiddle(spec.rotation ?? 0),
     u32((spec.width ?? 0) * 65536, (spec.height ?? 0) * 65536),
   );
   const mdhd = box('mdhd', u32(0, 0, 0, spec.timescale, duration), new Uint8Array(4));

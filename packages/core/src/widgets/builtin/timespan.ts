@@ -1,5 +1,12 @@
 import { z } from 'zod';
-import { drawPanel, drawTextBox } from '../draw.js';
+import {
+  backgroundFields,
+  backgroundProps,
+  drawBackground,
+  drawTextBox,
+  textAlignFields,
+  textAlignProp,
+} from '../draw.js';
 import { formatDuration, parseClock } from '../format.js';
 import { defineWidget } from '../types.js';
 
@@ -23,7 +30,8 @@ export const timespan = defineWidget({
     label: z.string().default(''),
     color: z.string().default('text'),
     countdownColor: z.string().default('warning'),
-    background: z.boolean().default(true),
+    ...textAlignProp,
+    ...backgroundProps(),
   }),
   fields: [
     {
@@ -62,7 +70,8 @@ export const timespan = defineWidget({
     { key: 'label', label: 'Label', kind: 'text', hint: 'Optional line above, e.g. RACE TIME' },
     { key: 'color', label: 'Color', kind: 'color' },
     { key: 'countdownColor', label: 'Countdown color', kind: 'color' },
-    { key: 'background', label: 'Background panel', kind: 'boolean' },
+    ...textAlignFields(),
+    ...backgroundFields(),
   ],
   inputs: (props) => [props.reference === 'clock' ? 'time.clock' : 'time.timeline'],
   render(ctx, frame) {
@@ -83,11 +92,11 @@ export const timespan = defineWidget({
     const counting = elapsed < 0 && props.beforeStart === 'countdown';
     const shown = elapsed < 0 && !counting ? 0 : elapsed;
 
-    if (props.background) drawPanel(ctx, frame);
+    drawBackground(ctx, frame, props);
     const text = formatDuration(shown, props.decimals, '--:--');
     const color = frame.color(counting ? props.countdownColor : props.color);
     if (!props.label) {
-      drawTextBox(ctx, frame, text, { color, size: 0.7, weight: 700, align: 'center' });
+      drawTextBox(ctx, frame, text, { color, size: 0.7, weight: 700, align: props.align });
       return;
     }
     ctx.save();
@@ -95,7 +104,7 @@ export const timespan = defineWidget({
       color: frame.color('textMuted'),
       size: 0.75,
       weight: 600,
-      align: 'center',
+      align: props.align,
       uppercase: true,
     });
     ctx.translate(0, frame.height * 0.32);
@@ -103,7 +112,7 @@ export const timespan = defineWidget({
       color,
       size: 0.8,
       weight: 700,
-      align: 'center',
+      align: props.align,
     });
     ctx.restore();
   },

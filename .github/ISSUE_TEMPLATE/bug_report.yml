@@ -13,7 +13,7 @@ body:
     attributes:
       label: Version
       description: The release you downloaded (e.g. from the Releases page).
-      placeholder: "0.1.0"
+      placeholder: "0.2.0"
     validations:
       required: true
   - type: dropdown

@@ -4,6 +4,7 @@ import type {
   ProjectMedia,
   SourceKind,
   TelemetrySeries,
+  VideoExportPlan,
 } from '@custom-overlay/core';
 import type { LoadedVideo } from '@custom-overlay/core/loaders';
 import type { ValuesSnapshot } from '@custom-overlay/ui/api';
@@ -29,6 +30,11 @@ export interface EngineOperations {
   imageSequence: {
     args: { project: Project };
     result: { plan: ImageSequencePlan; media: ProjectMedia };
+  };
+  /** Frames and video pieces of a video export, and the media its workers need. */
+  videoExport: {
+    args: { project: Project };
+    result: { plan: VideoExportPlan; media: ProjectMedia };
   };
 }
 

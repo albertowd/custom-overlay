@@ -39,8 +39,12 @@ export interface Mp4Track {
   color: Mp4ColorInfo | null;
   /** Luma bit depth of video tracks, when known from the decoder configuration. */
   bitDepth: number | null;
+  /** Rotation players apply from the track matrix (a camera mounted upside down: 180). */
+  rotation: Mp4Rotation;
   samples: SampleTable;
 }
+
+export type Mp4Rotation = 0 | 90 | 180 | 270;
 
 export interface Mp4ColorInfo {
   primaries: number;
@@ -170,13 +174,24 @@ function parseMvhd(box: BoxView): { timescale: number; duration: number; creatio
   return { creation: v.getUint32(4), timescale: v.getUint32(12), duration: v.getUint32(16) };
 }
 
-function parseTkhd(box: BoxView): { id: number; width: number; height: number } {
+function parseTkhd(box: BoxView): { id: number; width: number; height: number; rotation: Mp4Rotation } {
   const v = box.view;
   const version = v.getUint8(0);
   const id = version === 1 ? v.getUint32(20) : v.getUint32(12);
-  // width / height are the last 8 bytes, 16.16 fixed point.
+  // width / height are the last 8 bytes, 16.16 fixed point, after the 3 × 3 matrix (36 bytes).
   const end = box.bytes.byteLength;
-  return { id, width: v.getUint32(end - 8) / 65536, height: v.getUint32(end - 4) / 65536 };
+  return {
+    id,
+    width: v.getUint32(end - 8) / 65536,
+    height: v.getUint32(end - 4) / 65536,
+    rotation: end >= 44 ? matrixRotation(v.getInt32(end - 44), v.getInt32(end - 40)) : 0,
+  };
+}
+
+/** Display rotation of a track matrix, from its first row (a, b) in 16.16, to the nearest 90°. */
+function matrixRotation(a: number, b: number): Mp4Rotation {
+  const degrees = (Math.round((Math.atan2(b, a) * 180) / Math.PI / 90) * 90 + 360) % 360;
+  return degrees as Mp4Rotation;
 }
 
 function parseMdhd(box: BoxView): { timescale: number; duration: number; creation: number } {
@@ -336,6 +351,7 @@ function parseTrack(trak: BoxView): Mp4Track | null {
     creationTime: mp4TimeToDate(media.creation),
     color: sampleEntry.color,
     bitDepth: sampleEntry.bitDepth,
+    rotation: header.rotation,
     samples,
   };
 }

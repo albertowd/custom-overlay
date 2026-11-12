@@ -240,6 +240,7 @@ describe('export and shell', () => {
 
   it('answers app information, update checks and the track catalog', async () => {
     expect(await invoke(IpcChannel.appInfo)).toMatchObject({ name: 'Custom Overlay' });
+    expect(await invoke(IpcChannel.graphicsCards)).toEqual([]);
     expect(await invoke(IpcChannel.checkForUpdate)).toBeNull();
     expect(await invoke(IpcChannel.trackCatalog)).toBeNull();
     expect(remoteTrackCatalog).toHaveBeenCalled();

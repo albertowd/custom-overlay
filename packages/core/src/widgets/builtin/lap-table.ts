@@ -1,5 +1,12 @@
 import { z } from 'zod';
-import { drawPanel, fitText, roundRectPath, withAlpha } from '../draw.js';
+import {
+  backgroundFields,
+  backgroundProps,
+  drawBackground,
+  fitText,
+  roundRectPath,
+  withAlpha,
+} from '../draw.js';
 import { formatDuration } from '../format.js';
 import { bestLapTime, formatDelta, type Lap, lapFinished, lapIndexAt, lapsFromSeries } from '../laps.js';
 import { defineWidget } from '../types.js';
@@ -25,7 +32,7 @@ export const lapTable = defineWidget({
     color: z.string().default('text'),
     currentColor: z.string().default('primary'),
     bestColor: z.string().default('accent'),
-    background: z.boolean().default(true),
+    ...backgroundProps(),
   }),
   fields: [
     { key: 'lapTimeId', label: 'Lap time value (s)', kind: 'value' },
@@ -57,13 +64,13 @@ export const lapTable = defineWidget({
     { key: 'color', label: 'Text', kind: 'color' },
     { key: 'currentColor', label: 'Current lap', kind: 'color' },
     { key: 'bestColor', label: 'Best lap', kind: 'color' },
-    { key: 'background', label: 'Background panel', kind: 'boolean' },
+    ...backgroundFields(),
   ],
   inputs: (props) => [props.lapTimeId, props.lapNumberId],
   prepare: ({ props, values }): Lap[] => lapsFromSeries(values, props.lapTimeId, props.lapNumberId),
   render(ctx, frame) {
     const { props, prepared: laps } = frame;
-    if (props.background) drawPanel(ctx, frame);
+    drawBackground(ctx, frame, props);
     const time = frame.time;
     const currentIndex = lapIndexAt(laps, time);
     const sessionMode = props.mode === 'session';

@@ -7,7 +7,8 @@
   "tabs": {
     "widget": "Widget",
     "values": "Valores",
-    "style": "Estilo"
+    "style": "Estilo",
+    "label": "Painel"
   },
   "visible": {
     "title": "Widgets visíveis",
@@ -16,7 +17,13 @@
   "editor": {
     "snap": "Alinhar às guias",
     "showGuides": "Mostrar guias",
-    "hint": "Segure Alt ao arrastar para inverter o alinhamento. As guias são definidas na aba Estilo."
+    "hint": "Segure Alt ao arrastar para inverter o alinhamento; Ctrl ou Shift + clique para selecionar vários widgets. As guias são definidas na aba Estilo.",
+    "snapTo": "Alinhar a",
+    "snapTargets": {
+      "guides": "Guias",
+      "group": "Grupo",
+      "both": "Ambos"
+    }
   },
   "canvas": {
     "title": "Tela",
@@ -181,5 +188,66 @@
     "likeProject": "Como o projeto ({range})",
     "ownData": "Intervalo de dados próprio",
     "ownDataShort": "intervalo de dados próprio"
+  },
+  "groups": {
+    "title": "Grupo",
+    "defaultName": "Grupo {number}",
+    "group": "Grupo",
+    "none": "Nenhum",
+    "position": "Posição",
+    "relative": "Relativa",
+    "absolute": "Absoluta",
+    "absoluteShort": "absoluta",
+    "relativeHint": "Move-se com o grupo; X e Y são medidos a partir da origem do grupo.",
+    "absoluteHint": "Fica onde está quando o grupo se move; X e Y são do quadro.",
+    "relativeX": "X a partir do grupo %",
+    "relativeY": "Y a partir do grupo %",
+    "collapse": "Recolher grupo",
+    "expand": "Expandir grupo",
+    "count": {
+      "one": "{count} widget",
+      "other": "{count} widgets"
+    },
+    "groupAction": "Agrupar",
+    "groupHint": "Agrupar os widgets selecionados (Ctrl+G)",
+    "multiSelectHint": "Ctrl ou Shift + clique para selecionar vários widgets e depois agrupá-los ou alinhá-los.",
+    "ungroup": "Desagrupar",
+    "visible": "Visível",
+    "originX": "Origem X %",
+    "originY": "Origem Y %",
+    "originHint": "Mover a origem move os widgets relativos do grupo.",
+    "absoluteCount": {
+      "one": "{count} widget absoluto fica no lugar.",
+      "other": "{count} widgets absolutos ficam no lugar."
+    },
+    "selected": {
+      "one": "{count} widget selecionado",
+      "other": "{count} widgets selecionados"
+    },
+    "dragHint": "{name}: arraste para mover o grupo"
+  },
+  "align": {
+    "title": "Alinhar",
+    "to": "Alinhar a",
+    "targets": {
+      "group": "Grupo",
+      "guides": "Guias"
+    },
+    "edges": {
+      "left": "Alinhar bordas esquerdas",
+      "center": "Alinhar centros horizontais",
+      "right": "Alinhar bordas direitas",
+      "top": "Alinhar bordas superiores",
+      "middle": "Alinhar centros verticais",
+      "bottom": "Alinhar bordas inferiores"
+    },
+    "distribute": {
+      "horizontal": "Distribuir horizontalmente",
+      "vertical": "Distribuir verticalmente"
+    },
+    "hints": {
+      "group": "À caixa do grupo ou da seleção; um widget sozinho alinha ao quadro.",
+      "guides": "À guia mais próxima: bordas do quadro, divisões, margem segura, linhas extras."
+    }
   }
 }

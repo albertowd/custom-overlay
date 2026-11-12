@@ -102,10 +102,15 @@ export interface WorkflowContext {
   /** Ids of videos and sources that failed to load. */
   failedIds?: readonly string[];
   /**
-   * Whether this host renders videos (true by default). The web app does not: a video export is
-   * done by the desktop app or the CLI, so it needs no output location here.
+   * Whether this host renders videos (true by default): browsers without WebCodecs cannot, the
+   * desktop app or the CLI does it.
    */
   videoExport?: boolean;
+  /**
+   * Whether the host asks where to write when the export starts (the web app: a save dialog or a
+   * download), so no output location is needed beforehand.
+   */
+  asksOutput?: boolean;
 }
 
 type Evaluation = Pick<StepStatus, 'state' | 'issues'>;
@@ -188,7 +193,7 @@ function evaluateSummary(): Evaluation {
   return { state: 'complete', issues: [] };
 }
 
-function evaluateExport({ project, videoExport = true }: WorkflowContext): Evaluation {
+function evaluateExport({ project, videoExport = true, asksOutput = false }: WorkflowContext): Evaluation {
   const issues: StepIssue[] = [];
   if (project.export.mode === 'video' && enabledVideos(project).length === 0) {
     issues.push(
@@ -202,13 +207,13 @@ function evaluateExport({ project, videoExport = true }: WorkflowContext): Evalu
     issues.push(
       warning(
         'videoExportElsewhere',
-        'The final video is exported by the desktop app or the CLI: save the project next to its videos and open it there',
+        'This browser cannot encode video: use a recent Chrome or Edge, or the desktop app',
       ),
     );
     return { state: 'incomplete', issues };
   }
   // Without a choice the export goes next to the videos (or data): only media-less projects need one.
-  if (!exportOutputPath(project)) issues.push(error('noOutput', 'Choose an output location'));
+  if (!asksOutput && !exportOutputPath(project)) issues.push(error('noOutput', 'Choose an output location'));
   return { state: issues.length > 0 ? 'incomplete' : 'complete', issues };
 }
 

@@ -37,6 +37,8 @@ export const liveMap = defineWidget({
     ...strokeProps,
     showNorth: z.boolean().default(true),
     background: z.boolean().default(true),
+    backgroundColor: z.string().default('background'),
+    backgroundOpacity: z.number().min(0).max(1).default(1),
   }),
   fields: [
     { key: 'latitudeId', label: 'Latitude', kind: 'value' },
@@ -78,6 +80,21 @@ export const liveMap = defineWidget({
     ...strokeFields,
     { key: 'showNorth', label: 'North indicator', kind: 'boolean' },
     { key: 'background', label: 'Background', kind: 'boolean' },
+    {
+      key: 'backgroundColor',
+      label: 'Background color',
+      kind: 'color',
+      dependsOn: { key: 'background', values: [true] },
+    },
+    {
+      key: 'backgroundOpacity',
+      label: 'Background opacity',
+      kind: 'number',
+      min: 0,
+      max: 1,
+      step: 0.05,
+      dependsOn: { key: 'background', values: [true] },
+    },
   ],
   inputs: (props) => [props.latitudeId, props.longitudeId, props.headingId],
   prepare: ({ props, values }) => prepareTrack(values, props.latitudeId, props.longitudeId, props.headingId),
@@ -96,7 +113,7 @@ export const liveMap = defineWidget({
       roundRectPath(ctx, 0, 0, frame.width, frame.height, u * 8);
     }
     if (props.background) {
-      ctx.fillStyle = frame.palette.background;
+      ctx.fillStyle = withAlpha(frame.color(props.backgroundColor), props.backgroundOpacity);
       ctx.fill();
     }
     ctx.clip();

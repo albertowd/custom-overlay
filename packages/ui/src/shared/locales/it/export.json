@@ -15,6 +15,7 @@
     "none": "Nessuna uscita selezionata",
     "choose": "Scegli…",
     "defaultHint": "Non scelto: va accanto ai video (o ai dati), con il nome del progetto, senza sostituire un’esportazione precedente.",
+    "browserVideoHint": "Non scelto: il browser chiede dove salvarlo all'avvio dell'esportazione, oppure lo scarica alla fine.",
     "zipHint": "Il browser non può scrivere in una cartella: i fotogrammi vengono scaricati in un unico file zip.",
     "useDefault": "Usa la posizione predefinita"
   },
@@ -50,8 +51,12 @@
     "acceleration": "Decodifica / codifica con",
     "accelerationOptions": {
       "auto": "GPU se disponibile",
+      "nvidia": "Scheda grafica NVIDIA",
+      "amd": "Scheda grafica AMD",
+      "intel": "Grafica Intel",
       "software": "Solo CPU"
     },
+    "accelerationHelp": "Scegli una scheda grafica per codificare il video su di essa; la CPU subentra quando non può codificare questo formato.",
     "scaling": "Ridimensionamento (quando la dimensione d'uscita è diversa da un video)",
     "scalers": {
       "bilinear": "Bilineare (veloce)",
@@ -60,6 +65,7 @@
       "fsr1": "Stile FSR 1 (Lanczos + nitidezza AMD CAS)"
     },
     "scalingHelp": "DLSS e XeSS non sono disponibili: sono upscaler temporali che richiedono vettori di movimento e profondità da un motore di gioco, che un video registrato non ha. L'opzione stile FSR 1 ingrandisce con Lanczos e aumenta la nitidezza con il CAS di AMD, le due fasi di FSR 1.",
+    "browserHelp": "Codificato da questo browser con l'hardware del dispositivo: 8 bit SDR, con l'audio ricodificato. Il filtro di scala, 10 bit e HDR richiedono l'app desktop.",
     "notes": {
       "sdrConverted": "YouTube converte i caricamenti SDR in Rec.709 a gamma limitata e 8 bit: un'uscita Rec.709 limitata appare uguale prima e dopo il caricamento.",
       "h264TenBit": "L'H.264 a 10 bit si codifica solo sulla CPU (i codificatori H.264 su GPU sono a 8 bit) e YouTube lo converte comunque a 8 bit: scegli un'uscita a 8 bit o il preset HEVC.",
@@ -82,17 +88,38 @@
     "preparing": "Preparazione: caricamento dei valori, scelta del codificatore…",
     "progress": "{percent}% · fotogramma {frame} / {frames}",
     "speed": "{fps} fps · {elapsed} trascorsi · {left} rimanenti",
+    "threads": {
+      "one": "{count} thread di disegno",
+      "other": "{count} thread di disegno"
+    },
     "done": {
       "one": "{count} fotogramma esportato",
       "other": "{count} fotogrammi esportati"
     },
     "doneTime": "in {time}.",
     "doneTimeEncoder": "in {time} con {encoder}.",
+    "doneGpu": "I widget sono stati fusi sulla scheda grafica.",
     "showInFolder": "Mostra nella cartella",
     "dismiss": "Chiudi",
     "failed": "L'esportazione non è riuscita.",
     "cancelled": "Esportazione annullata; il file incompleto è stato rimosso.",
     "cancelledSequence": "Esportazione annullata; i fotogrammi già salvati sono stati mantenuti.",
-    "cancelledZip": "Esportazione annullata; non è stato scaricato nulla."
+    "cancelledZip": "Esportazione annullata; non è stato scaricato nulla.",
+    "moving": "Spostamento del video dalla cartella temporanea…",
+    "throttled": "Rallentato: il disco dei video è occupato.",
+    "waitingOn": {
+      "drawing": "Limitato dal disegno dei widget.",
+      "encoder": "Limitato da ffmpeg: decodifica, codifica o il disco."
+    }
+  },
+  "disk": {
+    "title": "Disco",
+    "slow": "Disco lento (disco rigido)",
+    "slowHelp": "Per un disco rigido che contiene anche i video: il video viene scritto sul disco regolarmente invece che a grandi blocchi, e l'esportazione rallenta finché il disco risponde lentamente, così la lettura dei video non si blocca mai.",
+    "stageInTemp": "Scrivi prima nella cartella temporanea",
+    "stageInTempHelp": "Il video viene scritto nella cartella temporanea del sistema (di solito su un altro disco) e spostato al suo posto alla fine, così il disco dei video legge soltanto durante la codifica. Serve spazio per tutto il video.",
+    "maxSpeed": "Velocità massima (× tempo reale)",
+    "noLimit": "Nessun limite",
+    "maxSpeedHelp": "Limita la velocità di codifica e con essa letture e scritture: 1 codifica alla velocità di riproduzione del video. Vuoto per nessun limite."
   }
 }

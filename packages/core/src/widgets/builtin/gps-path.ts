@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { drawMarker, drawPanel, withAlpha } from '../draw.js';
+import { backgroundFields, backgroundProps, drawBackground, drawMarker, withAlpha } from '../draw.js';
 import { defineWidget, type FieldSpec, type ValueSeries } from '../types.js';
 
 const EARTH_RADIUS = 6_371_000;
@@ -189,7 +189,7 @@ export const gpsPath = defineWidget({
     ...markerProps,
     markerSize: z.number().min(2).max(60).default(8),
     showProgress: z.boolean().default(true),
-    background: z.boolean().default(true),
+    ...backgroundProps(),
   }),
   fields: [
     { key: 'latitudeId', label: 'Latitude', kind: 'value' },
@@ -214,13 +214,13 @@ export const gpsPath = defineWidget({
     ...strokeFields,
     ...markerFields,
     { key: 'showProgress', label: 'Highlight progress', kind: 'boolean' },
-    { key: 'background', label: 'Background panel', kind: 'boolean' },
+    ...backgroundFields(),
   ],
   inputs: (props) => [props.latitudeId, props.longitudeId, props.headingId],
   prepare: ({ props, values }) => prepareTrack(values, props.latitudeId, props.longitudeId, props.headingId),
   render(ctx, frame) {
     const { props, prepared } = frame;
-    if (props.background) drawPanel(ctx, frame);
+    drawBackground(ctx, frame, props);
     const { xs, ys, bounds, step } = prepared;
     if (!bounds) return;
     const pad = Math.min(frame.width, frame.height) * 0.1;

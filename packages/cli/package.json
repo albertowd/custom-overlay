@@ -3,7 +3,7 @@
     "custom-overlay": "./dist/index.js"
   },
   "dependencies": {
-    "@custom-overlay/core": "^0.1.0",
+    "@custom-overlay/core": "^0.2.0",
     "commander": "^15.0.0"
   },
   "description": "Command line interface for custom-overlay",
@@ -20,5 +20,5 @@
     "test:watch": "vitest"
   },
   "type": "module",
-  "version": "0.1.0"
+  "version": "0.2.0"
 }

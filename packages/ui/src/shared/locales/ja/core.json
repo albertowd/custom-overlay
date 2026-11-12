@@ -37,7 +37,7 @@
     "noStartFinish": "ラップ値はコースラインから取得されますが、スタート/フィニッシュラインがまだありません",
     "noWidgets": "テンプレートにまだウィジェットがありません",
     "videoExportWithoutVideo": "動画をエクスポートするには元の動画が必要です。画像シーケンスモードを選択してください",
-    "videoExportElsewhere": "最終動画はデスクトップアプリまたはCLIで書き出します。プロジェクトを動画と同じフォルダーに保存し、そちらで開いてください",
+    "videoExportElsewhere": "このブラウザーは動画をエンコードできません。最新の Chrome か Edge、またはデスクトップアプリを使ってください",
     "noOutput": "出力先を選択してください"
   },
   "widgets": {
@@ -298,7 +298,7 @@
     },
     "distance-bar": {
       "name": "距離バー",
-      "description": "走行距離の進捗バー。距離の間隔ごと、または各ラップの開始位置に目盛り付き。",
+      "description": "走行距離の進捗バー。距離の間隔ごとに目盛り付き。",
       "fields": {
         "valueId": {
           "label": "距離の値（m）"
@@ -315,28 +315,13 @@
           "label": "合計",
           "hint": "上の単位で指定。0 = セッション全体"
         },
-        "ticks": {
-          "label": "主目盛り",
-          "options": {
-            "distance": "目盛りの間隔ごと",
-            "laps": "各ラップの開始位置"
-          }
-        },
         "tickStep": {
           "label": "目盛りの間隔",
-          "hint": "0 = 自動。距離の目盛りのみ"
-        },
-        "lapTimeId": {
-          "label": "ラップタイムの値（秒）",
-          "hint": "ラップの目盛りのみ"
-        },
-        "lapNumberId": {
-          "label": "ラップ数の値",
-          "hint": "ラップの目盛りのみ"
+          "hint": "0 = 自動"
         },
         "minorTicks": {
           "label": "補助目盛り",
-          "hint": "主目盛りの間（ラップの目盛りではラップごと）"
+          "hint": "主目盛りの間"
         },
         "decimals": {
           "label": "小数点以下の桁数"
@@ -358,6 +343,69 @@
         },
         "background": {
           "label": "背景パネル"
+        }
+      }
+    },
+    "lap-bar": {
+      "name": "ラップバー",
+      "description": "ラップの進捗バー: セッション全体（各ラップの開始位置に番号付きの目盛り）、または現在のラップのみ。",
+      "fields": {
+        "view": {
+          "label": "表示",
+          "options": {
+            "session": "セッション全体（ラップごとに目盛り）",
+            "lap": "現在のラップのみ"
+          }
+        },
+        "valueId": {
+          "label": "距離の値（m）"
+        },
+        "unit": {
+          "label": "単位",
+          "options": {
+            "km": "キロメートル",
+            "m": "メートル",
+            "mi": "マイル"
+          }
+        },
+        "total": {
+          "label": "合計",
+          "hint": "上の単位で指定。0 = セッション全体"
+        },
+        "decimals": {
+          "label": "小数点以下の桁数"
+        },
+        "color": {
+          "label": "進行状況"
+        },
+        "trackColor": {
+          "label": "バーの背景"
+        },
+        "textColor": {
+          "label": "テキスト"
+        },
+        "showLabels": {
+          "label": "目盛りラベル"
+        },
+        "showValue": {
+          "label": "現在の距離"
+        },
+        "background": {
+          "label": "背景パネル"
+        },
+        "lapTimeId": {
+          "label": "ラップタイムの値（秒）"
+        },
+        "lapNumberId": {
+          "label": "ラップ数の値"
+        },
+        "label": {
+          "label": "ラベル",
+          "hint": "ラップ番号の前"
+        },
+        "minorTicks": {
+          "label": "補助目盛り",
+          "hint": "ラップごと"
         }
       }
     },
@@ -1061,6 +1109,45 @@
     "editing": {
       "label": "編集向け",
       "description": "動画編集ソフトでスムーズにスクラブできる、B フレームなしの 0.25 秒の短い GOP、H.264。"
+    }
+  },
+  "fields": {
+    "backgroundColor": {
+      "label": "背景色"
+    },
+    "backgroundShape": {
+      "label": "背景の形",
+      "options": {
+        "rounded": "角丸長方形",
+        "rectangle": "長方形",
+        "pill": "ピル型",
+        "ellipse": "楕円",
+        "circle": "円",
+        "slanted": "斜め"
+      }
+    },
+    "backgroundRadius": {
+      "label": "角の半径",
+      "hint": "短い辺に対する %"
+    },
+    "backgroundOpacity": {
+      "label": "背景の不透明度"
+    },
+    "align": {
+      "label": "配置",
+      "options": {
+        "left": "左",
+        "center": "中央",
+        "right": "右"
+      }
+    },
+    "verticalAlign": {
+      "label": "縦の配置",
+      "options": {
+        "top": "上",
+        "middle": "中央",
+        "bottom": "下"
+      }
     }
   }
 }

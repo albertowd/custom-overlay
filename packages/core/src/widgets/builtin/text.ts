@@ -1,22 +1,24 @@
 import { z } from 'zod';
-import { drawPanel, drawTextBox } from '../draw.js';
+import {
+  backgroundFields,
+  backgroundProps,
+  drawBackground,
+  drawTextBox,
+  textAlignFields,
+  textAlignProp,
+  verticalAlignProp,
+} from '../draw.js';
 import { formatClock, formatTemplate, templateValueIds } from '../format.js';
 import { defineWidget, type FieldSpec } from '../types.js';
-
-const ALIGN_OPTIONS = [
-  ['left', 'Left'],
-  ['center', 'Center'],
-  ['right', 'Right'],
-] as const;
 
 const textStyle = {
   color: z.string().default('text'),
   size: z.number().min(0.05).max(1).default(0.7),
   weight: z.enum(['400', '600', '800']).default('600'),
-  align: z.enum(['left', 'center', 'right']).default('center'),
+  ...textAlignProp,
+  ...verticalAlignProp,
   italic: z.boolean().default(false),
   uppercase: z.boolean().default(false),
-  background: z.boolean().default(false),
 };
 
 const textStyleFields: FieldSpec[] = [
@@ -40,10 +42,10 @@ const textStyleFields: FieldSpec[] = [
       ['800', 'Bold'],
     ],
   },
-  { key: 'align', label: 'Align', kind: 'select', options: ALIGN_OPTIONS },
+  ...textAlignFields(true),
   { key: 'italic', label: 'Italic', kind: 'boolean' },
   { key: 'uppercase', label: 'Uppercase', kind: 'boolean' },
-  { key: 'background', label: 'Background panel', kind: 'boolean' },
+  ...backgroundFields(),
 ];
 
 export const staticText = defineWidget({
@@ -52,12 +54,16 @@ export const staticText = defineWidget({
   description: 'Static text: a title, the driver name, the event...',
   category: 'text',
   defaultSize: { width: 0.25, height: 0.06 },
-  schema: z.object({ text: z.string().default('Text'), ...textStyle }),
+  schema: z.object({
+    text: z.string().default('Text'),
+    ...textStyle,
+    ...backgroundProps({ enabled: false }),
+  }),
   fields: [{ key: 'text', label: 'Text', kind: 'textarea' }, ...textStyleFields],
   inputs: () => [],
   render(ctx, frame) {
     const { props } = frame;
-    if (props.background) drawPanel(ctx, frame);
+    drawBackground(ctx, frame, props);
     drawTextBox(ctx, frame, props.text, { ...props, color: frame.color(props.color) });
   },
 });
@@ -72,7 +78,7 @@ export const valueText = defineWidget({
     template: z.string().default('{speed.kmh|0} km/h'),
     fallback: z.string().default('—'),
     ...textStyle,
-    background: z.boolean().default(true),
+    ...backgroundProps(),
   }),
   fields: [
     {
@@ -87,7 +93,7 @@ export const valueText = defineWidget({
   inputs: (props) => templateValueIds(props.template),
   render(ctx, frame) {
     const { props } = frame;
-    if (props.background) drawPanel(ctx, frame);
+    drawBackground(ctx, frame, props);
     const text = formatTemplate(props.template, frame.value, frame.utcOffsetMinutes, props.fallback);
     drawTextBox(ctx, frame, text, { ...props, color: frame.color(props.color) });
   },
@@ -106,7 +112,8 @@ export const dateTime = defineWidget({
     utcOffsetMinutes: z.number().default(0),
     color: z.string().default('text'),
     dateColor: z.string().default('textMuted'),
-    background: z.boolean().default(true),
+    ...textAlignProp,
+    ...backgroundProps(),
   }),
   fields: [
     { key: 'time', label: 'Time format', kind: 'text', hint: 'Tokens: HH mm ss SSS (empty to hide)' },
@@ -130,12 +137,13 @@ export const dateTime = defineWidget({
     },
     { key: 'color', label: 'Time color', kind: 'color' },
     { key: 'dateColor', label: 'Date color', kind: 'color' },
-    { key: 'background', label: 'Background panel', kind: 'boolean' },
+    ...textAlignFields(),
+    ...backgroundFields(),
   ],
   inputs: () => ['time.clock'],
   render(ctx, frame) {
     const { props } = frame;
-    if (props.background) drawPanel(ctx, frame);
+    drawBackground(ctx, frame, props);
     const offset =
       props.timezone === 'utc'
         ? 0
@@ -151,14 +159,14 @@ export const dateTime = defineWidget({
         color: frame.color(props.color),
         size: 0.8,
         weight: 700,
-        align: 'center',
+        align: props.align,
       });
       ctx.translate(0, frame.height * 0.58);
       drawTextBox(ctx, { ...frame, height: frame.height * 0.36 }, date, {
         color: frame.color(props.dateColor),
         size: 0.75,
         weight: 500,
-        align: 'center',
+        align: props.align,
       });
       ctx.restore();
     } else {
@@ -166,7 +174,7 @@ export const dateTime = defineWidget({
         color: frame.color(props.color),
         size: 0.7,
         weight: 700,
-        align: 'center',
+        align: props.align,
       });
     }
   },

@@ -7,7 +7,8 @@
   "tabs": {
     "widget": "ウィジェット",
     "values": "値",
-    "style": "スタイル"
+    "style": "スタイル",
+    "label": "パネル"
   },
   "visible": {
     "title": "ウィジェットの表示期間",
@@ -16,7 +17,13 @@
   "editor": {
     "snap": "ガイドにスナップ",
     "showGuides": "ガイドを表示",
-    "hint": "ドラッグ中に Alt キーを押すとスナップを切り替えます。ガイドは「スタイル」タブで設定します。"
+    "hint": "ドラッグ中に Alt を押すとスナップを切り替えます。Ctrl または Shift + クリックで複数のウィジェットを選択できます。ガイドは「スタイル」タブで設定します。",
+    "snapTo": "スナップ先",
+    "snapTargets": {
+      "guides": "ガイド",
+      "group": "グループ",
+      "both": "両方"
+    }
   },
   "canvas": {
     "title": "キャンバス",
@@ -181,5 +188,63 @@
     "likeProject": "プロジェクトと同じ ({range})",
     "ownData": "独自のデータ範囲",
     "ownDataShort": "独自のデータ範囲"
+  },
+  "groups": {
+    "title": "グループ",
+    "defaultName": "グループ {number}",
+    "group": "グループ",
+    "none": "なし",
+    "position": "位置",
+    "relative": "相対",
+    "absolute": "絶対",
+    "absoluteShort": "絶対位置",
+    "relativeHint": "グループと一緒に移動します。X と Y はグループの原点からの位置です。",
+    "absoluteHint": "グループを移動してもその場に留まります。X と Y はフレーム内の位置です。",
+    "relativeX": "グループからの X %",
+    "relativeY": "グループからの Y %",
+    "collapse": "グループを折りたたむ",
+    "expand": "グループを展開",
+    "count": {
+      "other": "ウィジェット {count} 個"
+    },
+    "groupAction": "グループ化",
+    "groupHint": "選択したウィジェットをグループ化（Ctrl+G）",
+    "multiSelectHint": "Ctrl または Shift + クリックで複数のウィジェットを選択し、グループ化や整列ができます。",
+    "ungroup": "グループ解除",
+    "visible": "表示",
+    "originX": "原点 X %",
+    "originY": "原点 Y %",
+    "originHint": "原点を動かすと、グループの相対位置のウィジェットが移動します。",
+    "absoluteCount": {
+      "other": "絶対位置のウィジェット {count} 個は動きません。"
+    },
+    "selected": {
+      "other": "{count} 個のウィジェットを選択中"
+    },
+    "dragHint": "{name}: ドラッグしてグループを移動"
+  },
+  "align": {
+    "title": "整列",
+    "to": "整列の基準",
+    "targets": {
+      "group": "グループ",
+      "guides": "ガイド"
+    },
+    "edges": {
+      "left": "左端を揃える",
+      "center": "左右中央を揃える",
+      "right": "右端を揃える",
+      "top": "上端を揃える",
+      "middle": "上下中央を揃える",
+      "bottom": "下端を揃える"
+    },
+    "distribute": {
+      "horizontal": "左右に均等配置",
+      "vertical": "上下に均等配置"
+    },
+    "hints": {
+      "group": "グループまたは選択範囲の枠に揃えます。単独のウィジェットはフレームに揃えます。",
+      "guides": "最も近いガイド線に揃えます（フレームの端、分割線、セーフマージン、追加の線）。"
+    }
   }
 }

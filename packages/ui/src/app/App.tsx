@@ -1,10 +1,11 @@
 import { nextStep, previousStep, type StepId, type StepStatus } from '@custom-overlay/core';
-import { type ComponentType, useEffect, useState } from 'react';
+import { type ComponentType, useEffect, useRef, useState } from 'react';
 import type { AppInfo } from '../shared/api';
 import { api } from './api';
 import { BusyMask } from './components/BusyMask';
 import { LanguagePicker } from './components/LanguagePicker';
 import { NewProjectDialog } from './components/NewProjectDialog';
+import { SupportBanner } from './components/SupportAlerts';
 import { UpdateDialog } from './components/UpdateDialog';
 import { coreText, useT } from './i18n';
 import logoUrl from './logo.svg';
@@ -37,8 +38,14 @@ const STATE_ICONS: Record<StepStatus['state'], string> = {
 function Stepper({ workflow, current }: { workflow: StepStatus[]; current: StepId }) {
   const t = useT();
   const goTo = useStore((s) => s.goTo);
+  const ref = useRef<HTMLElement>(null);
+  // On phones the steps scroll sideways: keep the current one in view.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: re-run when the step changes
+  useEffect(() => {
+    ref.current?.querySelector('.step-item.active')?.scrollIntoView?.({ block: 'nearest', inline: 'center' });
+  }, [current]);
   return (
-    <nav className="stepper">
+    <nav className="stepper" ref={ref}>
       {workflow.map((step, index) => {
         const hasError = step.issues.some((i) => i.severity === 'error');
         return (
@@ -246,6 +253,7 @@ export function App() {
       <div className="body">
         <Stepper workflow={workflow} current={step} />
         <main className="content">
+          <SupportBanner />
           <StepComponent />
         </main>
       </div>

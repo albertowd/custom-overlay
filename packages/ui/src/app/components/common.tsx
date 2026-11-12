@@ -142,3 +142,35 @@ export function DropZone({ onFiles, children, className = '' }: DropZoneProps) {
     </section>
   );
 }
+
+/** Segmented control: one of a few choices, as toggle buttons. */
+export function Segmented<T extends string>({
+  label,
+  value,
+  options,
+  onChange,
+  className = '',
+}: {
+  /** Accessible name of the group. */
+  label: string;
+  value: T;
+  options: readonly (readonly [T, ReactNode])[];
+  onChange(value: T): void;
+  className?: string;
+}) {
+  return (
+    <fieldset className={`segmented ${className}`} aria-label={label}>
+      {options.map(([option, text]) => (
+        <button
+          type="button"
+          key={option}
+          aria-pressed={option === value}
+          className={option === value ? 'active' : ''}
+          onClick={() => onChange(option)}
+        >
+          {text}
+        </button>
+      ))}
+    </fieldset>
+  );
+}

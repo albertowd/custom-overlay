@@ -91,5 +91,20 @@
       "title": "Atualizando os valores…",
       "detail": "Recalculando voltas, distâncias e dados dos widgets com as novas configurações."
     }
+  },
+  "support": {
+    "title": "Limites deste navegador",
+    "dismiss": "Fechar",
+    "insecureContext": "Esta página não foi aberta por HTTPS, então o navegador bloqueia a exportação de vídeo e os arquivos de que ela precisa. Abra o aplicativo pelo endereço https:// (ou por localhost neste computador).",
+    "noWebCodecs": "Este navegador não consegue codificar vídeo, então o vídeo final não pode ser exportado aqui: use um Chrome ou Edge recente (no computador ou no Android), ou o aplicativo para desktop. A edição e a sequência de imagens continuam funcionando.",
+    "noPrivateStorage": "Este navegador não consegue guardar o vídeo enquanto ele é exportado: atualize-o, ou use o Chrome ou o Edge.",
+    "noSavePicker": "Este navegador não consegue salvar num arquivo que você escolha: o vídeo é baixado quando a exportação termina. Deixe espaço para ele no dispositivo.",
+    "cannotDecode": "Este navegador não consegue decodificar '{label}' ({codec}), então ele não pode ser exportado aqui. O Firefox não tem HEVC (H.265), o formato da maioria dos vídeos 4K da GoPro: use o Chrome ou o Edge, ou o aplicativo para desktop.",
+    "cannotDecodeAudio": "Este navegador não consegue decodificar o som de '{label}' ({codec}): essa parte é exportada sem som.",
+    "cannotEncodeVideo": "Este navegador não consegue codificar {codec} em {size} neste dispositivo: o vídeo é codificado em H.264.",
+    "cannotEncodeAny": "Este navegador não consegue codificar vídeo em {size} neste dispositivo: escolha uma resolução menor, ou use o aplicativo para desktop.",
+    "cannotEncodeAac": "Este navegador não consegue codificar som AAC: ele é codificado em Opus, que alguns editores de vídeo não leem.",
+    "cannotEncodeAudio": "Este navegador não consegue codificar som: o vídeo é exportado sem ele.",
+    "eightBitOnly": "Os navegadores exportam 8 bits SDR (Rec.709): as configurações de 10 bits e HDR precisam do aplicativo para desktop."
   }
 }

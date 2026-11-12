@@ -1,5 +1,14 @@
 import { z } from 'zod';
-import { drawPanel, drawTextBox } from '../draw.js';
+import {
+  alignedX,
+  backgroundFields,
+  backgroundProps,
+  drawBackground,
+  drawTextBox,
+  textAlignFields,
+  textAlignProp,
+  textPadding,
+} from '../draw.js';
 import { formatNumber } from '../format.js';
 import { defineWidget } from '../types.js';
 
@@ -17,7 +26,8 @@ export const lapCount = defineWidget({
     beforeFirstLap: z.enum(['dashes', 'hide']).default('dashes'),
     color: z.string().default('text'),
     totalColor: z.string().default('textMuted'),
-    background: z.boolean().default(true),
+    ...textAlignProp,
+    ...backgroundProps(),
   }),
   fields: [
     { key: 'lapNumberId', label: 'Lap number value', kind: 'value' },
@@ -35,14 +45,15 @@ export const lapCount = defineWidget({
     },
     { key: 'color', label: 'Current lap', kind: 'color' },
     { key: 'totalColor', label: 'Total', kind: 'color' },
-    { key: 'background', label: 'Background panel', kind: 'boolean' },
+    ...textAlignFields(),
+    ...backgroundFields(),
   ],
   inputs: (props) => [props.lapNumberId, ...(props.showTotal ? [props.lapCountId] : [])],
   render(ctx, frame) {
     const { props } = frame;
     const lap = frame.value(props.lapNumberId);
     if (!Number.isFinite(lap) && props.beforeFirstLap === 'hide') return;
-    if (props.background) drawPanel(ctx, frame);
+    drawBackground(ctx, frame, props);
 
     ctx.save();
     let area = frame.height;
@@ -51,17 +62,17 @@ export const lapCount = defineWidget({
         color: frame.color('textMuted'),
         size: 0.75,
         weight: 600,
-        align: 'center',
+        align: props.align,
         uppercase: true,
       });
       ctx.translate(0, frame.height * 0.32);
       area = frame.height * 0.66;
     }
 
-    // Current lap large, "/ total" smaller on the same baseline, centred together.
+    // Current lap large, "/ total" smaller on the same baseline, aligned together.
     const current = formatNumber(lap, 0, '-');
     const total = props.showTotal ? ` / ${formatNumber(frame.value(props.lapCountId), 0, '-')}` : '';
-    const padding = frame.unit * 6;
+    const padding = textPadding(frame);
     const maxWidth = Math.max(1, frame.width - padding * 2);
     let size = area * 0.8;
     const measure = () => {
@@ -75,7 +86,9 @@ export const lapCount = defineWidget({
       size *= maxWidth / (widths.big + widths.small);
       widths = measure();
     }
-    const left = (frame.width - widths.big - widths.small) / 2;
+    const together = widths.big + widths.small;
+    const at = alignedX(frame, props.align);
+    const left = props.align === 'left' ? at : props.align === 'right' ? at - together : at - together / 2;
     const baseline = area / 2 + size * 0.36;
     ctx.textAlign = 'left';
     ctx.textBaseline = 'alphabetic';

@@ -32,6 +32,20 @@ Guides are only shown in the editor, never rendered.
 
 **Order.** Widgets are drawn in template order: the first one is at the back.
 
+**Groups.** Widgets can be grouped (`groups` in the template, `groupId` on each member) to move,
+hide, align and reorder them together: a group is one layer of the widget list and its members
+stay next to each other in the drawing order. Positions stay stored in the frame. Each member is
+either **relative** (`groupPosition: "relative"`, the default), which moves with the group and
+shows its X / Y from the group origin (the group's `x` / `y`, set at its top-left when created),
+or **absolute**, which stays where it is when the group moves and shows its X / Y in the frame.
+Hiding a group hides all its members.
+
+**Alignment.** Selected widgets (or a group's members) can be aligned left, centre, right, top,
+middle or bottom, and spread with equal gaps. They align either to their group (the box around the
+group, or around the selection) or to the nearest guide lines. Snapping while dragging follows the
+same choice: to the guides, to other widgets (the rest of its group for a group member; every
+other widget for a widget on its own or a whole group), or both.
+
 **Values.** Widgets read [values](../values/README.md) by id (`speed.kmh`, `lap.time`,
 `racechrono.lateralAcc`…), one number per frame. Every value input of a widget is a setting, so a
 gauge can show RPM, a text can show your own script value, and so on.
@@ -54,7 +68,12 @@ or an explicit hex color (`#ff0000`), which overrides it for that widget only. R
 overlay by changing the palette.
 
 **Transparent background.** Widgets draw on a transparent canvas. Most have an optional
-background panel in the palette's `background` color.
+background (`background`), with its own color (`backgroundColor`, the palette's `background` by
+default), shape (`backgroundShape`: rounded, rectangle, pill, ellipse, circle or slanted; gauges
+default to a circle), corner radius (`backgroundRadius`) and opacity (`backgroundOpacity`).
+
+**Text alignment.** Text widgets align their text left, centre or right (`align`), and the free
+text widgets (`text`, `value-text`) also to the top, middle or bottom of their box (`verticalAlign`).
 
 **Lap timing.** A widget that reads lap or sector values (`lap.*`, `sector.*`) follows the
 project's timing source (Track step) unless its _Lap timing_ is set to the logger or the track
@@ -72,24 +91,25 @@ gauge, a 2.5 g corner).
 
 ## Built-in widgets
 
-| Type id         | Name          | Reads                                 | Highlights                                                                                                                                                                                                                               |
-| --------------- | ------------- | ------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `speed-gauge`   | Speed gauge   | `speed.kmh`                           | Needle (a line, your own image turned around a pivot, or none for a clean centre), arc, major/minor ticks, digital readout. Maximum and tick step automatic from the session. Works for any value (RPM, G…).                             |
-| `g-force`       | G-force       | `accel.lateral`, `accel.longitudinal` | Friction circle with rings, fading trail of the last seconds, combined G readout; axes can be inverted.                                                                                                                                  |
-| `gps-path`      | GPS path      | `latitude`, `longitude`, `heading`    | Whole session path (north up), progress so far highlighted, current position as a dot or your own marker image (car, kart…) turned by the heading.                                                                                       |
-| `live-map`      | Live map      | `latitude`, `longitude`, `heading`    | Map following the current position within a radius, or the whole track. Heading-up (map rotates) or north-up (marker rotates). Marker can be your own image. Heading is computed from the path when there is no heading value.           |
-| `distance-bar`  | Distance bar  | `distance.traveled`                   | Progress bar of the distance covered with tick marks and labels, in km, m or mi. Major ticks every tick step, or at each lap start labelled with the lap number (`lap.time`, `lap.number`).                                              |
-| `elevation`     | Elevation     | `altitude`                            | Current altitude with the elevation profile of the session and a position marker, in m or ft.                                                                                                                                            |
-| `lap-timer`     | Lap timer     | `lap.time`, `lap.number`              | Running time of the current lap. A finished lap stays on screen for a few seconds (5 by default) with its gap to the best or previous lap, in the best-lap color when it is a new best.                                                  |
-| `lap-count`     | Lap count     | `lap.number`, `lap.count`             | Current lap and total laps (`LAP 3 / 12`), the total smaller in its own color; optional label, dashes or hidden before the first lap.                                                                                                    |
-| `lap-table`     | Lap times     | `lap.time`, `lap.number`              | Lap times with the gap to the best lap: the laps done so far or the whole session (future laps dimmed). The current lap is highlighted with its running time and, when its length is known, a progress fill. Scrolls to keep it in view. |
-| `date-time`     | Date and time | `time.clock`                          | Clock time of the frame and optional date, with custom formats and timezone.                                                                                                                                                             |
-| `timespan`      | Timespan      | `time.clock` or `time.timeline`       | Time since a start (a date/time or a timeline position). Before the start: count down, show zero, or hide.                                                                                                                               |
-| `value-text`    | Value text    | any                                   | Text with placeholders: `{speed.kmh\|0} km/h`, `Lap {lap.number}  {lap.time\|duration}`.                                                                                                                                                 |
-| `text`          | Text          | —                                     | Static text.                                                                                                                                                                                                                             |
-| `image`         | Image         | —                                     | Static PNG, JPEG, WebP, GIF or SVG; contain/cover/stretch, rounded corners.                                                                                                                                                              |
-| `dynamic-image` | Dynamic image | any                                   | An image rotated, moved and scaled by values: a steering wheel turned by the steering angle, a needle, a car icon…                                                                                                                       |
-| `shape`         | Shape         | —                                     | Solid colour background without an image: rectangle, rounded rectangle, ellipse, slanted parallelogram, triangle, diamond or hexagon; optional border, or border only.                                                                   |
+| Type id         | Name          | Reads                                 | Highlights                                                                                                                                                                                                                                 |
+| --------------- | ------------- | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `speed-gauge`   | Speed gauge   | `speed.kmh`                           | Needle (a line, your own image turned around a pivot, or none for a clean centre), arc, major/minor ticks, digital readout. Maximum and tick step automatic from the session. Works for any value (RPM, G…).                               |
+| `g-force`       | G-force       | `accel.lateral`, `accel.longitudinal` | Friction circle with rings, fading trail of the last seconds, combined G readout; axes can be inverted.                                                                                                                                    |
+| `gps-path`      | GPS path      | `latitude`, `longitude`, `heading`    | Whole session path (north up), progress so far highlighted, current position as a dot or your own marker image (car, kart…) turned by the heading.                                                                                         |
+| `live-map`      | Live map      | `latitude`, `longitude`, `heading`    | Map following the current position within a radius, or the whole track. Heading-up (map rotates) or north-up (marker rotates). Marker can be your own image. Heading is computed from the path when there is no heading value.             |
+| `distance-bar`  | Distance bar  | `distance.traveled`                   | Progress bar of the distance covered with tick marks and labels every tick step, in km, m or mi.                                                                                                                                           |
+| `lap-bar`       | Lap bar       | `distance.traveled`, `lap.time`       | Progress bar of the laps: the whole session with a major tick at each lap start labelled with its number, or the current lap only (an unfinished last lap as long as the one before). Distance bars saved with lap ticks load as lap bars. |
+| `elevation`     | Elevation     | `altitude`                            | Current altitude with the elevation profile of the session and a position marker, in m or ft.                                                                                                                                              |
+| `lap-timer`     | Lap timer     | `lap.time`, `lap.number`              | Running time of the current lap. A finished lap stays on screen for a few seconds (5 by default) with its gap to the best or previous lap, in the best-lap color when it is a new best.                                                    |
+| `lap-count`     | Lap count     | `lap.number`, `lap.count`             | Current lap and total laps (`LAP 3 / 12`), the total smaller in its own color; optional label, dashes or hidden before the first lap.                                                                                                      |
+| `lap-table`     | Lap times     | `lap.time`, `lap.number`              | Lap times with the gap to the best lap: the laps done so far or the whole session (future laps dimmed). The current lap is highlighted with its running time and, when its length is known, a progress fill. Scrolls to keep it in view.   |
+| `date-time`     | Date and time | `time.clock`                          | Clock time of the frame and optional date, with custom formats and timezone.                                                                                                                                                               |
+| `timespan`      | Timespan      | `time.clock` or `time.timeline`       | Time since a start (a date/time or a timeline position). Before the start: count down, show zero, or hide.                                                                                                                                 |
+| `value-text`    | Value text    | any                                   | Text with placeholders: `{speed.kmh\|0} km/h`, `Lap {lap.number}  {lap.time\|duration}`.                                                                                                                                                   |
+| `text`          | Text          | —                                     | Static text.                                                                                                                                                                                                                               |
+| `image`         | Image         | —                                     | Static PNG, JPEG, WebP, GIF or SVG; contain/cover/stretch, rounded corners.                                                                                                                                                                |
+| `dynamic-image` | Dynamic image | any                                   | An image rotated, moved and scaled by values: a steering wheel turned by the steering angle, a needle, a car icon…                                                                                                                         |
+| `shape`         | Shape         | —                                     | Solid colour background without an image: rectangle, rounded rectangle, ellipse, slanted parallelogram, triangle, diamond or hexagon; optional border, or border only.                                                                     |
 
 ### Text formats
 
@@ -216,6 +236,9 @@ Rules of thumb:
 | `value`            | value id with suggestions                                                                                | string   |
 | `image`            | file picker                                                                                              | data URL |
 
+A field can be shown only while another setting has some values:
+`dependsOn: { key: 'background', values: [true] }`.
+
 ## Rendering API
 
 | `frame` member       | Description                                                        |
@@ -234,7 +257,10 @@ Rules of thumb:
 | `editing`            | `true` in the editor                                               |
 
 Drawing helpers: `drawPanel`, `drawDisc`, `drawTextBox`, `fitText`, `roundRectPath`, `fitRect`,
-`withAlpha`, `niceStep`, `niceCeil`, `minOf`, `maxOf`. Formatting: `formatNumber`,
+`withAlpha`, `niceStep`, `niceCeil`, `minOf`, `maxOf`. A widget gets the standard background
+settings with `...backgroundProps()` in its schema, `...backgroundFields()` in its fields and
+`drawBackground(ctx, frame, props)`; text alignment with `...textAlignProp` /
+`...verticalAlignProp` and `...textAlignFields()`. Formatting: `formatNumber`,
 `formatDuration`, `formatClock`, `formatTemplate`, `parseClock`.
 
 `renderOverlay(ctx, options)` draws a whole template for one frame. The desktop preview and the
