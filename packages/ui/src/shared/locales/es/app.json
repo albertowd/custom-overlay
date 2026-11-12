@@ -24,6 +24,7 @@
     "openProjectFailed": "No se pudo abrir el proyecto: {error}",
     "saveProjectFailed": "No se pudo guardar el proyecto: {error}",
     "loadFailed": "No se pudo cargar {path}: {error}",
+    "notSameFile": "'{picked}' no es el mismo archivo que '{name}' del proyecto: no se cambió nada. Selecciona el archivo con el que se hizo el proyecto.",
     "trackImported": "Líneas de '{name}' importadas",
     "trackImportedUnnamed": "Líneas del circuito importadas",
     "trackDetected": "Detectado {name}: sus líneas cronometran las vueltas",

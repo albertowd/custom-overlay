@@ -24,6 +24,7 @@
     "openProjectFailed": "Could not open the project: {error}",
     "saveProjectFailed": "Could not save the project: {error}",
     "loadFailed": "Could not load {path}: {error}",
+    "notSameFile": "'{picked}' is not the same file as '{name}' in the project: nothing changed. Select the file the project was made with.",
     "trackImported": "Imported the lines of '{name}'",
     "trackImportedUnnamed": "Imported the track lines",
     "trackDetected": "Detected {name}: its lines time the laps",

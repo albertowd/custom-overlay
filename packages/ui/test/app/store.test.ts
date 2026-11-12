@@ -247,6 +247,126 @@ describe('videos', () => {
     expect(state.syncResults).toEqual({});
   });
 
+  describe('a video that did not load', () => {
+    async function openMissing() {
+      const session = sessionProject();
+      api().loadVideo.mockRejectedValueOnce(new Error("'GX010001.MP4' is not open in this tab"));
+      api().loadSource.mockResolvedValue(session.series[session.sourceId] as never);
+      await store().openProject({ path: '/p.json', project: session.project });
+      expect(store().errors[session.videoId]).toBeDefined();
+      // The same recording, wherever it is picked from.
+      api().loadVideo.mockImplementation(async (path) =>
+        loadedVideo(path, session.series[embeddedSourceId(session.videoId)] ?? null),
+      );
+      return session;
+    }
+
+    /** The video and its telemetry, without the path. */
+    const itemsOf = (p: Project) =>
+      [...p.videos, ...p.sources.filter((s) => s.videoId !== null)].map(({ path: _, ...rest }) => rest);
+
+    it('loads in its place when a file with its name is added, keeping the stored path', async () => {
+      const session = await openMissing();
+      api().withChapters.mockImplementation(async (picked) => picked);
+      await store().addVideos(['gx010001.mp4']);
+      expect(api().withChapters).toHaveBeenCalledWith(['gx010001.mp4'], []);
+      expect(api().loadVideo).toHaveBeenLastCalledWith('gx010001.mp4');
+      const state = store();
+      expect(state.project.videos.map((v) => [v.id, v.path])).toEqual([
+        [session.videoId, '/videos/GX010001.MP4'],
+      ]);
+      expect(state.errors[session.videoId]).toBeUndefined();
+      expect(state.videos[session.videoId]).toBeDefined();
+      expect(state.series[embeddedSourceId(session.videoId)]).toBeDefined();
+    });
+
+    it('is selected again from its card, keeping the template, the timeline and the sync', async () => {
+      const session = await openMissing();
+      const before = store().project;
+      api().selectVideos.mockResolvedValue(['/moved/renamed.mp4']);
+      await store().relinkVideo(session.videoId);
+      const state = store();
+      expect(state.project.template).toBe(before.template);
+      expect(itemsOf(state.project)).toEqual(itemsOf(before));
+      expect(state.project.videos[0]?.path).toBe('/moved/renamed.mp4');
+      expect(state.project.sources.find((s) => s.videoId === session.videoId)?.path).toBe(
+        '/moved/renamed.mp4',
+      );
+      expect(state.errors[session.videoId]).toBeUndefined();
+      expect(state.dirty).toBe(true);
+    });
+
+    it('refuses another file, even with the same name, and says so', async () => {
+      const session = await openMissing();
+      const before = store().project;
+      // Another recording: GoPro file names repeat.
+      api().loadVideo.mockImplementation(async (path) => loadedVideo(path, null, { sizeBytes: 123 }));
+      api().selectVideos.mockResolvedValue(['/other/GX010001.MP4']);
+      await store().relinkVideo(session.videoId);
+      const state = store();
+      expect(state.project).toBe(before);
+      expect(state.videos[session.videoId]).toBeUndefined();
+      expect(state.errors[session.videoId]).toBeDefined();
+      expect(state.notice).toEqual({
+        kind: 'error',
+        message:
+          "'GX010001.MP4' is not the same file as 'GX010001.MP4' in the project: nothing changed. Select the file the project was made with.",
+      });
+
+      // Nor is it added as a new video when added by name.
+      api().withChapters.mockImplementation(async (picked) => picked);
+      await store().addVideos(['/other/GX010001.MP4']);
+      expect(store().project.videos).toHaveLength(1);
+    });
+
+    it('takes a file with its name when the project never saw it load (older projects)', async () => {
+      const session = sessionProject();
+      const old: Project = {
+        ...session.project,
+        videos: session.project.videos.map((v) => ({ ...v, fingerprint: null })),
+      };
+      api().loadVideo.mockRejectedValueOnce(new Error('not open'));
+      await store().openProject({ path: '/p.json', project: old });
+      api().loadVideo.mockImplementation(async (path) => loadedVideo(path, null, { sizeBytes: 77 }));
+      api().selectVideos.mockResolvedValue(['/x/other.mp4']);
+      await store().relinkVideo(session.videoId);
+      expect(store().notice?.kind).toBe('error');
+      api().selectVideos.mockResolvedValue(['/x/GX010001.MP4']);
+      await store().relinkVideo(session.videoId);
+      expect(store().videos[session.videoId]).toBeDefined();
+      // From now on the file is known by what it is.
+      expect(store().project.videos[0]?.fingerprint).toBe('size:77');
+    });
+
+    it('remembers what an older project file is when it loads, without a change to save', async () => {
+      const session = sessionProject();
+      const old: Project = {
+        ...session.project,
+        videos: session.project.videos.map((v) => ({ ...v, fingerprint: null })),
+      };
+      api().loadVideo.mockResolvedValue(loadedVideo('/videos/GX010001.MP4', null, { sizeBytes: 55 }));
+      await store().openProject({ path: '/p.json', project: old });
+      expect(store().project.videos[0]?.fingerprint).toBe('size:55');
+    });
+
+    it('keeps its path when the file picked again does not load', async () => {
+      const session = await openMissing();
+      api().loadVideo.mockRejectedValue(new Error('not a video'));
+      api().selectVideos.mockResolvedValue(['/other/clip.mp4']);
+      await store().relinkVideo(session.videoId);
+      expect(store().project.videos[0]?.path).toBe('/videos/GX010001.MP4');
+      expect(store().errors[session.videoId]).toBe('not a video');
+    });
+
+    it('stays as it is when the picker is cancelled', async () => {
+      const session = await openMissing();
+      const calls = api().loadVideo.mock.calls.length;
+      await store().relinkVideo(session.videoId);
+      expect(api().loadVideo).toHaveBeenCalledTimes(calls);
+      expect(store().errors[session.videoId]).toBeDefined();
+    });
+  });
+
   it('enables and disables a video', () => {
     const session = loadSession();
     store().setVideoEnabled(session.videoId, false);
@@ -271,6 +391,40 @@ describe('sources', () => {
     const id = store().project.sources[0]?.id ?? '';
     expect(store().errors[id]).toBe('bad csv');
     expect(store().loading[id]).toBe(false);
+  });
+
+  it('loads a source that did not load in its place, only from the same file', async () => {
+    const session = sessionProject();
+    const logger = session.series[session.sourceId] as never;
+    api().loadVideo.mockResolvedValue(
+      loadedVideo('/videos/GX010001.MP4', session.series[embeddedSourceId(session.videoId)] ?? null),
+    );
+    // Loads once (what the file is gets remembered), then goes missing.
+    api().loadSource.mockResolvedValue(logger);
+    await store().openProject({ path: '/p.json', project: session.project });
+    const fingerprint = store().project.sources.find((s) => s.id === session.sourceId)?.fingerprint;
+    expect(fingerprint).toMatch(/^racechrono:/);
+    useStore.setState((s) => {
+      const { [session.sourceId]: _, ...series } = s.series;
+      return { series, errors: { [session.sourceId]: 'gone' } };
+    });
+
+    // Another log with its name: refused, and not added either.
+    api().loadSource.mockResolvedValue(speedSeries({ duration: 30 }));
+    await store().addSources([{ path: 'SESSION.csv', kind: 'racechrono' }]);
+    expect(store().project.sources.filter((s) => s.videoId === null)).toHaveLength(1);
+    expect(store().series[session.sourceId]).toBeUndefined();
+    expect(store().notice?.kind).toBe('error');
+
+    // The same log, renamed elsewhere: loaded in its place.
+    api().loadSource.mockResolvedValue(logger);
+    api().selectSources.mockResolvedValue([{ path: '/elsewhere/renamed.csv', kind: 'racechrono' }]);
+    await store().relinkSource(session.sourceId);
+    expect(api().loadSource).toHaveBeenLastCalledWith('/elsewhere/renamed.csv', 'racechrono');
+    const source = store().project.sources.find((s) => s.id === session.sourceId);
+    expect(source).toMatchObject({ path: '/elsewhere/renamed.csv', fingerprint });
+    expect(store().series[session.sourceId]).toBeDefined();
+    expect(store().errors[session.sourceId]).toBeUndefined();
   });
 
   it('does nothing without files', async () => {

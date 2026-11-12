@@ -27,6 +27,11 @@ const timelineItem = {
   offsetSeconds: z.number().default(0),
   /** True once the offset was confirmed by the user or computed with enough confidence. */
   synced: z.boolean().default(false),
+  /**
+   * What the file was when it first loaded (see `videoFingerprint`, `seriesFingerprint`): a file
+   * picked again in its place must match it. Null until it loads once, and for embedded telemetry.
+   */
+  fingerprint: z.string().nullable().default(null),
 };
 
 export const VideoRefSchema = z.object(timelineItem);

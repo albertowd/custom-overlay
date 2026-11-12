@@ -24,6 +24,7 @@
     "openProjectFailed": "プロジェクトを開けませんでした: {error}",
     "saveProjectFailed": "プロジェクトを保存できませんでした: {error}",
     "loadFailed": "{path} を読み込めませんでした: {error}",
+    "notSameFile": "「{picked}」はプロジェクトの「{name}」と同じファイルではありません。何も変更されていません。プロジェクトを作成したときのファイルを選択してください。",
     "trackImported": "「{name}」のラインをインポートしました",
     "trackImportedUnnamed": "コースのラインをインポートしました",
     "trackDetected": "{name}を検出しました。ラインでラップを計測します",

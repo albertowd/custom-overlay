@@ -24,6 +24,7 @@ function SourceCard({ source, series }: { source: SourceRef; series: TelemetrySe
   const loading = useStore((s) => s.loading[source.id] ?? false);
   const removeSource = useStore((s) => s.removeSource);
   const setEnabled = useStore((s) => s.setSourceEnabled);
+  const relinkSource = useStore((s) => s.relinkSource);
   const summary = useMemo(() => (series ? summarizeSeries(series) : null), [series]);
 
   return (
@@ -50,6 +51,11 @@ function SourceCard({ source, series }: { source: SourceRef; series: TelemetrySe
             />
             {t('sources.card.use')}
           </label>
+          {source.videoId === null && error && !loading && (
+            <button type="button" className="small" onClick={() => void relinkSource(source.id)}>
+              {t('common.selectAgain')}
+            </button>
+          )}
           {source.videoId === null && (
             <button type="button" className="danger small" onClick={() => removeSource(source.id)}>
               {t('common.remove')}

@@ -34,6 +34,8 @@ import {
   groupMembers,
   groupWidgets,
   guideLines,
+  isEmbedded,
+  isSameMedia,
   mergeTrackCatalogs,
   moveGroup,
   moveLayer,
@@ -41,6 +43,7 @@ import {
   type Palette,
   type Project,
   type ProjectMedia,
+  relinkMedia,
   removeGroup,
   removeSource,
   removeVideo,
@@ -49,6 +52,8 @@ import {
   type StepId,
   type StepStatus,
   type SyncResult,
+  sameFileName,
+  seriesFingerprint,
   seriesGpsPath,
   setItemOffset,
   setItemSynced,
@@ -68,6 +73,8 @@ import {
   type ValueScript,
   ValueScriptSchema,
   type VideoInfo,
+  type VideoRef,
+  videoFingerprint,
   type Widget,
   type WidgetGroup,
   widgetFrame,
@@ -164,9 +171,13 @@ interface AppActions {
    * recordings; chapters are then chained by the automatic sync.
    */
   addVideos(paths?: string[]): Promise<void>;
+  /** Ask for the file of a video that did not load, and load it in its place. */
+  relinkVideo(id: string): Promise<void>;
   removeVideo(id: string): void;
   setVideoEnabled(id: string, enabled: boolean): void;
   addSources(files?: { path: string; kind: SourceKind }[]): Promise<void>;
+  /** Ask for the file of a data source that did not load, and load it in its place. */
+  relinkSource(id: string): Promise<void>;
   removeSource(id: string): void;
   setSourceEnabled(id: string, enabled: boolean): void;
   setOffset(id: string, offsetSeconds: number, synced?: boolean): void;
@@ -392,33 +403,96 @@ export const useStore = create<Store>()((set, get) => {
 
   const media = (): ProjectMedia => ({ videos: get().videos, series: get().series });
 
-  async function loadSourceData(id: string, path: string, kind: SourceKind): Promise<void> {
+  const baseName = (path: string) => path.split(/[\\/]/).pop() ?? path;
+
+  /**
+   * The path to keep for a file picked again. A bare file name (the web app, which gets no
+   * folders) keeps the stored path when the names match: the file is found by name, and the
+   * desktop app still finds it next to the project.
+   */
+  const relinkedPath = (stored: string, picked: string) =>
+    /[\\/]/.test(picked) || !sameFileName(stored, picked) ? picked : stored;
+
+  /**
+   * After a project item loaded from `path`: whether that file is the item's. A file picked again
+   * must match what the item was (else nothing changes and the user is told); a file the project
+   * already pointed at is trusted. Then remembers the path and what the file is.
+   */
+  function acceptFile(
+    item: VideoRef | SourceRef,
+    path: string,
+    fingerprint: string,
+    picked: boolean,
+  ): boolean {
+    if (picked && !isSameMedia(item, path, fingerprint)) {
+      get().notify('error', t('app.notices.notSameFile', { picked: baseName(path), name: item.label }));
+      return false;
+    }
+    const next = picked ? relinkedPath(item.path, path) : item.path;
+    const known = item.fingerprint ?? fingerprint;
+    if (next === item.path && known === item.fingerprint) return true;
+    const project = relinkMedia(get().project, item.id, next, known);
+    // Only what the user picked is a change to save; a first fingerprint is kept silently.
+    set(picked ? { project, dirty: true } : { project });
+    return true;
+  }
+
+  /** Whether it loaded; a failure is shown on the source. `picked`: a file picked again for it. */
+  async function loadSourceData(source: SourceRef, path: string, picked = false): Promise<boolean> {
+    const { id } = source;
     setLoading(id, true);
     try {
-      const series = await api().loadSource(path, kind);
+      const series = await api().loadSource(path, source.kind);
+      if (!acceptFile(source, path, seriesFingerprint(series), picked)) return false;
       set((s) => ({ series: { ...s.series, [id]: series }, errors: without(s.errors, id) }));
+      return true;
     } catch (error) {
       set((s) => ({ errors: { ...s.errors, [id]: errorMessage(error) } }));
+      return false;
     } finally {
       setLoading(id, false);
     }
   }
 
-  async function loadProjectVideo(id: string, path: string): Promise<void> {
+  /** Whether it loaded; a failure is shown on the video. `picked`: a file picked again for it. */
+  async function loadProjectVideo(video: VideoRef, path: string, picked = false): Promise<boolean> {
+    const { id } = video;
     setLoading(id, true);
     try {
       const loaded = await api().loadVideo(path);
+      if (!acceptFile(video, path, videoFingerprint(loaded.info), picked)) return false;
       set((s) => ({
         videos: { ...s.videos, [id]: loaded.info },
         mediaUrls: { ...s.mediaUrls, [id]: loaded.mediaUrl },
         series: loaded.telemetry ? { ...s.series, [embeddedSourceId(id)]: loaded.telemetry } : s.series,
         errors: without(s.errors, id),
       }));
+      return true;
     } catch (error) {
       set((s) => ({ errors: { ...s.errors, [id]: errorMessage(error) } }));
+      return false;
     } finally {
       setLoading(id, false);
     }
+  }
+
+  /** The project video with this file name that did not load, if any. */
+  const missingVideo = (path: string) => {
+    const { project, videos, loading } = get();
+    return project.videos.find((v) => !videos[v.id] && !loading[v.id] && sameFileName(v.path, path));
+  };
+
+  /** The standalone project source with this file name that did not load, if any. */
+  const missingSource = (path: string) => {
+    const { project, series, loading } = get();
+    return project.sources.find(
+      (s) => !isEmbedded(s) && !series[s.id] && !loading[s.id] && sameFileName(s.path, path),
+    );
+  };
+
+  /** Load a project item from a file picked again, when it is the same file; whether it loaded. */
+  function relink(item: VideoRef | SourceRef, path: string): Promise<boolean> {
+    return 'kind' in item ? loadSourceData(item, path, true) : loadProjectVideo(item, path, true);
   }
 
   /** Sync every item that is not synced yet; runs by default whenever media loads. */
@@ -486,10 +560,8 @@ export const useStore = create<Store>()((set, get) => {
           step: 'summary',
         });
         await Promise.all([
-          ...project.videos.map((v) => loadProjectVideo(v.id, v.path)),
-          ...project.sources
-            .filter((s) => s.videoId === null)
-            .map((s) => loadSourceData(s.id, s.path, s.kind)),
+          ...project.videos.map((v) => loadProjectVideo(v, v.path)),
+          ...project.sources.filter((s) => s.videoId === null).map((s) => loadSourceData(s, s.path)),
         ]);
         afterMediaLoad();
       } catch (error) {
@@ -510,11 +582,23 @@ export const useStore = create<Store>()((set, get) => {
     async addVideos(paths) {
       const picked = paths ?? (await api().selectVideos());
       if (picked.length === 0) return;
-      const existing = get().project.videos.map((v) => v.path);
+      // Videos that did not load are not in the way: a file with their name is loaded in their place.
+      const { videos } = get();
+      const existing = get()
+        .project.videos.filter((v) => videos[v.id])
+        .map((v) => v.path);
       const selected = await api()
         .withChapters(picked, existing)
         .catch(() => picked);
+      // A refused file (another recording with the name of a missing one) loads nothing new.
+      let loadedAny = false;
       for (const path of selected) {
+        const missing = missingVideo(path);
+        if (missing) {
+          if (await relink(missing, path)) loadedAny = true;
+          continue;
+        }
+        loadedAny = true;
         set((s) => ({ loading: { ...s.loading, [path]: true } }));
         try {
           const loaded = await api().loadVideo(path);
@@ -539,7 +623,21 @@ export const useStore = create<Store>()((set, get) => {
           set((s) => ({ loading: without(s.loading, path) }));
         }
       }
-      if (selected.length > 0) afterMediaLoad();
+      if (loadedAny) afterMediaLoad();
+    },
+
+    async relinkVideo(id) {
+      const [first, ...others] = await api().selectVideos();
+      const video = get().project.videos.find((v) => v.id === id);
+      if (!first || !video) return;
+      let loadedAny = await relink(video, first);
+      // More files picked at once: those of other videos that did not load.
+      for (const path of others) {
+        const missing = missingVideo(path);
+        if (missing && (await relink(missing, path))) loadedAny = true;
+      }
+      // Nothing loaded: the notice says why, no sync notice replaces it.
+      if (loadedAny) afterMediaLoad();
     },
 
     removeVideo(id) {
@@ -559,14 +657,33 @@ export const useStore = create<Store>()((set, get) => {
 
     async addSources(files) {
       const selected = files ?? (await api().selectSources());
-      const added: { id: string; path: string; kind: SourceKind }[] = [];
+      const added: SourceRef[] = [];
+      const relinked: Promise<boolean>[] = [];
       for (const file of selected) {
+        // A file with the name of a source that did not load is loaded in its place.
+        const missing = missingSource(file.path);
+        if (missing) {
+          relinked.push(relink(missing, file.path));
+          continue;
+        }
         const result = addSource(get().project, file);
         set({ project: result.project, dirty: true });
-        added.push({ id: result.source.id, ...file });
+        added.push(result.source);
       }
-      await Promise.all(added.map((s) => loadSourceData(s.id, s.path, s.kind)));
-      if (added.length > 0) afterMediaLoad();
+      const loaded = await Promise.all([...relinked, ...added.map((s) => loadSourceData(s, s.path))]);
+      if (added.length > 0 || loaded.some(Boolean)) afterMediaLoad();
+    },
+
+    async relinkSource(id) {
+      const [first, ...others] = await api().selectSources();
+      const source = get().project.sources.find((s) => s.id === id);
+      if (!first || !source) return;
+      const missing = others.flatMap((file) => {
+        const other = missingSource(file.path);
+        return other && other.id !== id ? [relink(other, file.path)] : [];
+      });
+      const loaded = await Promise.all([relink(source, first.path), ...missing]);
+      if (loaded.some(Boolean)) afterMediaLoad();
     },
 
     removeSource(id) {

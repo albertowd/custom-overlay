@@ -25,6 +25,7 @@ function VideoCard({ video, isReference }: { video: VideoRef; isReference: boole
   const telemetry = useStore((s) => s.series[embeddedSourceId(video.id)]);
   const removeVideo = useStore((s) => s.removeVideo);
   const setEnabled = useStore((s) => s.setVideoEnabled);
+  const relinkVideo = useStore((s) => s.relinkVideo);
   const summary = useMemo(() => (telemetry ? summarizeSeries(telemetry) : null), [telemetry]);
 
   return (
@@ -55,6 +56,11 @@ function VideoCard({ video, isReference }: { video: VideoRef; isReference: boole
             />
             {t('videos.card.use')}
           </label>
+          {error && !loading && (
+            <button type="button" className="small" onClick={() => void relinkVideo(video.id)}>
+              {t('common.selectAgain')}
+            </button>
+          )}
           <button type="button" className="danger small" onClick={() => removeVideo(video.id)}>
             {t('common.remove')}
           </button>

@@ -21,7 +21,7 @@ import {
   type Template,
   type VideoRef,
 } from './model/project.js';
-import type { SourceKind } from './model/telemetry.js';
+import type { SourceKind, TelemetrySeries } from './model/telemetry.js';
 import { resizeAroundAnchor } from './widgets/layout.js';
 import { getWidgetType } from './widgets/registry.js';
 
@@ -160,6 +160,7 @@ export function addVideo(project: Project, input: NewVideo): { project: Project;
     enabled: true,
     offsetSeconds: 0,
     synced: isFirst,
+    fingerprint: videoFingerprint(input.info),
   };
   const sources = isFirst
     ? // Sources were placed relative to the first source: they must be synced to the video now.
@@ -174,6 +175,7 @@ export function addVideo(project: Project, input: NewVideo): { project: Project;
       enabled: true,
       offsetSeconds: video.offsetSeconds,
       synced: true,
+      fingerprint: null,
       videoId: video.id,
     });
   }
@@ -223,6 +225,49 @@ export function removeVideo(project: Project, id: string): Project {
   );
 }
 
+/**
+ * What identifies a video file: its exact size. The desktop and web apps read the same number,
+ * where frame counts and lengths may differ by reader.
+ */
+export function videoFingerprint(info: VideoInfo): string {
+  return `size:${info.sizeBytes}`;
+}
+
+/** What identifies a data file: its kind, start time and number of samples of each channel. */
+export function seriesFingerprint(series: TelemetrySeries): string {
+  const samples = series.channels.map((c) => `${c.key}=${c.time.length}`).join(',');
+  return `${series.kind}:${series.startEpochMs ?? '-'}:${samples}`;
+}
+
+/**
+ * Whether a file picked again is the one of the item: same fingerprint, or the same file name
+ * while the item has no fingerprint yet (it never loaded).
+ */
+export function isSameMedia(item: VideoRef | SourceRef, path: string, fingerprint: string): boolean {
+  return item.fingerprint ? item.fingerprint === fingerprint : sameFileName(item.path, path);
+}
+
+/**
+ * Point a video or standalone source at its file, e.g. one picked again after the project moved,
+ * and remember what the file is. Telemetry embedded in a video follows it. The item keeps its
+ * name, place and sync.
+ */
+export function relinkMedia(project: Project, id: string, path: string, fingerprint: string): Project {
+  return {
+    ...project,
+    videos: project.videos.map((v) => (v.id === id ? { ...v, path, fingerprint } : v)),
+    sources: project.sources.map((s) => {
+      if (s.id === id) return { ...s, path, fingerprint };
+      return s.videoId === id ? { ...s, path } : s;
+    }),
+  };
+}
+
+/** Whether two paths name the same file, wherever it is (by file name, any case). */
+export function sameFileName(a: string, b: string): boolean {
+  return fileName(a).toLowerCase() === fileName(b).toLowerCase();
+}
+
 export function setVideoEnabled(project: Project, id: string, enabled: boolean): Project {
   return normalizeOffsets({
     ...project,
@@ -246,6 +291,8 @@ export function addSource(project: Project, input: NewSource): { project: Projec
     enabled: true,
     offsetSeconds: 0,
     synced: false,
+    // Remembered once the file loads.
+    fingerprint: null,
     videoId: null,
   };
   const updated = { ...project, sources: [...project.sources, source] };

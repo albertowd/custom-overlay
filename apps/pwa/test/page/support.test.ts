@@ -58,7 +58,15 @@ function withVideos(...codecs: { video?: string; audio?: string }[]): Project {
     const name = `clip-${++counter}.mp4`;
     tracks[name] = codec;
     addFile(new File([], name));
-    return { id: `v${i}`, path: name, label: `Clip ${i + 1}`, enabled: true, offsetSeconds: 0, synced: true };
+    return {
+      id: `v${i}`,
+      path: name,
+      label: `Clip ${i + 1}`,
+      enabled: true,
+      offsetSeconds: 0,
+      synced: true,
+      fingerprint: null,
+    };
   });
   return project;
 }
@@ -121,6 +129,7 @@ describe('the project', () => {
       enabled: true,
       offsetSeconds: 0,
       synced: true,
+      fingerprint: null,
     });
     project.videos[0] = { ...(project.videos[0] as Project['videos'][number]), enabled: false };
     expect(await supportIssues(project)).toEqual([]);

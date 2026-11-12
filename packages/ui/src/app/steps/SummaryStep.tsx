@@ -23,6 +23,18 @@ function status(
   );
 }
 
+/** Pick again the file of an item that did not load. */
+function SelectAgain({ onClick, label }: { onClick: () => void; label: string }) {
+  return (
+    <>
+      {' '}
+      <button type="button" className="link" onClick={onClick}>
+        {label}
+      </button>
+    </>
+  );
+}
+
 export function SummaryStep() {
   const t = useT();
   const project = useStore((s) => s.project);
@@ -30,6 +42,8 @@ export function SummaryStep() {
   const series = useStore((s) => s.series);
   const errors = useStore((s) => s.errors);
   const goTo = useStore((s) => s.goTo);
+  const relinkVideo = useStore((s) => s.relinkVideo);
+  const relinkSource = useStore((s) => s.relinkSource);
   const timeline = useTimeline();
   const workflow = useWorkflow();
   const title = coreText.stepTitle(t, STEP_DEFINITIONS.summary);
@@ -117,6 +131,12 @@ export function SummaryStep() {
                   <td className="mono">{formatOffset(video.offsetSeconds)}</td>
                   <td>
                     {status(t, video.enabled, errors[video.id], video.synced, video.id === reference?.id)}
+                    {errors[video.id] && (
+                      <SelectAgain
+                        onClick={() => void relinkVideo(video.id)}
+                        label={t('common.selectAgain')}
+                      />
+                    )}
                   </td>
                 </tr>
               ))}
@@ -143,6 +163,12 @@ export function SummaryStep() {
                         errors[source.id],
                         embedded || source.synced,
                         source.id === reference?.id,
+                      )}
+                      {!embedded && errors[source.id] && (
+                        <SelectAgain
+                          onClick={() => void relinkSource(source.id)}
+                          label={t('common.selectAgain')}
+                        />
                       )}
                     </td>
                   </tr>

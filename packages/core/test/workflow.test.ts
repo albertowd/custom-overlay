@@ -4,15 +4,20 @@ import {
   addSource,
   addVideo,
   applyPreset,
+  isSameMedia,
   referenceItem,
+  relinkMedia,
   removeSource,
   removeVideo,
+  sameFileName,
+  seriesFingerprint,
   setItemOffset,
   setItemSynced,
   setOutput,
   setPalette,
   setSourceEnabled,
   setVideoEnabled,
+  videoFingerprint,
 } from '../src/project-ops.js';
 import { autoSyncProject, goproChapter, goproChapterFiles } from '../src/sync/project-sync.js';
 import { computeTimeline, itemsRequiringSync, type ProjectMedia, videoAt } from '../src/workflow/timeline.js';
@@ -207,6 +212,56 @@ describe('project operations', () => {
     expect(itemsRequiringSync(project).map((s) => s.id)).toEqual([b.source.id]);
     expect(referenceItem(setSourceEnabled(project, a.id, false))?.id).toBe(b.source.id);
     expect(removeSource(project, a.id).sources[0]?.offsetSeconds).toBe(0);
+  });
+
+  it('points an item at another file, with the telemetry of a video', () => {
+    const { project, video } = addVideo(createProject(), {
+      path: '../videos/GX010001.MP4',
+      info: videoInfo(),
+      hasTelemetry: true,
+    });
+    expect(video.fingerprint).toBe(videoFingerprint(videoInfo()));
+    const log = addSource(project, { kind: 'racechrono', path: '/logs/a.csv' });
+    expect(log.source.fingerprint).toBeNull();
+    let moved = relinkMedia(log.project, video.id, 'D:\\moved\\GX010001.MP4', 'size:1');
+    moved = relinkMedia(moved, log.source.id, '/other/a.csv', 'racechrono:-:speed=3');
+    expect(moved.videos[0]).toMatchObject({
+      path: 'D:\\moved\\GX010001.MP4',
+      label: 'GX010001.MP4',
+      fingerprint: 'size:1',
+    });
+    expect(moved.sources.map((s) => [s.path, s.fingerprint])).toEqual([
+      ['D:\\moved\\GX010001.MP4', null],
+      ['/other/a.csv', 'racechrono:-:speed=3'],
+    ]);
+    expect(moved.sources[0]?.label).toBe('GX010001.MP4 telemetry');
+  });
+
+  it('knows two paths name the same file by name, in any case', () => {
+    expect(sameFileName('../videos/GX010001.MP4', 'gx010001.mp4')).toBe(true);
+    expect(sameFileName('C:\\v\\a.mp4', '/x/A.MP4')).toBe(true);
+    expect(sameFileName('/v/a.mp4', '/v/b.mp4')).toBe(false);
+  });
+
+  it('tells a file picked again is the same by what it is, or by name before it ever loaded', () => {
+    const info = videoInfo();
+    const { video } = addVideo(createProject(), { path: '/v/GX010001.MP4', info, hasTelemetry: false });
+    // Renamed or moved: still the same file.
+    expect(isSameMedia(video, '/elsewhere/renamed.mp4', videoFingerprint(info))).toBe(true);
+    // Another recording with the same name (GoPro names repeat): not the same.
+    const other = videoFingerprint({ ...info, sizeBytes: info.sizeBytes + 1 });
+    expect(isSameMedia(video, '/v/GX010001.MP4', other)).toBe(false);
+    // No fingerprint yet (a project saved before them): the name decides.
+    const old = { ...video, fingerprint: null };
+    expect(isSameMedia(old, 'gx010001.mp4', other)).toBe(true);
+    expect(isSameMedia(old, 'GX020001.MP4', other)).toBe(false);
+  });
+
+  it('fingerprints a data file by its kind, start and samples', () => {
+    const series = speedSeries(0, 10, 10, null);
+    expect(seriesFingerprint(series)).toBe(seriesFingerprint(speedSeries(0, 10, 10, null)));
+    expect(seriesFingerprint(series)).not.toBe(seriesFingerprint(speedSeries(0, 11, 10, null)));
+    expect(seriesFingerprint({ ...series, startEpochMs: 5 })).not.toBe(seriesFingerprint(series));
   });
 
   it('edits the palette', () => {
