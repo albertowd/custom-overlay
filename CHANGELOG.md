@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.2.2
+
+- A video or data file that cannot be found can be selected again from its card, keeping the sync, the template and the settings of the project.
+- The app checks that a file selected again is the same one the project was made with, and says so when it is not.
+- The web app tells when a new version is out, and reloads into it.
+- Videos exported in the web app keep to the bitrate they are set to: they could come out twice as large.
+- In the web app, the browser asks where to save the export when it starts, instead of in the Export step.
+- New screenshots and recordings in the README.
+
 ## 0.2.1
 
 - Exports that join several videos, like the chapters of a long GoPro recording, no longer lose their last frame.
