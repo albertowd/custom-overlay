@@ -118,6 +118,8 @@ export interface UpdateInfo {
   /** Installer of this OS / architecture, null when the release has none. */
   downloadUrl: string | null;
   assetName: string | null;
+  /** Already downloaded (the web app): a reload starts it, with `startUpdate`. */
+  ready?: boolean;
 }
 
 /** What a host can do beyond the common API. */
@@ -186,6 +188,8 @@ export interface AppApi {
   graphicsCards(): Promise<GraphicsCard[]>;
   /** The latest GitHub release when it is newer than this app (null offline or up to date). */
   checkForUpdate(): Promise<UpdateInfo | null>;
+  /** Reload into an update that is `ready` (the web app). */
+  startUpdate?(): Promise<void>;
   /** Open a page of the project on GitHub (release, download) in the browser. */
   openProjectUrl(url: string): Promise<void>;
   /** Path that stands for a dropped File: absolute on the desktop, the file name on the web. */

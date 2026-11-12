@@ -2,10 +2,12 @@
 // version (a hash of the build) and the list of files to precache.
 //
 // The app shell is precached so the app opens offline. A new version installs in the background
-// and takes over once every tab of the app is closed: a page never runs code of two versions,
-// and a project being edited is never reloaded under the user.
+// and takes over once every tab of the app is closed, or when the user reloads into it from the
+// update dialog: a page never runs code of two versions, and a project being edited is never
+// reloaded under the user.
 
 const VERSION = __VERSION__;
+const APP_VERSION = __APP_VERSION__;
 const PRECACHE = __PRECACHE__;
 const PREFIX = 'custom-overlay-';
 const CACHE = `${PREFIX}${VERSION}`;
@@ -22,6 +24,13 @@ self.addEventListener('activate', (event) => {
         Promise.all(keys.filter((k) => k.startsWith(PREFIX) && k !== CACHE).map((k) => caches.delete(k))),
       ),
   );
+});
+
+self.addEventListener('message', (event) => {
+  // The page asks which version waits, to tell the user.
+  if (event.data === 'version') event.ports[0]?.postMessage(APP_VERSION);
+  // Only when the user chose to reload into this version: the page reloads once it takes over.
+  if (event.data === 'skip-waiting') self.skipWaiting();
 });
 
 self.addEventListener('fetch', (event) => {

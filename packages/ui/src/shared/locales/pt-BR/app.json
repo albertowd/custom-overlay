@@ -68,6 +68,11 @@
     "later": "Depois",
     "skip": "Pular esta versão",
     "noInstaller": "Esta versão não tem instalador para este sistema: baixe pela página da versão.",
+    "readyTitle": "Uma nova versão está pronta",
+    "readyMessage": "O Custom Overlay {latest} já foi baixado (você tem a {current}). Recarregue para usá-lo.",
+    "readySame": "Uma atualização do Custom Overlay {current} já foi baixada. Recarregue para usá-la.",
+    "saveFirst": "Salve o projeto antes: recarregar fecha o projeto.",
+    "reload": "Recarregar",
     "change": {
       "major": "Atualização principal",
       "minor": "Novos recursos",

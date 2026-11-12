@@ -24,6 +24,7 @@ let checked = false;
 export function UpdateDialog() {
   const t = useT();
   const naming = useStore((s) => s.naming);
+  const dirty = useStore((s) => s.dirty);
   const ref = useRef<HTMLDialogElement>(null);
   const [update, setUpdate] = useState<UpdateInfo | null>(null);
   const [open, setOpen] = useState(false);
@@ -63,6 +64,33 @@ export function UpdateDialog() {
     void api().openProjectUrl(url);
     close();
   };
+  const reload = () => {
+    if (dirty && !window.confirm(t('app.toolbar.confirmDiscard'))) return;
+    void api().startUpdate?.();
+  };
+
+  if (update.ready) {
+    // Downloaded already (the web app): nothing to install, a reload starts it.
+    return (
+      <dialog ref={ref} className="modal update-dialog" aria-labelledby="update-title" onClose={close}>
+        <h2 id="update-title">{t('app.update.readyTitle')}</h2>
+        <p>
+          {update.latest === update.current
+            ? t('app.update.readySame', { current: update.current })
+            : t('app.update.readyMessage', { latest: update.latest, current: update.current })}
+        </p>
+        {dirty && <p className="muted small">{t('app.update.saveFirst')}</p>}
+        <div className="modal-actions wrap">
+          <button type="button" onClick={close}>
+            {t('app.update.later')}
+          </button>
+          <button type="button" className="primary" onClick={reload}>
+            {t('app.update.reload')}
+          </button>
+        </div>
+      </dialog>
+    );
+  }
 
   return (
     <dialog ref={ref} className="modal update-dialog" aria-labelledby="update-title" onClose={close}>

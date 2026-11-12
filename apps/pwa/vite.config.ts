@@ -6,6 +6,9 @@ import { defineConfig, type Plugin } from 'vite';
 
 const PUBLIC_DIR = join(import.meta.dirname, 'public');
 const SERVICE_WORKER = join(import.meta.dirname, 'src', 'service-worker.js');
+const APP_VERSION = (
+  JSON.parse(readFileSync(join(import.meta.dirname, 'package.json'), 'utf8')) as { version: string }
+).version;
 
 /** The dev server injects <style> tags (HMR), so only the dev page allows inline styles. */
 function devInlineStyles(): Plugin {
@@ -46,6 +49,7 @@ export function serviceWorker(): Plugin {
       }
       const source = readFileSync(SERVICE_WORKER, 'utf8')
         .replace('__VERSION__', JSON.stringify(hash.digest('hex').slice(0, 16)))
+        .replace('__APP_VERSION__', JSON.stringify(APP_VERSION))
         .replace('__PRECACHE__', JSON.stringify(['./', ...files.sort((a, b) => a.localeCompare(b))]));
       this.emitFile({ type: 'asset', fileName: 'sw.js', source });
     },

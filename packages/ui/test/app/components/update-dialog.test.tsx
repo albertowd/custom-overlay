@@ -124,6 +124,45 @@ describe('UpdateDialog', () => {
     expect(screen.queryByRole('dialog', { hidden: true })).toBeNull();
   });
 
+  it('reloads into a version that is downloaded already (the web app)', async () => {
+    const user = userEvent.setup();
+    const startUpdate = vi.fn(async () => undefined);
+    installFakeApi({
+      checkForUpdate: async () => ({ ...update, notes: '', downloadUrl: null, assetName: null, ready: true }),
+      startUpdate,
+    });
+    await renderDialog();
+    await screen.findByRole('dialog'); // open: showModal() runs in an effect
+    expect(
+      screen.getByText(t('app.update.readyMessage', { latest: '0.2.0', current: '0.1.0' })),
+    ).toBeTruthy();
+    expect(screen.queryByText(t('app.update.noInstaller'))).toBeNull();
+    expect(screen.queryByRole('button', { name: t('app.update.skip') })).toBeNull();
+    await user.click(screen.getByRole('button', { name: t('app.update.reload') }));
+    expect(startUpdate).toHaveBeenCalledTimes(1);
+  });
+
+  it('asks before reloading away unsaved changes, for a new deploy of the same version', async () => {
+    const user = userEvent.setup();
+    const startUpdate = vi.fn(async () => undefined);
+    const confirm = vi.spyOn(window, 'confirm').mockReturnValue(false);
+    installFakeApi({
+      checkForUpdate: async () => ({ ...update, latest: '0.1.0', ready: true }),
+      startUpdate,
+    });
+    const { store } = await renderDialog();
+    act(() => store.setState({ dirty: true }));
+    await screen.findByRole('dialog'); // open: showModal() runs in an effect
+    expect(screen.getByText(t('app.update.readySame', { current: '0.1.0' }))).toBeTruthy();
+    expect(screen.getByText(t('app.update.saveFirst'))).toBeTruthy();
+    await user.click(screen.getByRole('button', { name: t('app.update.reload') }));
+    expect(confirm).toHaveBeenCalledWith(t('app.toolbar.confirmDiscard'));
+    expect(startUpdate).not.toHaveBeenCalled();
+    confirm.mockReturnValue(true);
+    await user.click(screen.getByRole('button', { name: t('app.update.reload') }));
+    expect(startUpdate).toHaveBeenCalledTimes(1);
+  });
+
   it('ignores a failed check', async () => {
     const api = installFakeApi({
       checkForUpdate: async () => {

@@ -68,6 +68,11 @@
     "later": "Later",
     "skip": "Skip this version",
     "noInstaller": "There is no installer for this system in this release: download it from the release page.",
+    "readyTitle": "A new version is ready",
+    "readyMessage": "Custom Overlay {latest} is downloaded (you have {current}). Reload to start it.",
+    "readySame": "An update of Custom Overlay {current} is downloaded. Reload to start it.",
+    "saveFirst": "Save your project first: reloading closes it.",
+    "reload": "Reload",
     "change": {
       "major": "Major update",
       "minor": "New features",

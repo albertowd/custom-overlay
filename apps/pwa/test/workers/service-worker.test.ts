@@ -1,6 +1,7 @@
 import { runInNewContext } from 'node:vm';
 import type { Rollup } from 'vite';
 import { describe, expect, it, vi } from 'vitest';
+import pkg from '../../package.json';
 import { serviceWorker } from '../../vite.config';
 
 const ORIGIN = 'https://app.test';
@@ -73,10 +74,12 @@ function startWorker(source: string) {
   const listeners = new Map<string, (event: unknown) => void>();
   const caches = new FakeCaches();
   const fetch = vi.fn(async (request: { url: string }) => new Response(`network ${request.url}`));
+  const skipWaiting = vi.fn(async () => undefined);
   runInNewContext(source, {
     self: {
       addEventListener: (type: string, fn: (event: unknown) => void) => listeners.set(type, fn),
       location: { origin: ORIGIN },
+      skipWaiting,
     },
     caches,
     fetch,
@@ -97,7 +100,13 @@ function startWorker(source: string) {
     });
     return response ? (await response).text() : null;
   };
-  return { caches, fetch, lifecycle, request };
+  /** A message from a page; returns what the worker answered on the port. */
+  const message = (data: unknown) => {
+    const answers: unknown[] = [];
+    listeners.get('message')?.({ data, ports: [{ postMessage: (answer: unknown) => answers.push(answer) }] });
+    return answers;
+  };
+  return { caches, fetch, lifecycle, request, message, skipWaiting };
 }
 
 describe('service worker build', () => {
@@ -113,7 +122,7 @@ describe('service worker build', () => {
       'index.html',
       'manifest.webmanifest',
     ]);
-    expect(source).not.toMatch(/__VERSION__|__PRECACHE__/);
+    expect(source).not.toMatch(/__VERSION__|__APP_VERSION__|__PRECACHE__/);
   });
 
   it('versions the worker by the content of the build', () => {
@@ -163,8 +172,21 @@ describe('service worker', () => {
     expect(await worker.request('/api', { method: 'POST' })).toBeNull();
   });
 
-  it('never takes over a running page: a new version waits for every tab to close', () => {
-    expect(source).not.toContain('skipWaiting');
+  it('never takes over a running page on its own: a new version waits for every tab to close', async () => {
+    const worker = startWorker(source);
+    await worker.lifecycle('install');
+    await worker.lifecycle('activate');
+    expect(worker.skipWaiting).not.toHaveBeenCalled();
     expect(source).not.toContain('clients.claim');
+  });
+
+  it('tells its app version, and takes over when the user reloads into it', () => {
+    const worker = startWorker(source);
+    expect(worker.message('version')).toEqual([pkg.version]);
+    expect(worker.skipWaiting).not.toHaveBeenCalled();
+    expect(worker.message('skip-waiting')).toEqual([]);
+    expect(worker.skipWaiting).toHaveBeenCalledTimes(1);
+    expect(worker.message('something else')).toEqual([]);
+    expect(worker.skipWaiting).toHaveBeenCalledTimes(1);
   });
 });

@@ -18,6 +18,7 @@ import {
   TRACK_FILE_EXTENSION,
   trackFromData,
   VALUES_FILE_EXTENSION,
+  versionChange,
   WIDGET_FILE_EXTENSION,
   widgetsFromData,
 } from '@custom-overlay/core';
@@ -45,6 +46,7 @@ import {
   writableFolder,
 } from './files';
 import { supportIssues } from './support';
+import { startWaitingVersion, versionOf, waitingWorker } from './updates';
 import { canExportVideo, exportVideo } from './video-export';
 
 const REPOSITORY = 'albertowd/custom-overlay';
@@ -394,8 +396,26 @@ export const webApi: AppApi = {
   },
 
   async checkForUpdate() {
-    // The service worker installs new versions of the web app.
-    return null;
+    // The service worker installs new versions of the web app; this one waits for a reload.
+    const worker = await waitingWorker();
+    if (!worker) return null;
+    const latest = (await versionOf(worker)) ?? pkg.version;
+    return {
+      current: pkg.version,
+      latest,
+      // A deploy of the same version (fixes between releases) is offered as fixes.
+      change: versionChange(pkg.version, latest) ?? 'patch',
+      title: `Custom Overlay ${latest}`,
+      notes: '',
+      pageUrl: `https://github.com/${REPOSITORY}/releases`,
+      downloadUrl: null,
+      assetName: null,
+      ready: true,
+    };
+  },
+
+  startUpdate() {
+    return startWaitingVersion();
   },
 
   async openProjectUrl(url) {

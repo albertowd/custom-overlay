@@ -66,6 +66,11 @@
     "later": "後で",
     "skip": "このバージョンをスキップ",
     "noInstaller": "このリリースにはこのシステム用のインストーラーがありません。リリースページからダウンロードしてください。",
+    "readyTitle": "新しいバージョンの準備ができました",
+    "readyMessage": "Custom Overlay {latest} をダウンロードしました（現在は {current}）。再読み込みすると使えます。",
+    "readySame": "Custom Overlay {current} の更新をダウンロードしました。再読み込みすると使えます。",
+    "saveFirst": "先にプロジェクトを保存してください。再読み込みすると閉じます。",
+    "reload": "再読み込み",
     "change": {
       "major": "メジャーアップデート",
       "minor": "新機能",
