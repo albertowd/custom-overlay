@@ -373,6 +373,14 @@ export interface ExportCommand {
 const fmt = (n: number) => String(Math.round(n * 1e6) / 1e6);
 
 /**
+ * Times frames by their number on a time base of one frame. ffmpeg's concat retimes the joined
+ * pieces in microseconds, which can put the last frame just past the last widget frame, and the
+ * blend (`shortest=1`) then drops it. Given to both the joined video and the widgets, frame n of
+ * one meets frame n of the other.
+ */
+const frameIndexTimes = (rate: string) => `settb=1/${rate},setpts=N`;
+
+/**
  * ffmpeg command of a video export: the pieces of the range (videos cut with `-ss`/`-t`, gaps
  * as black and silence), scaled to the output, concatenated, with the overlay frames from stdin
  * on top, then encoded.
@@ -468,10 +476,11 @@ export function videoExportCommand(options: {
   inputs.push('-f', 'rawvideo', '-pix_fmt', 'rgba', '-s', `${width}x${height}`, '-r', rate, '-i', 'pipe:0');
 
   filters.push(
-    `${concat.join('')}concat=n=${segments.length}:v=1:a=${encodeAudio ? 1 : 0}[base]${encodeAudio ? '[aout]' : ''}`,
+    `${concat.join('')}concat=n=${segments.length}:v=1:a=${encodeAudio ? 1 : 0}[joined]${encodeAudio ? '[aout]' : ''}`,
+    `[joined]${frameIndexTimes(rate)}[base]`,
     // The widgets' RGB is converted with the output's matrix and range: left to the overlay filter
     // it would use BT.601 on an HD video and shift colours (#ff5a36 came out #fc7139).
-    `[${overlayIndex}:v:0]unpremultiply=inplace=1,scale=out_color_matrix=${color.matrix}:out_range=${color.range},format=${blend.overlay}[widgets]`,
+    `[${overlayIndex}:v:0]${frameIndexTimes(rate)},unpremultiply=inplace=1,scale=out_color_matrix=${color.matrix}:out_range=${color.range},format=${blend.overlay}[widgets]`,
     `[base][widgets]overlay=0:0:format=${blend.format}:shortest=1,format=${pixelFormat}[vout]`,
   );
 
@@ -629,8 +638,9 @@ function cudaExportCommand(options: {
     'pipe:0',
   );
   filters.push(
-    `${concat.join('')}concat=n=${segments.length}:v=1:a=${encodeAudio ? 1 : 0}[base]${encodeAudio ? '[aout]' : ''}`,
-    `[${overlayIndex}:v:0]hwupload_cuda[widgets]`,
+    `${concat.join('')}concat=n=${segments.length}:v=1:a=${encodeAudio ? 1 : 0}[joined]${encodeAudio ? '[aout]' : ''}`,
+    `[joined]${frameIndexTimes(rate)}[base]`,
+    `[${overlayIndex}:v:0]${frameIndexTimes(rate)},hwupload_cuda[widgets]`,
     '[base][widgets]overlay_cuda=0:0:shortest=1[vout]',
   );
   const args = outputArgs({

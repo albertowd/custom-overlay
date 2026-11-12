@@ -198,7 +198,8 @@ describe('export plan', () => {
     expect(args).toContain('-ss 0 -t 30 -i /b.mp4 -f lavfi -t 30 -i anullsrc');
     expect(args).toContain('[0:v:0]fps=30,scale=1280:720:flags=lanczos');
     expect(args).toContain('cas=strength=0.4');
-    expect(args).toContain('concat=n=3:v=1:a=1[base][aout]');
+    expect(args).toContain('concat=n=3:v=1:a=1[joined][aout];[joined]settb=1/30,setpts=N[base]');
+    expect(args).toContain('[5:v:0]settb=1/30,setpts=N,unpremultiply');
     // The fixture video is 10-bit, so is the output.
     expect(args).toContain(
       'unpremultiply=inplace=1,scale=out_color_matrix=bt709:out_range=pc,format=yuva444p10le[widgets]',
@@ -340,7 +341,7 @@ describe('export plan', () => {
     silent.project.export.encoder.audio = 'none';
     const none = videoExportCommand({ ...silent, outputPath: '/o.mp4', encoder, hardwareDecode: null });
     expect(none.args).toContain('-an');
-    expect(none.args.join(' ')).toContain('concat=n=1:v=1:a=0[base];');
+    expect(none.args.join(' ')).toContain('concat=n=1:v=1:a=0[joined];[joined]settb=1/30,setpts=N[base];');
   });
 
   it('plans the frames and pieces of a video drawn without ffmpeg', () => {
@@ -634,6 +635,91 @@ describe('export with ffmpeg', () => {
     const chroma = yuv.subarray(320 * 180);
     const green = [...chroma].filter((v) => v < 64).length;
     expect(green).toBe(0);
+  }, 60_000);
+
+  /**
+   * Two GoPro-like 119.88 fps chapters joined, exported at 60 fps: 1.216 s of the end of the first
+   * (72.96 frames) then 0.784 s of the second. ffmpeg's concat retimes the joined frames in
+   * microseconds, and the last one, just after the last widget frame, was dropped (119 of 120).
+   */
+  async function joinedClips(acceleration: 'software' | 'nvidia') {
+    const ffmpeg = resolveFfmpegPath();
+    const frames = 300;
+    const duration = (frames * 1001) / 120_000;
+    const clip = (name: string) => {
+      const path = join(dir, name);
+      execFileSync(ffmpeg, [
+        ...[
+          '-hide_banner',
+          '-loglevel',
+          'error',
+          '-y',
+          '-f',
+          'lavfi',
+          '-i',
+          'testsrc2=s=160x90:r=120000/1001',
+        ],
+        ...['-frames:v', String(frames), '-pix_fmt', 'yuv420p', '-c:v', 'libx264', path],
+      ]);
+      return videoInfo({
+        path,
+        width: 160,
+        height: 90,
+        frameRate: 119.88,
+        frameCount: frames,
+        durationSeconds: duration,
+        hasAudio: false,
+        color: { space: 'rec709', range: 'limited', bitDepth: 8 },
+      });
+    };
+    const a = clip('join-a.mp4');
+    const b = clip('join-b.mp4');
+    const first = addVideo(createProject(), { path: a.path, info: a, hasTelemetry: false });
+    const second = addVideo(first.project, { path: b.path, info: b, hasTelemetry: false });
+    const out = join(dir, `joined-${acceleration}.mp4`);
+    const project: Project = {
+      ...second.project,
+      videos: second.project.videos.map((v) =>
+        v.id === second.video.id ? { ...v, offsetSeconds: duration } : v,
+      ),
+      output: {
+        ...second.project.output,
+        width: 160,
+        height: 90,
+        frameRate: 60,
+        color: { space: 'rec709', range: 'limited', bitDepth: 8 },
+      },
+      export: {
+        ...second.project.export,
+        outputPath: out,
+        range: { start: duration - 1.216, end: duration + 0.784 },
+        encoder: { ...second.project.export.encoder, acceleration, audio: 'none' },
+      },
+    };
+    const result = await exportProject({
+      project,
+      media: { videos: { [first.video.id]: a, [second.video.id]: b }, series: {} },
+      workers: 0,
+    });
+    const gray = execFileSync(
+      ffmpeg,
+      ['-hide_banner', '-loglevel', 'error', '-i', out, '-f', 'rawvideo', '-pix_fmt', 'gray', '-'],
+      { maxBuffer: 1 << 24 },
+    );
+    return { result, written: gray.byteLength / (160 * 90) };
+  }
+
+  it('keeps every frame of videos joined end to end', async () => {
+    const { result, written } = await joinedClips('software');
+    expect(result).toMatchObject({ frames: 120, pipeline: 'cpu' });
+    expect(written).toBe(120);
+  }, 60_000);
+
+  it('keeps every frame of videos joined end to end on an NVIDIA GPU', async (ctx) => {
+    if (!(await cudaPipelineWorks(resolveFfmpegPath()))) ctx.skip();
+    const { result, written } = await joinedClips('nvidia');
+    expect(result).toMatchObject({ frames: 120, pipeline: 'cuda' });
+    expect(written).toBe(120);
   }, 60_000);
 
   it('refuses an empty range', async () => {
