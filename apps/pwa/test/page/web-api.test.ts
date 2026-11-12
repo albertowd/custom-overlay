@@ -79,7 +79,7 @@ describe('host', () => {
   it('describes the app and never offers installers', async () => {
     expect(await api.appInfo()).toEqual({
       name: 'Custom Overlay',
-      version: '0.2.0',
+      version: '0.2.1',
       author: 'Alberto',
       homepage: 'https://github.com/albertowd/custom-overlay',
     });

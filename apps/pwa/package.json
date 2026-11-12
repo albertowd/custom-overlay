@@ -21,7 +21,7 @@
     "typecheck": "tsc -p tsconfig.node.json --noEmit && tsc -p tsconfig.web.json --noEmit && tsc -p tsconfig.test.json --noEmit"
   },
   "type": "module",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "dependencies": {
     "mediabunny": "1.62.1"
   }

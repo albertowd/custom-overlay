@@ -31,5 +31,5 @@
     "test:coverage": "vitest run --coverage && node ../../scripts/normalize-lcov.mjs coverage/lcov.info",
     "test:watch": "vitest"
   },
-  "version": "0.2.0"
+  "version": "0.2.1"
 }

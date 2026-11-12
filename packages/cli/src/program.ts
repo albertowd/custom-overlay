@@ -98,7 +98,7 @@ export function createProgram(): Command {
   const program = new Command()
     .name('custom-overlay')
     .description('Sync GoPro videos with telemetry and render overlay widgets')
-    .version('0.2.0');
+    .version('0.2.1');
 
   program
     .command('probe')

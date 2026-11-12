@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.1
+
+- Exports that join several videos, like the chapters of a long GoPro recording, no longer lose their last frame.
+
 ## 0.2.0
 
 - New look, easier to use on phones and tablets.

@@ -35,7 +35,7 @@
     "typecheck": "npm run build:core && npm run typecheck --workspaces --if-present"
   },
   "type": "module",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "workspaces": [
     "packages/core",
     "packages/ui",
